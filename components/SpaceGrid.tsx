@@ -335,7 +335,7 @@ function CakeNameTag() {
           curveSegments={48}
         >
           Jessy
-          <meshPhysicalMaterial color="#ffcc00" metalness={1} roughness={0.05} clearcoat={1} clearcoatRoughness={0} reflectivity={1} />
+          <meshStandardMaterial color="#d4900a" roughness={0.25} metalness={0.35} emissive="#9a5f00" emissiveIntensity={0.5} />
         </Text3D>
       </Center>
     </group>
