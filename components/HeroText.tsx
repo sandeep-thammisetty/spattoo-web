@@ -61,7 +61,7 @@ export default function HeroText() {
             key={`eyebrow-${index}`}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0, position: "absolute" } as object}
+            exit={{ opacity: 0 }}
             transition={{ duration: 0.35 }}
             className="inline-block text-xs tracking-[0.2em] uppercase text-[#a8c5b5] font-medium mb-5 px-4 py-1.5 rounded-full"
             style={{ border: "1px solid rgba(107,143,126,0.4)", backgroundColor: "rgba(107,143,126,0.08)" }}
@@ -77,7 +77,7 @@ export default function HeroText() {
               key={index}
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -16, position: "absolute" } as object}
+              exit={{ opacity: 0, y: -16 }}
               transition={{ duration: 0.45 }}
               className="text-4xl md:text-5xl font-bold leading-snug text-[#edeae3]"
             >
@@ -94,7 +94,7 @@ export default function HeroText() {
             key={`sub-${index}`}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0, position: "absolute" } as object}
+            exit={{ opacity: 0 }}
             transition={{ duration: 0.35 }}
             className="text-base text-[#edeae3]/70 mb-8 leading-relaxed"
           >
@@ -137,7 +137,7 @@ export default function HeroText() {
             key={`mob-eyebrow-${index}`}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0, position: "absolute" } as object}
+            exit={{ opacity: 0 }}
             transition={{ duration: 0.35 }}
             className="inline-block text-[10px] tracking-[0.2em] uppercase text-[#a8c5b5] font-medium mb-2 px-3 py-1 rounded-full"
             style={{ border: "1px solid rgba(107,143,126,0.4)", backgroundColor: "rgba(107,143,126,0.08)" }}
