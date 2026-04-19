@@ -481,7 +481,7 @@ export default function SpaceGrid() {
     <div style={{ width: "100%", height: "100vh", position: "relative" }}>
       <Canvas
         camera={{ position: [0, 1.8, 4], fov: 60, near: 0.1, far: 100 }}
-        gl={{ alpha: true, antialias: true, powerPreference: "high-performance" }}
+        gl={{ alpha: true, antialias: false, powerPreference: "default" }}
         onCreated={({ gl }) => { gl.setClearColor(0x000000, 0); }}
         style={{ background: "transparent" }}
         shadows
