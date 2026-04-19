@@ -126,7 +126,7 @@ function CakeBody() {
     <group position={[0, -0.6 + HEIGHT / 2, 0]}>
       <mesh castShadow receiveShadow>
         <cylinderGeometry args={[RADIUS, RADIUS, HEIGHT, 64]} />
-        <meshPhysicalMaterial map={patchTex} roughness={0.95} metalness={0} sheen={0.3} sheenRoughness={1} sheenColor="#2d4a3a" />
+        <meshStandardMaterial map={patchTex} roughness={0.95} metalness={0} />
       </mesh>
     </group>
   );
@@ -335,17 +335,7 @@ function CakeNameTag() {
           curveSegments={48}
         >
           Jessy
-          <meshPhysicalMaterial
-            color="#ffcc00"
-            metalness={1}
-            roughness={0}
-            clearcoat={1}
-            clearcoatRoughness={0}
-            reflectivity={1}
-            envMapIntensity={8}
-            iridescence={0.3}
-            iridescenceIOR={1.8}
-          />
+          <meshStandardMaterial color="#ffcc00" metalness={0.9} roughness={0.1} />
         </Text3D>
       </Center>
     </group>

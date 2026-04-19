@@ -56,13 +56,13 @@ export default function HeroText() {
       {/* Desktop */}
       <div className="hidden md:block relative z-10 px-16 max-w-lg">
         {/* Eyebrow — always visible, fades on slide change */}
-        <AnimatePresence mode="wait" initial={false}>
+        <AnimatePresence initial={false}>
           <motion.p
             key={`eyebrow-${index}`}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.4 }}
+            exit={{ opacity: 0, position: "absolute" } as object}
+            transition={{ duration: 0.35 }}
             className="inline-block text-xs tracking-[0.2em] uppercase text-[#a8c5b5] font-medium mb-5 px-4 py-1.5 rounded-full"
             style={{ border: "1px solid rgba(107,143,126,0.4)", backgroundColor: "rgba(107,143,126,0.08)" }}
           >
@@ -72,13 +72,13 @@ export default function HeroText() {
 
         {/* Headline */}
         <div className="mb-6" style={{ minHeight: "200px" }}>
-          <AnimatePresence mode="wait" initial={false}>
+          <AnimatePresence initial={false}>
             <motion.h1
               key={index}
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -16 }}
-              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}
+              exit={{ opacity: 0, y: -16, position: "absolute" } as object}
+              transition={{ duration: 0.45 }}
               className="text-4xl md:text-5xl font-bold leading-snug text-[#edeae3]"
             >
               {slide.headline.map((line, i) => (
@@ -89,13 +89,13 @@ export default function HeroText() {
         </div>
 
         {/* Subline */}
-        <AnimatePresence mode="wait" initial={false}>
+        <AnimatePresence initial={false}>
           <motion.p
             key={`sub-${index}`}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.4 }}
+            exit={{ opacity: 0, position: "absolute" } as object}
+            transition={{ duration: 0.35 }}
             className="text-base text-[#edeae3]/70 mb-8 leading-relaxed"
           >
             {slide.sub}
@@ -132,13 +132,13 @@ export default function HeroText() {
         className="md:hidden absolute bottom-0 left-0 right-0 z-10 px-6 pt-6 pb-10"
         style={{ background: "linear-gradient(to top, #111111 60%, transparent)" }}
       >
-        <AnimatePresence mode="wait" initial={false}>
+        <AnimatePresence initial={false}>
           <motion.p
             key={`mob-eyebrow-${index}`}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.4 }}
+            exit={{ opacity: 0, position: "absolute" } as object}
+            transition={{ duration: 0.35 }}
             className="inline-block text-[10px] tracking-[0.2em] uppercase text-[#a8c5b5] font-medium mb-2 px-3 py-1 rounded-full"
             style={{ border: "1px solid rgba(107,143,126,0.4)", backgroundColor: "rgba(107,143,126,0.08)" }}
           >
@@ -146,12 +146,12 @@ export default function HeroText() {
           </motion.p>
         </AnimatePresence>
 
-        <AnimatePresence mode="wait" initial={false}>
+        <AnimatePresence initial={false}>
           <motion.h1
             key={`mob-h-${index}`}
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -12 }}
+            exit={{ opacity: 0, y: -12, position: "absolute" } as object}
             transition={{ duration: 0.4 }}
             className="text-2xl font-bold leading-snug mb-2 text-[#edeae3]"
           >
