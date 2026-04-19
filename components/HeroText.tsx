@@ -55,52 +55,38 @@ export default function HeroText() {
     <>
       {/* Desktop */}
       <div className="hidden md:block relative z-10 px-16 max-w-lg">
-        {/* Eyebrow — always visible, fades on slide change */}
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.p
-            key={`eyebrow-${index}`}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.35 }}
-            className="inline-block text-xs tracking-[0.2em] uppercase text-[#a8c5b5] font-medium mb-5 px-4 py-1.5 rounded-full"
-            style={{ border: "1px solid rgba(107,143,126,0.4)", backgroundColor: "rgba(107,143,126,0.08)" }}
-          >
-            {slide.eyebrow}
-          </motion.p>
-        </AnimatePresence>
-
-        {/* Headline */}
-        <div className="mb-6" style={{ minHeight: "200px" }}>
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.h1
+        {/* Grid stack: all slides in same cell, container auto-sizes to tallest, pure crossfade */}
+        <div style={{ display: "grid", marginBottom: "2rem" }}>
+          <AnimatePresence initial={false}>
+            <motion.div
               key={index}
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -16 }}
-              transition={{ duration: 0.45 }}
-              className="text-4xl md:text-5xl font-bold leading-snug text-[#edeae3]"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.6, ease: "easeInOut" }}
+              style={{ gridArea: "1 / 1" }}
             >
-              {slide.headline.map((line, i) => (
-                <Headline key={line} line={line} isHighlight={line === slide.highlight} addBreak={i > 0} />
-              ))}
-            </motion.h1>
+              <p
+                className="inline-block text-xs tracking-[0.2em] uppercase text-[#a8c5b5] font-medium mb-5 px-4 py-1.5 rounded-full"
+                style={{ border: "1px solid rgba(107,143,126,0.4)", backgroundColor: "rgba(107,143,126,0.08)" }}
+              >
+                {slide.eyebrow}
+              </p>
+
+              <div className="mb-6">
+                <h1 className="text-4xl md:text-5xl font-bold leading-snug text-[#edeae3]">
+                  {slide.headline.map((line, i) => (
+                    <Headline key={line} line={line} isHighlight={line === slide.highlight} addBreak={i > 0} />
+                  ))}
+                </h1>
+              </div>
+
+              <p className="text-base text-[#edeae3]/70 leading-relaxed">
+                {slide.sub}
+              </p>
+            </motion.div>
           </AnimatePresence>
         </div>
-
-        {/* Subline */}
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.p
-            key={`sub-${index}`}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.35 }}
-            className="text-base text-[#edeae3]/70 mb-8 leading-relaxed"
-          >
-            {slide.sub}
-          </motion.p>
-        </AnimatePresence>
 
         {/* Dot indicators */}
         <div className="flex gap-2 mb-6">
@@ -132,34 +118,31 @@ export default function HeroText() {
         className="md:hidden absolute bottom-0 left-0 right-0 z-10 px-6 pt-6 pb-10"
         style={{ background: "linear-gradient(to top, #111111 60%, transparent)" }}
       >
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.p
-            key={`mob-eyebrow-${index}`}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.35 }}
-            className="inline-block text-[10px] tracking-[0.2em] uppercase text-[#a8c5b5] font-medium mb-2 px-3 py-1 rounded-full"
-            style={{ border: "1px solid rgba(107,143,126,0.4)", backgroundColor: "rgba(107,143,126,0.08)" }}
-          >
-            {slide.eyebrow}
-          </motion.p>
-        </AnimatePresence>
+        <div style={{ display: "grid", marginBottom: "1rem" }}>
+          <AnimatePresence initial={false}>
+            <motion.div
+              key={`mob-${index}`}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.6, ease: "easeInOut" }}
+              style={{ gridArea: "1 / 1" }}
+            >
+              <p
+                className="inline-block text-[10px] tracking-[0.2em] uppercase text-[#a8c5b5] font-medium mb-2 px-3 py-1 rounded-full"
+                style={{ border: "1px solid rgba(107,143,126,0.4)", backgroundColor: "rgba(107,143,126,0.08)" }}
+              >
+                {slide.eyebrow}
+              </p>
 
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.h1
-            key={`mob-h-${index}`}
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -12 }}
-            transition={{ duration: 0.4 }}
-            className="text-2xl font-bold leading-snug mb-2 text-[#edeae3]"
-          >
-            {slide.headline.map((line, i) => (
-              <Headline key={line} line={line} isHighlight={line === slide.highlight} addBreak={i > 0} />
-            ))}
-          </motion.h1>
-        </AnimatePresence>
+              <h1 className="text-2xl font-bold leading-snug mb-2 text-[#edeae3]">
+                {slide.headline.map((line, i) => (
+                  <Headline key={line} line={line} isHighlight={line === slide.highlight} addBreak={i > 0} />
+                ))}
+              </h1>
+            </motion.div>
+          </AnimatePresence>
+        </div>
 
         <div className="flex gap-2 mb-4">
           {slides.map((_, i) => (
