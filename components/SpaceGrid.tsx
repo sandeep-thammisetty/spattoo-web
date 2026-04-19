@@ -3,6 +3,9 @@
 import { useRef, useMemo, useState, useEffect } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { useGLTF, Environment, OrbitControls, Text3D, Center } from "@react-three/drei";
+
+// Point Draco decoder to CDN so Safari can load compressed GLBs
+useGLTF.setDecoderPath("https://www.gstatic.com/draco/versioned/decoders/1.5.7/");
 import { Suspense } from "react";
 import * as THREE from "three";
 
@@ -478,7 +481,8 @@ export default function SpaceGrid() {
     <div style={{ width: "100%", height: "100vh", position: "relative" }}>
       <Canvas
         camera={{ position: [0, 1.8, 4], fov: 60, near: 0.1, far: 100 }}
-        gl={{ alpha: true, antialias: true }}
+        gl={{ alpha: true, antialias: true, powerPreference: "high-performance" }}
+        onCreated={({ gl }) => { gl.setClearColor(0x000000, 0); }}
         style={{ background: "transparent" }}
         shadows
       >
