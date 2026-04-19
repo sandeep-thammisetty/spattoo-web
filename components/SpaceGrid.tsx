@@ -2,7 +2,7 @@
 
 import { useRef, useMemo, useState, useEffect } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { useGLTF, OrbitControls, Text3D, Center } from "@react-three/drei";
+import { useGLTF, OrbitControls, Text3D, Center, Environment } from "@react-three/drei";
 
 // Local Draco decoder — avoids CDN CORS/WASM issues in Safari
 useGLTF.setDecoderPath("/draco/");
@@ -335,7 +335,7 @@ function CakeNameTag() {
           curveSegments={48}
         >
           Jessy
-          <meshStandardMaterial color="#d4900a" roughness={0.25} metalness={0.35} emissive="#9a5f00" emissiveIntensity={0.5} />
+          <meshPhysicalMaterial color="#ffcc00" metalness={1} roughness={0.05} clearcoat={1} clearcoatRoughness={0} />
         </Text3D>
       </Center>
     </group>
@@ -480,6 +480,11 @@ export default function SpaceGrid() {
           <Grid />
           <VanishingRings />
         </group>
+
+        {/* Environment in its own Suspense — if CDN fails it won't block the cake */}
+        <Suspense fallback={null}>
+          <Environment preset="apartment" />
+        </Suspense>
 
         <Suspense fallback={null}>
           <TimelineWatcher onReady={() => setShowPicker(true)} />
