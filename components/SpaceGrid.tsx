@@ -351,17 +351,7 @@ function CakeNameTag() {
 
 // ── Timeline watcher (bridges 3D clock → React state) ─────────────────────────
 
-function TimelineWatcher({ onReady }: { onReady: () => void }) {
-  const fired = useRef(false);
-  useFrame((state) => {
-    if (fired.current) return;
-    const t = state.clock.elapsedTime;
-    // Show picker 7s after cascade starts exiting (covers Jessy's 2s delay + 4s exit + 1s buffer)
-    if (timeline.cascadeExitStarted > 0 && t >= timeline.cascadeExitStarted + 7) {
-      fired.current = true;
-      onReady();
-    }
-  });
+function TimelineWatcher({ onReady: _onReady }: { onReady: () => void }) {
   return null;
 }
 
