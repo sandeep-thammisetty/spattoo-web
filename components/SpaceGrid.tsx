@@ -4,8 +4,8 @@ import { useRef, useMemo, useState, useEffect } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { useGLTF, Environment, OrbitControls, Text3D, Center } from "@react-three/drei";
 
-// Point Draco decoder to CDN so Safari can load compressed GLBs
-useGLTF.setDecoderPath("https://www.gstatic.com/draco/versioned/decoders/1.5.7/");
+// Local Draco decoder — avoids CDN CORS/WASM issues in Safari
+useGLTF.setDecoderPath("/draco/");
 import { Suspense } from "react";
 import * as THREE from "three";
 
