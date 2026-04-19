@@ -57,8 +57,6 @@ export default function Home() {
         </div>
       </section>
 
-      <PainPoint />
-
       {/* How it works */}
       <section id="how-it-works" className="py-28 px-8 md:px-16 bg-[#0f0f0f]">
         <div className="max-w-6xl mx-auto">
@@ -104,6 +102,7 @@ export default function Home() {
         </div>
       </section>
 
+      <PainPoint />
 
       <Pricing />
 
