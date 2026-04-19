@@ -142,7 +142,7 @@ function Topper() {
   const EXIT_TO    = useMemo(() => new THREE.Vector3(0, 4.5, 6), []);
 
   const T_ENTER = 1;
-  const T_SIT   = 4;
+  const T_SIT   = 1.5;
   const T_EXIT_DURATION = 4;
 
   useFrame((state) => {
@@ -197,89 +197,6 @@ function Topper() {
   return <primitive ref={ref} object={scene} scale={0.7} visible={false} />;
 }
 
-// ── Petal flower prop ─────────────────────────────────────────────────────────
-
-function PetalFlower() {
-  const { scene } = useGLTF("/green-petal-flower-2.glb");
-  const ref = useRef<THREE.Group>(null);
-  const phase = useRef<"hidden" | "entering" | "sitting" | "exiting">("hidden");
-  const phaseStart = useRef(0);
-
-  const ENTER_FROM = useMemo(() => new THREE.Vector3(5, 0.5, 3), []);
-  const SIT_POS    = useMemo(() => new THREE.Vector3(0, 0.2, 1.6), []);
-  const EXIT_TO    = useMemo(() => new THREE.Vector3(-6, 1, 3), []);
-
-  const T_ENTER = 99999;
-  const T_SIT   = 4;
-  const T_EXIT_DURATION = 4;
-
-  useFrame((state) => {
-    if (!ref.current) return;
-    const t = state.clock.elapsedTime;
-
-    if (phase.current === "hidden") {
-      ref.current.visible = false;
-      ref.current.position.copy(ENTER_FROM);
-      if (t >= T_ENTER) {
-        phase.current = "entering";
-        phaseStart.current = t;
-        ref.current.visible = true;
-        ref.current.rotation.set(0.5, 0, 0.3);
-      }
-      return;
-    }
-
-    const elapsed = t - phaseStart.current;
-
-    const clampToCakeSurface = () => {
-      if (!ref.current) return;
-      const CAKE_BOTTOM = -0.6;
-      const CAKE_TOP = 1.6;
-      const SURFACE = RADIUS + 0.45;
-      const y = ref.current.position.y;
-      if (y > CAKE_BOTTOM && y < CAKE_TOP) {
-        const xzDist = Math.sqrt(ref.current.position.x ** 2 + ref.current.position.z ** 2);
-        if (xzDist < SURFACE) {
-          const angle = Math.atan2(ref.current.position.z, ref.current.position.x);
-          ref.current.position.x = Math.cos(angle) * SURFACE;
-          ref.current.position.z = Math.sin(angle) * SURFACE;
-        }
-      }
-    };
-
-    if (phase.current === "entering") {
-      ref.current.position.lerp(SIT_POS, 0.045);
-      ref.current.rotation.x = THREE.MathUtils.lerp(ref.current.rotation.x, 0, 0.05);
-      ref.current.rotation.y = THREE.MathUtils.lerp(ref.current.rotation.y, 0, 0.05);
-      ref.current.rotation.z = THREE.MathUtils.lerp(ref.current.rotation.z, 0, 0.05);
-      clampToCakeSurface();
-      if (ref.current.position.distanceTo(SIT_POS) < 0.05) {
-        phase.current = "sitting";
-        phaseStart.current = t;
-      }
-    } else if (phase.current === "sitting") {
-      ref.current.position.y = SIT_POS.y + Math.sin(t * 0.9) * 0.05;
-      ref.current.rotation.y += 0.004;
-      clampToCakeSurface();
-      if (elapsed > T_SIT) {
-        phase.current = "exiting";
-        phaseStart.current = t;
-      }
-    } else if (phase.current === "exiting") {
-      ref.current.rotation.y += 0.07;
-      ref.current.rotation.x += 0.03;
-      ref.current.position.lerp(EXIT_TO, 0.028);
-      if (elapsed > T_EXIT_DURATION) {
-        phase.current = "hidden";
-        ref.current.visible = false;
-        ref.current.position.copy(ENTER_FROM);
-      }
-    }
-  });
-
-  return <primitive ref={ref} object={scene} scale={0.4} visible={false} />;
-}
-
 // ── Flower Cascade prop ───────────────────────────────────────────────────────
 
 function FlowerCascade() {
@@ -292,7 +209,7 @@ function FlowerCascade() {
   const SIT_POS    = useMemo(() => new THREE.Vector3(0.5, 0.55, 1.3), []);
   const EXIT_TO    = useMemo(() => new THREE.Vector3(-5, 1, 4), []);
 
-  const T_ENTER = 13;
+  const T_ENTER = 5;
   const T_SIT   = 7;
   const T_EXIT_DURATION = 4;
 
@@ -358,7 +275,7 @@ function CakeNameTag() {
   const ENTER_FROM = useMemo(() => new THREE.Vector3(2.5, 0.95, RADIUS - 0.01), []);
   const EXIT_TO    = useMemo(() => new THREE.Vector3(-3, 1.5, 3), []);
 
-  const T_ENTER = 15;
+  const T_ENTER = 7;
   const T_EXIT_DURATION = 4;
 
   useFrame((state) => {
@@ -457,13 +374,13 @@ function CakeContainer({ children }: { children: React.ReactNode }) {
     if (!ref.current) return;
     const t = state.clock.elapsedTime;
     // t=11→12.5: tilt left on z, t=12.5→13: straighten back
-    if (t >= 11 && t < 13) {
-      const progress = (t - 11) / 2;
+    if (t >= 3 && t < 5) {
+      const progress = (t - 3) / 2;
       const angle = progress < 0.5
         ? THREE.MathUtils.lerp(0, -0.07, progress * 2)
         : THREE.MathUtils.lerp(-0.07, 0, (progress - 0.5) * 2);
       ref.current.rotation.z = angle;
-    } else if (t >= 13) {
+    } else if (t >= 5) {
       ref.current.rotation.z = 0;
     }
   });
@@ -472,7 +389,6 @@ function CakeContainer({ children }: { children: React.ReactNode }) {
 }
 
 useGLTF.preload("/3D_happy_birthday_acrylic_topper_1.glb");
-useGLTF.preload("/green-petal-flower-2.glb");
 useGLTF.preload("/flower-cascade-2-70degrees.glb");
 
 // ── HTML colour selector ──────────────────────────────────────────────────────
@@ -597,7 +513,6 @@ export default function SpaceGrid() {
               <CakeBoard />
               <CakeBody />
               <Topper />
-              <PetalFlower />
               <FlowerCascade />
               <CakeNameTag />
             </group>

@@ -17,9 +17,9 @@ const slides = [
     sub: "Stop spending hours describing cake designs over messages. Let your customers design it themselves.",
   },
   {
-    eyebrow: "Start from a template. Personalise it.",
-    headline: ["Your customers start with", "a template,", "not a blank page."],
-    highlight: "not a blank page.",
+    eyebrow: "No design skills needed.",
+    headline: ["No design skills needed.", "Start from a template."],
+    highlight: "Start from a template.",
     sub: "Choose from cake templates — your customers pick one and personalise it to their taste.",
   },
   {
@@ -37,7 +37,7 @@ const container = {
 
 const item = {
   hidden: { opacity: 0, y: 28 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
+  show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] } },
 };
 
 export default function HeroText() {
