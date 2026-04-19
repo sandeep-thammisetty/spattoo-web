@@ -44,16 +44,16 @@ function Grid() {
     () => new THREE.LineBasicMaterial({ color: "#a8c5b5", transparent: true, opacity: 1 }),
     []
   );
-  const centerLineGeo = useMemo(() => {
+  const centerLine = useMemo(() => {
     const geo = new THREE.BufferGeometry();
     geo.setAttribute("position", new THREE.Float32BufferAttribute([0, 0, 0, 0, 0, -20], 3));
-    return geo;
-  }, []);
+    return new THREE.Line(geo, centerLineMat);
+  }, [centerLineMat]);
 
   return (
     <group>
       <lineSegments geometry={lines} material={lineMat} />
-      <line geometry={centerLineGeo} material={centerLineMat} />
+      <primitive object={centerLine} />
     </group>
   );
 }
