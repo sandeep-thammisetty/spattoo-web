@@ -56,7 +56,7 @@ export default function HeroText() {
       {/* Desktop */}
       <div className="hidden md:block relative z-10 px-16 max-w-lg">
         {/* Eyebrow — always visible, fades on slide change */}
-        <AnimatePresence initial={false}>
+        <AnimatePresence mode="wait" initial={false}>
           <motion.p
             key={`eyebrow-${index}`}
             initial={{ opacity: 0 }}
@@ -72,7 +72,7 @@ export default function HeroText() {
 
         {/* Headline */}
         <div className="mb-6" style={{ minHeight: "200px" }}>
-          <AnimatePresence initial={false}>
+          <AnimatePresence mode="wait" initial={false}>
             <motion.h1
               key={index}
               initial={{ opacity: 0, y: 16 }}
@@ -89,7 +89,7 @@ export default function HeroText() {
         </div>
 
         {/* Subline */}
-        <AnimatePresence initial={false}>
+        <AnimatePresence mode="wait" initial={false}>
           <motion.p
             key={`sub-${index}`}
             initial={{ opacity: 0 }}
@@ -132,7 +132,7 @@ export default function HeroText() {
         className="md:hidden absolute bottom-0 left-0 right-0 z-10 px-6 pt-6 pb-10"
         style={{ background: "linear-gradient(to top, #111111 60%, transparent)" }}
       >
-        <AnimatePresence initial={false}>
+        <AnimatePresence mode="wait" initial={false}>
           <motion.p
             key={`mob-eyebrow-${index}`}
             initial={{ opacity: 0 }}
@@ -146,7 +146,7 @@ export default function HeroText() {
           </motion.p>
         </AnimatePresence>
 
-        <AnimatePresence initial={false}>
+        <AnimatePresence mode="wait" initial={false}>
           <motion.h1
             key={`mob-h-${index}`}
             initial={{ opacity: 0, y: 12 }}
