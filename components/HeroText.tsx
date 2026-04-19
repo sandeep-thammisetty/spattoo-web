@@ -151,7 +151,7 @@ export default function HeroText() {
             key={`mob-h-${index}`}
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -12, position: "absolute" } as object}
+            exit={{ opacity: 0, y: -12 }}
             transition={{ duration: 0.4 }}
             className="text-2xl font-bold leading-snug mb-2 text-[#edeae3]"
           >
