@@ -2,7 +2,7 @@
 
 import { useRef, useMemo, useState, useEffect } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { useGLTF, Environment, OrbitControls, Text3D, Center } from "@react-three/drei";
+import { useGLTF, OrbitControls, Text3D, Center } from "@react-three/drei";
 
 // Local Draco decoder — avoids CDN CORS/WASM issues in Safari
 useGLTF.setDecoderPath("/draco/");
@@ -493,7 +493,6 @@ export default function SpaceGrid() {
 
         <Suspense fallback={null}>
           <TimelineWatcher onReady={() => setShowPicker(true)} />
-          <Environment preset="apartment" backgroundBlurriness={1} />
           <ambientLight intensity={2.0} />
           <directionalLight position={[5, 10, 6]} intensity={1.2} castShadow />
           <directionalLight position={[-5, 6, 3]} intensity={1.0} />

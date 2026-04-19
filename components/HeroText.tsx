@@ -30,18 +30,19 @@ const slides = [
   },
 ];
 
-const container = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.18 } },
-};
-
-const item = {
-  hidden: { opacity: 0, y: 28 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] } },
-};
+function Headline({ line, isHighlight, addBreak }: { line: string; isHighlight: boolean; addBreak: boolean }) {
+  return isHighlight ? (
+    <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#edeae3] to-[#a8c5b5]">
+      {addBreak && <br />}{line}
+    </span>
+  ) : (
+    <span>{addBreak && <br />}{line}</span>
+  );
+}
 
 export default function HeroText() {
   const [index, setIndex] = useState(0);
+  const slide = slides[index];
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -50,18 +51,12 @@ export default function HeroText() {
     return () => clearInterval(timer);
   }, []);
 
-  const slide = slides[index];
-
   return (
     <>
       {/* Desktop */}
-      <motion.div
-        className="hidden md:block relative z-10 px-16 max-w-lg"
-        variants={container}
-        initial="hidden"
-        animate="show"
-      >
-        <AnimatePresence mode="wait">
+      <div className="hidden md:block relative z-10 px-16 max-w-lg">
+        {/* Eyebrow — always visible, fades on slide change */}
+        <AnimatePresence mode="wait" initial={false}>
           <motion.p
             key={`eyebrow-${index}`}
             initial={{ opacity: 0 }}
@@ -75,34 +70,26 @@ export default function HeroText() {
           </motion.p>
         </AnimatePresence>
 
-        {/* Cycling headline */}
+        {/* Headline */}
         <div className="mb-6" style={{ minHeight: "200px" }}>
-          <AnimatePresence mode="wait">
+          <AnimatePresence mode="wait" initial={false}>
             <motion.h1
               key={index}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+              exit={{ opacity: 0, y: -16 }}
+              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}
               className="text-4xl md:text-5xl font-bold leading-snug text-[#edeae3]"
             >
-              {slide.headline.map((line, i) =>
-                line === slide.highlight ? (
-                  <span key={line} className="text-transparent bg-clip-text bg-gradient-to-r from-[#edeae3] to-[#a8c5b5]">
-                    {i > 0 && <br />}{line}
-                  </span>
-                ) : (
-                  <span key={line}>
-                    {i > 0 && <br />}{line}
-                  </span>
-                )
-              )}
+              {slide.headline.map((line, i) => (
+                <Headline key={line} line={line} isHighlight={line === slide.highlight} addBreak={i > 0} />
+              ))}
             </motion.h1>
           </AnimatePresence>
         </div>
 
-        {/* Cycling subline */}
-        <AnimatePresence mode="wait">
+        {/* Subline */}
+        <AnimatePresence mode="wait" initial={false}>
           <motion.p
             key={`sub-${index}`}
             initial={{ opacity: 0 }}
@@ -116,7 +103,7 @@ export default function HeroText() {
         </AnimatePresence>
 
         {/* Dot indicators */}
-        <motion.div variants={item} className="flex gap-2 mb-6">
+        <div className="flex gap-2 mb-6">
           {slides.map((_, i) => (
             <button
               key={i}
@@ -128,27 +115,24 @@ export default function HeroText() {
               }}
             />
           ))}
-        </motion.div>
+        </div>
 
-        <motion.div variants={item} className="flex gap-3">
+        <div className="flex gap-3">
           <a href="#how-it-works" className="px-6 py-2.5 rounded-full bg-[#3d5247] text-[#edeae3] font-semibold text-sm hover:bg-[#4a6357] transition-colors text-center">
             See How It Works
           </a>
           <a href="https://spattoo.app" className="px-6 py-2.5 rounded-full bg-[#3d5247] text-[#edeae3] font-semibold text-sm hover:bg-[#4a6357] transition-colors text-center">
             Get Started Free
           </a>
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
 
       {/* Mobile */}
-      <motion.div
+      <div
         className="md:hidden absolute bottom-0 left-0 right-0 z-10 px-6 pt-6 pb-10"
         style={{ background: "linear-gradient(to top, #111111 60%, transparent)" }}
-        variants={container}
-        initial="hidden"
-        animate="show"
       >
-        <AnimatePresence mode="wait">
+        <AnimatePresence mode="wait" initial={false}>
           <motion.p
             key={`mob-eyebrow-${index}`}
             initial={{ opacity: 0 }}
@@ -162,26 +146,18 @@ export default function HeroText() {
           </motion.p>
         </AnimatePresence>
 
-        <AnimatePresence mode="wait">
+        <AnimatePresence mode="wait" initial={false}>
           <motion.h1
-            key={index}
-            initial={{ opacity: 0, y: 16 }}
+            key={`mob-h-${index}`}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -16 }}
+            exit={{ opacity: 0, y: -12 }}
             transition={{ duration: 0.4 }}
             className="text-2xl font-bold leading-snug mb-2 text-[#edeae3]"
           >
-            {slide.headline.map((line, i) =>
-              line === slide.highlight ? (
-                <span key={line} className="text-transparent bg-clip-text bg-gradient-to-r from-[#edeae3] to-[#a8c5b5]">
-                  {i > 0 && <br />}{line}
-                </span>
-              ) : (
-                <span key={line}>
-                  {i > 0 && <br />}{line}
-                </span>
-              )
-            )}
+            {slide.headline.map((line, i) => (
+              <Headline key={line} line={line} isHighlight={line === slide.highlight} addBreak={i > 0} />
+            ))}
           </motion.h1>
         </AnimatePresence>
 
@@ -199,15 +175,15 @@ export default function HeroText() {
           ))}
         </div>
 
-        <motion.div variants={item} className="flex gap-3">
+        <div className="flex gap-3">
           <a href="#how-it-works" className="flex-1 py-3.5 rounded-full bg-[#3d5247] text-[#edeae3] font-semibold text-sm text-center">
             See How It Works
           </a>
           <a href="https://spattoo.app" className="flex-1 py-3.5 rounded-full bg-[#3d5247] text-[#edeae3] font-semibold text-sm text-center">
             Get Started Free
           </a>
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
     </>
   );
 }
