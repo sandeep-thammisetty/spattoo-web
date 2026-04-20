@@ -8,25 +8,21 @@ const slides = [
     eyebrow: "3D cake designer for bakers",
     headline: ["Your customers design", "their cake in 3D.", "You just bake it."],
     highlight: "You just bake it.",
-    sub: "They pick every layer, colour and topping — in 3D. You get a confirmed design, ready to bake.",
   },
   {
     eyebrow: "Save hours every week",
     headline: ["Less design chats.", "More baking."],
     highlight: "More baking.",
-    sub: "Stop spending hours describing cake designs over messages. Let your customers design it themselves.",
   },
   {
     eyebrow: "No design skills needed.",
     headline: ["No design skills needed.", "Start from a template."],
     highlight: "Start from a template.",
-    sub: "Choose from cake templates — your customers pick one and personalise it to their taste.",
   },
   {
     eyebrow: "They see your brand, not ours.",
     headline: ["Your logo.", "Your colours.", "Your customer's design experience."],
     highlight: "Your customer's design experience.",
-    sub: "Every design link your customer opens carries your brand — your logo, your colours, your identity.",
   },
 ];
 
@@ -67,23 +63,20 @@ export default function HeroText() {
               style={{ gridArea: "1 / 1" }}
             >
               <p
-                className="inline-block text-xs tracking-[0.2em] uppercase text-[#a8c5b5] font-medium mb-5 px-4 py-1.5 rounded-full"
+                className="inline-block text-sm tracking-[0.2em] uppercase text-[#a8c5b5] font-medium mb-5 px-4 py-1.5 rounded-full"
                 style={{ border: "1px solid rgba(107,143,126,0.4)", backgroundColor: "rgba(107,143,126,0.08)" }}
               >
                 {slide.eyebrow}
               </p>
 
               <div className="mb-6">
-                <h1 className="text-4xl md:text-5xl font-bold leading-snug text-[#edeae3]">
+                <h1 className="text-3xl md:text-4xl font-bold leading-snug text-[#edeae3]">
                   {slide.headline.map((line, i) => (
                     <Headline key={line} line={line} isHighlight={line === slide.highlight} addBreak={i > 0} />
                   ))}
                 </h1>
               </div>
 
-              <p className="text-base text-[#edeae3]/70 leading-relaxed">
-                {slide.sub}
-              </p>
             </motion.div>
           </AnimatePresence>
         </div>
@@ -129,13 +122,13 @@ export default function HeroText() {
               style={{ gridArea: "1 / 1" }}
             >
               <p
-                className="inline-block text-[10px] tracking-[0.2em] uppercase text-[#a8c5b5] font-medium mb-2 px-3 py-1 rounded-full"
+                className="inline-block text-xs tracking-[0.2em] uppercase text-[#a8c5b5] font-medium mb-2 px-3 py-1 rounded-full"
                 style={{ border: "1px solid rgba(107,143,126,0.4)", backgroundColor: "rgba(107,143,126,0.08)" }}
               >
                 {slide.eyebrow}
               </p>
 
-              <h1 className="text-2xl font-bold leading-snug mb-2 text-[#edeae3]">
+              <h1 className="text-xl font-bold leading-snug mb-2 text-[#edeae3]">
                 {slide.headline.map((line, i) => (
                   <Headline key={line} line={line} isHighlight={line === slide.highlight} addBreak={i > 0} />
                 ))}
