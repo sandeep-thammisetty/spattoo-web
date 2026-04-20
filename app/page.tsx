@@ -46,8 +46,9 @@ export default function Home() {
           <SpaceGridLoader />
         </div>
 
-        {/* Fade gradient */}
-        <div className="absolute inset-0 bg-gradient-to-b md:bg-gradient-to-r from-[#111111] via-[#111111]/80 to-transparent pointer-events-none" />
+        {/* Fade gradient — desktop: left-to-right; mobile: subtle top-only so cake is visible */}
+        <div className="hidden md:block absolute inset-0 bg-gradient-to-r from-[#111111] via-[#111111]/80 to-transparent pointer-events-none" />
+        <div className="md:hidden absolute inset-0 bg-gradient-to-b from-[#111111]/70 via-transparent to-transparent pointer-events-none" />
 
         <HeroText />
 
