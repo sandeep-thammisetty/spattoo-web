@@ -39,7 +39,7 @@ export default function Home() {
       </nav>
 
       {/* Hero */}
-      <section className="relative min-h-screen flex flex-col md:flex-row md:items-center bg-gradient-to-br from-[#111111] via-[#2a2a2a] to-[#edeae3] overflow-hidden">
+      <section className="relative min-h-screen flex flex-col md:flex-row md:items-center bg-gradient-to-br from-[#111111] via-[#2a2a2a] to-[#edeae3] overflow-hidden md:pt-24">
 
         {/* 3D space grid — full on mobile (top half), right side on desktop */}
         <div className="absolute right-0 top-0 w-full md:w-[90%] h-full pointer-events-none">

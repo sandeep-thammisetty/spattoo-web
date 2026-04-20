@@ -115,8 +115,8 @@ export default function HeroText() {
 
       {/* Mobile */}
       <div
-        className="md:hidden absolute bottom-0 left-0 right-0 z-10 px-6 pt-6 pb-10"
-        style={{ background: "linear-gradient(to top, #111111 60%, transparent)" }}
+        className="md:hidden absolute bottom-0 top-[5.5rem] left-0 right-0 z-10 px-6 pt-4 pb-10 overflow-hidden flex flex-col justify-end"
+        style={{ background: "linear-gradient(to top, #111111 70%, transparent)" }}
       >
         <div style={{ display: "grid", marginBottom: "1rem" }}>
           <AnimatePresence initial={false}>
