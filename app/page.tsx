@@ -1,42 +1,16 @@
-import Image from "next/image";
 import HeroText from "@/components/HeroText";
 import SpaceGridLoader from "@/components/SpaceGridLoader";
 import Pricing from "@/components/Pricing";
 import PricingCTA from "@/components/PricingCTA";
 import Contact from "@/components/Contact";
 import PainPoint from "@/components/PainPoint";
+import SiteNav from "@/components/SiteNav";
 
 export default function Home() {
   return (
     <main className="min-h-screen bg-[#111111] text-[#edeae3]">
 
-      {/* Nav */}
-      <nav className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-8 md:px-16 py-6">
-        <Image
-          src="/Spattoo-lo-no-tag-line.png"
-          alt="Spattoo"
-          width={155}
-          height={55}
-          className="object-contain"
-          style={{ width: 155, height: "auto", filter: "drop-shadow(20px 0px 20px rgba(237,234,227,0.25))" }}
-          priority
-        />
-
-        {/* Nav links */}
-        <div className="hidden md:flex items-center gap-8 text-sm font-medium text-[#edeae3]/70">
-          <a href="#how-it-works" className="hover:text-[#edeae3] transition-colors">How It Works</a>
-          <a href="#pricing" className="hover:text-[#edeae3] transition-colors">Pricing</a>
-          <a href="#about" className="hover:text-[#edeae3] transition-colors">About Us</a>
-          <a href="#contact" className="hover:text-[#edeae3] transition-colors">Contact</a>
-        </div>
-
-        <a
-          href="https://spattoo.app/login"
-          className="px-6 py-2.5 rounded-full border border-[#6b8f7e]/50 text-[#a8c5b5] text-sm font-medium hover:border-[#6b8f7e] hover:text-[#edeae3] transition-all"
-        >
-          Login
-        </a>
-      </nav>
+      <SiteNav />
 
       {/* Hero */}
       <section className="relative min-h-screen flex flex-col md:flex-row md:items-center bg-gradient-to-br from-[#111111] via-[#2a2a2a] to-[#edeae3] overflow-hidden md:pt-24">
@@ -48,7 +22,7 @@ export default function Home() {
 
         {/* Fade gradient — desktop: left-to-right; mobile: subtle top-only so cake is visible */}
         <div className="hidden md:block absolute inset-0 bg-gradient-to-r from-[#111111] via-[#111111]/80 to-transparent pointer-events-none" />
-        <div className="md:hidden absolute inset-0 bg-gradient-to-b from-[#111111]/70 via-transparent to-transparent pointer-events-none" />
+        <div className="md:hidden absolute inset-0 bg-gradient-to-b from-[#111111]/20 via-transparent to-transparent pointer-events-none" />
 
         <HeroText />
 
