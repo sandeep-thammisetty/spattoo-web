@@ -241,91 +241,142 @@ const COUNTRY_OPTIONS = getCountries()
   .map((code) => ({ code, calling: getCountryCallingCode(code), name: REGION_NAMES.of(code) || code }))
   .sort((a, b) => a.name.localeCompare(b.name));
 
+// Shared email + password fields with show/hide. Used by BOTH the baker sign-in and the staff
+// modal (DRY — one copy, not two). Purely presentational; the parent owns the values.
+function CredentialFields({
+  email, password, onEmail, onPassword,
+}: { email: string; password: string; onEmail: (v: string) => void; onPassword: (v: string) => void }) {
+  const [showPw, setShowPw] = useState(false);
+  return (
+    <div className="mt-4 flex flex-col gap-4">
+      <label className="block">
+        <span className="mb-1.5 block text-sm font-medium text-[#edeae3]/70">Email</span>
+        <input type="email" autoComplete="email" placeholder="you@bakery.com" value={email}
+          onChange={(e) => onEmail(e.target.value)} className={AUTH_FIELD} />
+      </label>
+      <label className="block">
+        <span className="mb-1.5 block text-sm font-medium text-[#edeae3]/70">Password</span>
+        <div className="relative">
+          <input type={showPw ? "text" : "password"} autoComplete="current-password" placeholder="••••••••"
+            value={password} onChange={(e) => onPassword(e.target.value)} className={`${AUTH_FIELD} pr-11`} />
+          <button type="button" onClick={() => setShowPw((v) => !v)}
+            aria-label={showPw ? "Hide password" : "Show password"}
+            className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-1.5 text-[#edeae3]/40 transition hover:text-[#edeae3]/80">
+            {showPw ? <EyeOff /> : <Eye />}
+          </button>
+        </div>
+      </label>
+    </div>
+  );
+}
+
 function BakerLogin({
   supabase, showSignup, onSignup,
 }: { supabase: ReturnType<typeof getSupabase>; showSignup?: boolean; onSignup?: () => void }) {
-  // Two strict paths. The chosen path is stored before sign-in and validated against the
-  // server-resolved role (see BakerApp's profile effect): the Staff path rejects owner
-  // credentials and vice-versa. Mode + notice persist in sessionStorage across the retry.
-  const [mode, setMode] = useState<"baker" | "staff">(() => (ss.get(LS_LOGIN_MODE) === "staff" ? "staff" : "baker"));
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(() => ss.get(LS_LOGIN_NOTICE));
-
-  const [showPw, setShowPw] = useState(false);
+  const [showStaff, setShowStaff] = useState(false);
 
   useEffect(() => { ss.del(LS_LOGIN_NOTICE); }, []);   // one-shot: shown once, then cleared
 
-  const isStaff = mode === "staff";
-
+  // The baker door routes by the SERVER-resolved role, so clear any stale path first (e.g. a
+  // 'baker' retry left by a rejected staff attempt) — no client-selected mode here. The staff
+  // modal is the ONLY place that sets LS_LOGIN_MODE='staff' (strict staff enforcement).
   async function signIn(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
     setErr(null);
-    ss.set(LS_LOGIN_MODE, mode);                        // BakerApp's profile effect reads + validates this
+    ss.del(LS_LOGIN_MODE);
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) { setErr(error.message); setBusy(false); }
-    // On success the component unmounts (auth state change) → BakerApp validates the path.
+    // On success the component unmounts (auth state change) → BakerApp routes by role.
   }
 
   return (
     <AuthShell>
       <form onSubmit={signIn} className={AUTH_CARD}>
-        <h1 className="text-2xl font-bold text-[#edeae3]">{isStaff ? "Staff sign in" : "Welcome back"}</h1>
-        <p className="mt-1 text-sm text-[#edeae3]/45">
-          {isStaff ? "Sign in with the login your bakery gave you." : "Sign in to continue."}
-        </p>
-
-        {/* Strict path selector */}
-        <div className="mt-5 grid grid-cols-2 gap-1 rounded-xl bg-white/[0.04] p-1 text-sm font-semibold">
-          {(["baker", "staff"] as const).map((m) => (
-            <button key={m} type="button" onClick={() => { setMode(m); setErr(null); }}
-              className={`rounded-lg px-3 py-2 transition ${mode === m ? "bg-[#6b8f7e] text-[#0e1a14]" : "text-[#edeae3]/55 hover:text-[#edeae3]"}`}>
-              {m === "baker" ? "Baker" : "Staff"}
-            </button>
-          ))}
-        </div>
+        <h1 className="text-2xl font-bold text-[#edeae3]">Sign in to continue</h1>
 
         {notice && <p className="mt-4 text-sm font-semibold text-[#e0b877]">{notice}</p>}
 
-        <div className="mt-4 flex flex-col gap-4">
-          <label className="block">
-            <span className="mb-1.5 block text-sm font-medium text-[#edeae3]/70">Email</span>
-            <input type="email" autoComplete="email" placeholder="you@bakery.com" value={email}
-              onChange={(e) => setEmail(e.target.value)} className={AUTH_FIELD} />
-          </label>
+        <CredentialFields email={email} password={password} onEmail={setEmail} onPassword={setPassword} />
 
-          <label className="block">
-            <span className="mb-1.5 block text-sm font-medium text-[#edeae3]/70">Password</span>
-            <div className="relative">
-              <input type={showPw ? "text" : "password"} autoComplete="current-password" placeholder="••••••••"
-                value={password} onChange={(e) => setPassword(e.target.value)} className={`${AUTH_FIELD} pr-11`} />
-              <button type="button" onClick={() => setShowPw((v) => !v)}
-                aria-label={showPw ? "Hide password" : "Show password"}
-                className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-1.5 text-[#edeae3]/40 transition hover:text-[#edeae3]/80">
-                {showPw ? <EyeOff /> : <Eye />}
-              </button>
-            </div>
-          </label>
+        {err && <p className="mt-4 text-sm font-semibold text-[#ef9a9a]">{err}</p>}
 
-          {err && <p className="text-sm font-semibold text-[#ef9a9a]">{err}</p>}
+        <button type="submit" disabled={busy || !email || !password} className={`${AUTH_BTN} mt-4`}>
+          {busy ? "Signing in…" : "Sign in"}
+        </button>
 
-          <button type="submit" disabled={busy || !email || !password} className={`${AUTH_BTN} mt-1`}>
-            {busy ? "Signing in…" : "Sign in"}
-          </button>
-        </div>
-
-        {showSignup && !isStaff && (
-          <div className="mt-6 text-sm">
+        <div className="mt-6 flex items-center justify-between text-sm">
+          {showSignup ? (
             <button type="button" onClick={onSignup} className="font-semibold text-[#a8c5b5] hover:underline">
               Create an account
             </button>
-          </div>
-        )}
+          ) : <span />}
+          <button type="button" onClick={() => setShowStaff(true)}
+            className="font-medium text-[#edeae3]/45 transition hover:text-[#edeae3]/80 hover:underline">
+            Staff login
+          </button>
+        </div>
       </form>
+
+      {showStaff && <StaffLoginModal supabase={supabase} onClose={() => setShowStaff(false)} />}
     </AuthShell>
+  );
+}
+
+// Staff sign-in as a distinct popup so it reads as a separate door. Sets LS_LOGIN_MODE='staff'
+// so BakerApp strictly validates the staff role (and rejects owner credentials used here). No
+// "create account" — staff are invited by their bakery, they don't self-sign-up.
+function StaffLoginModal({
+  supabase, onClose,
+}: { supabase: ReturnType<typeof getSupabase>; onClose: () => void }) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+
+  async function signIn(e: React.FormEvent) {
+    e.preventDefault();
+    setBusy(true);
+    setErr(null);
+    ss.set(LS_LOGIN_MODE, "staff");                    // BakerApp's profile effect validates the staff role
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) { setErr(error.message); setBusy(false); ss.del(LS_LOGIN_MODE); }
+    // On success the component unmounts → BakerApp validates the staff path.
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4" onClick={onClose}>
+      <div className="w-full max-w-sm rounded-2xl border border-white/10 bg-[#141414] p-6 shadow-2xl"
+        onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-start justify-between">
+          <div>
+            <h2 className="text-xl font-bold text-[#edeae3]">Staff login</h2>
+            <p className="mt-1 text-sm text-[#edeae3]/45">Sign in with the login your bakery gave you.</p>
+          </div>
+          <button type="button" onClick={onClose} aria-label="Close"
+            className="-mr-1 -mt-1 rounded-md p-1.5 text-[#edeae3]/40 transition hover:text-[#edeae3]/80">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <path d="M6 6l12 12M18 6L6 18" />
+            </svg>
+          </button>
+        </div>
+
+        <form onSubmit={signIn}>
+          <CredentialFields email={email} password={password} onEmail={setEmail} onPassword={setPassword} />
+
+          {err && <p className="mt-4 text-sm font-semibold text-[#ef9a9a]">{err}</p>}
+
+          <button type="submit" disabled={busy || !email || !password} className={`${AUTH_BTN} mt-4`}>
+            {busy ? "Signing in…" : "Staff sign in"}
+          </button>
+        </form>
+      </div>
+    </div>
   );
 }
 
