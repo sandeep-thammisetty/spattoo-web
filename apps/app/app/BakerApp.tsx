@@ -270,6 +270,43 @@ function CredentialFields({
   );
 }
 
+// Resend the signup verification link (for a link that expired or never arrived). Shared by the
+// post-signup "check your email" screen and the login screen's "email not confirmed" case.
+// Supabase rate-limits resends, so we cool down and surface its message verbatim on error.
+function ResendVerification({
+  supabase, email,
+}: { supabase: ReturnType<typeof getSupabase>; email: string }) {
+  const [state, setState] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [msg, setMsg] = useState<string | null>(null);
+  const [cooldown, setCooldown] = useState(0);
+
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const t = setTimeout(() => setCooldown((c) => c - 1), 1000);
+    return () => clearTimeout(t);
+  }, [cooldown]);
+
+  async function resend() {
+    if (!email || state === "sending" || cooldown > 0) return;
+    setState("sending");
+    setMsg(null);
+    const { error } = await supabase.auth.resend({ type: "signup", email });
+    if (error) { setState("error"); setMsg(error.message); }
+    else { setState("sent"); setCooldown(60); }
+  }
+
+  return (
+    <div className="mt-4 text-sm">
+      <button type="button" onClick={resend} disabled={!email || state === "sending" || cooldown > 0}
+        className="font-semibold text-[#a8c5b5] transition hover:underline disabled:opacity-50 disabled:no-underline">
+        {state === "sending" ? "Sending…" : cooldown > 0 ? `Resend in ${cooldown}s` : "Resend verification email"}
+      </button>
+      {state === "sent"  && <p className="mt-1 text-[#edeae3]/45">A new link is on its way. It expires in 24 hours.</p>}
+      {state === "error" && <p className="mt-1 text-[#e0b877]">{msg ?? "Couldn't resend just now — please try again shortly."}</p>}
+    </div>
+  );
+}
+
 function BakerLogin({
   supabase, showSignup, onSignup,
 }: { supabase: ReturnType<typeof getSupabase>; showSignup?: boolean; onSignup?: () => void }) {
@@ -279,6 +316,7 @@ function BakerLogin({
   const [err, setErr] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(() => ss.get(LS_LOGIN_NOTICE));
   const [showStaff, setShowStaff] = useState(false);
+  const [unconfirmed, setUnconfirmed] = useState(false);
 
   useEffect(() => { ss.del(LS_LOGIN_NOTICE); }, []);   // one-shot: shown once, then cleared
 
@@ -289,9 +327,15 @@ function BakerLogin({
     e.preventDefault();
     setBusy(true);
     setErr(null);
+    setUnconfirmed(false);
     ss.del(LS_LOGIN_MODE);
     const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) { setErr(error.message); setBusy(false); }
+    if (error) {
+      setErr(error.message);
+      setBusy(false);
+      // Unconfirmed email (expired / never-clicked link) → offer a resend inline.
+      if (/not confirmed|confirm your email/i.test(error.message)) setUnconfirmed(true);
+    }
     // On success the component unmounts (auth state change) → BakerApp routes by role.
   }
 
@@ -305,6 +349,7 @@ function BakerLogin({
         <CredentialFields email={email} password={password} onEmail={setEmail} onPassword={setPassword} />
 
         {err && <p className="mt-4 text-sm font-semibold text-[#ef9a9a]">{err}</p>}
+        {unconfirmed && <ResendVerification supabase={supabase} email={email} />}
 
         <button type="submit" disabled={busy || !email || !password} className={`${AUTH_BTN} mt-4`}>
           {busy ? "Signing in…" : "Sign in"}
@@ -555,8 +600,10 @@ function BakerSignup({
           <h1 className="text-2xl font-bold text-[#edeae3]">Check your email</h1>
           <p className="mt-2 text-sm leading-relaxed text-[#edeae3]/55">
             We sent a verification link to <b className="text-[#edeae3]/80">{email}</b>. Confirm it
-            to finish setting up your brand. (Opened it on another device? Just sign in here.)
+            to finish setting up your brand — the link expires in 24 hours. (Opened it on another
+            device? Just sign in here.)
           </p>
+          <ResendVerification supabase={supabase} email={email} />
           <button type="button" onClick={onBack} className={`${AUTH_BTN} mt-5 w-full`}>Back to sign in</button>
         </div>
       </AuthShell>
