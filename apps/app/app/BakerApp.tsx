@@ -642,8 +642,10 @@ function SetupBaker({
   const [primaryColor, setPrimaryColor] = useState("#6b8f7e");
   const [accentColor, setAccentColor] = useState("#c4852a");
 
-  // Everyone starts on Spark (free, no storefront) at signup → name → address → start.
-  const steps: Step[] = ["basics", "address", "plan"];
+  // Everyone (incl. Spark) goes name → address → logo → branding → start. Storefront +
+  // branding are all-tiers now, so brand setup is part of EVERY signup; the logo and the
+  // colours/Instagram steps are OPTIONAL (each has a "Skip for now").
+  const steps: Step[] = ["basics", "address", "logo", "extras", "plan"];
   const stepIndex = steps.indexOf(step);
 
   const fail = (e: unknown) => {
@@ -700,7 +702,7 @@ function SetupBaker({
   // need it, and it drives area-wise subscription stats (line 2 + street optional).
   const addressValid = !!(line1.trim() && city.trim() && stateRegion.trim() && postalCode.trim() && country.trim());
 
-  // Step 2 — save the address (all bakers), then on to plan selection.
+  // Step 2 — save the address (all bakers), then on to the (optional) logo step.
   async function saveAddress() {
     if (!addressValid) return;
     setBusy(true); setErr(null);
@@ -713,20 +715,23 @@ function SetupBaker({
       for (const [k, v] of Object.entries(addr)) if (v.trim()) payload[k] = v.trim();
       await api.updateBakerProfile(payload);
       setBusy(false);
-      setStep("plan");
+      setStep("logo");
     } catch (e2) { fail(e2); }
   }
 
-  // Final step (paid plans only) — optional storefront branding: instagram + colors.
+  // Branding step (ALL tiers — storefront + branding are all-tiers) — optional colours +
+  // Instagram. Skipping or saving lands on the final "all set" screen (never the studio
+  // directly), so the flow always ends the same way.
   async function finish(skip: boolean) {
     setErr(null);
-    if (skip) { onDone(); return; }
+    if (skip) { setStep("plan"); return; }
     setBusy(true);
     try {
       const payload: Record<string, string> = { primary_color: primaryColor, accent_color: accentColor };
       if (instagram.trim()) payload.instagram_handle = instagram.trim().replace(/^@/, "");
       await api.updateBakerProfile(payload);
-      onDone();
+      setBusy(false);
+      setStep("plan");
     } catch (e2) { fail(e2); }
   }
 
