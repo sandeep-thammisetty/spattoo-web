@@ -233,6 +233,19 @@ const AUTH_CARD =
 const AUTH_BTN =
   "rounded-xl bg-[#6b8f7e] px-4 py-3 text-sm font-bold text-[#0e1a14] transition hover:bg-[#7ba18e] disabled:cursor-not-allowed disabled:opacity-40";
 
+// Indian states + union territories (alphabetical) for the onboarding address dropdown. Fixed
+// reference data — a hardcoded list, NOT DB master data (nothing edits it, ~36 entries). The
+// stored value is still the state name (text column, unchanged). Revisit only if the address form
+// is localised to other countries (then a country-scoped source).
+const INDIAN_STATES = [
+  "Andaman and Nicobar Islands", "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar",
+  "Chandigarh", "Chhattisgarh", "Dadra and Nagar Haveli and Daman and Diu", "Delhi", "Goa",
+  "Gujarat", "Haryana", "Himachal Pradesh", "Jammu and Kashmir", "Jharkhand", "Karnataka",
+  "Kerala", "Ladakh", "Lakshadweep", "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya",
+  "Mizoram", "Nagaland", "Odisha", "Puducherry", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu",
+  "Telangana", "Tripura", "Uttar Pradesh", "Uttarakhand", "West Bengal",
+];
+
 // Full ISO-3166 country list for the phone-region select (international-ready).
 // Names via Intl.DisplayNames; sorted A→Z. Region drives how numbers written
 // without a "+<dialcode>" prefix are parsed (see api src/lib/phone.js).
@@ -301,7 +314,7 @@ function ResendVerification({
         className="font-semibold text-[#a8c5b5] transition hover:underline disabled:opacity-50 disabled:no-underline">
         {state === "sending" ? "Sending…" : cooldown > 0 ? `Resend in ${cooldown}s` : "Resend verification email"}
       </button>
-      {state === "sent"  && <p className="mt-1 text-[#edeae3]/45">A new link is on its way. It expires in 24 hours.</p>}
+      {state === "sent"  && <p className="mt-1 text-[#edeae3]/45">A new link is on its way — check your inbox.</p>}
       {state === "error" && <p className="mt-1 text-[#e0b877]">{msg ?? "Couldn't resend just now — please try again shortly."}</p>}
     </div>
   );
@@ -317,8 +330,21 @@ function BakerLogin({
   const [notice, setNotice] = useState<string | null>(() => ss.get(LS_LOGIN_NOTICE));
   const [showStaff, setShowStaff] = useState(false);
   const [unconfirmed, setUnconfirmed] = useState(false);
+  const [linkExpired, setLinkExpired] = useState(false);
 
-  useEffect(() => { ss.del(LS_LOGIN_NOTICE); }, []);   // one-shot: shown once, then cleared
+  useEffect(() => {
+    ss.del(LS_LOGIN_NOTICE);                            // one-shot notice: shown once, then cleared
+    // Supabase redirects an expired/invalid verification link back here with an error hash
+    // (#error=access_denied&error_code=otp_expired…). Surface it + reveal the resend option, then
+    // strip the hash so a refresh doesn't re-trigger. NOTE: an expired link and an already-USED
+    // (already-verified) link both return otp_expired — indistinguishable here — so the copy
+    // self-selects (resend if unverified / sign in if verified) with sign-in as the primary action.
+    if (/error_code=otp_expired|error=access_denied/.test(window.location.hash || "")) {
+      setLinkExpired(true);
+      setUnconfirmed(true);
+      window.history.replaceState(null, "", window.location.pathname + window.location.search);
+    }
+  }, []);
 
   // The baker door routes by the SERVER-resolved role, so clear any stale path first (e.g. a
   // 'baker' retry left by a rejected staff attempt) — no client-selected mode here. The staff
@@ -345,6 +371,12 @@ function BakerLogin({
         <h1 className="text-2xl font-bold text-[#edeae3]">Sign in to continue</h1>
 
         {notice && <p className="mt-4 text-sm font-semibold text-[#e0b877]">{notice}</p>}
+        {linkExpired && (
+          <p className="mt-4 text-sm text-[#e0b877]">
+            This verification link is invalid or has expired. Not verified yet? Enter your email
+            below and resend it. Already verified — just sign in.
+          </p>
+        )}
 
         <CredentialFields email={email} password={password} onEmail={setEmail} onPassword={setPassword} />
 
@@ -600,8 +632,8 @@ function BakerSignup({
           <h1 className="text-2xl font-bold text-[#edeae3]">Check your email</h1>
           <p className="mt-2 text-sm leading-relaxed text-[#edeae3]/55">
             We sent a verification link to <b className="text-[#edeae3]/80">{email}</b>. Confirm it
-            to finish setting up your brand — the link expires in 24 hours. (Opened it on another
-            device? Just sign in here.)
+            to finish setting up your brand — if the link expires before you get to it, just resend
+            it below. (Opened it on another device? Just sign in here.)
           </p>
           <ResendVerification supabase={supabase} email={email} />
           <button type="button" onClick={onBack} className={`${AUTH_BTN} mt-5 w-full`}>Back to sign in</button>
@@ -738,7 +770,7 @@ function SetupBaker({
   const [country, setCountry] = useState("India");
   const [instagram, setInstagram] = useState("");
   const [primaryColor, setPrimaryColor] = useState("#6b8f7e");
-  const [accentColor, setAccentColor] = useState("#c4852a");
+  const [accentColor, setAccentColor] = useState("#000000");
 
   // Everyone (incl. Spark) goes name → address → logo → branding → start. Storefront +
   // branding are all-tiers now, so brand setup is part of EVERY signup; the logo and the
@@ -838,6 +870,13 @@ function SetupBaker({
   return (
     <AuthShell>
       <div className={AUTH_CARD}>
+        {/* Sign out — a subtle escape hatch, top-right (not competing with the step's primary CTA) */}
+        <div className="mb-3 flex justify-end">
+          <button type="button" onClick={onSignOut}
+            className="text-xs font-medium text-[#edeae3]/40 transition hover:text-[#edeae3]/80">
+            Sign out
+          </button>
+        </div>
         {/* Progress */}
         <div className="mb-5 flex items-center gap-1.5">
           {steps.map((s, i) => (
@@ -883,8 +922,11 @@ function SetupBaker({
               <div className="flex gap-2">
                 <input className={AUTH_FIELD} placeholder="City" value={city}
                   onChange={(e) => setCity(e.target.value)} />
-                <input className={AUTH_FIELD} placeholder="State" value={stateRegion}
-                  onChange={(e) => setStateRegion(e.target.value)} />
+                <select className={AUTH_FIELD} value={stateRegion} style={{ colorScheme: "dark" }}
+                  onChange={(e) => setStateRegion(e.target.value)}>
+                  <option value="" disabled>State</option>
+                  {INDIAN_STATES.map((s) => <option key={s} value={s}>{s}</option>)}
+                </select>
               </div>
               <div className="flex gap-2">
                 <input className={AUTH_FIELD} placeholder="Postal code" value={postalCode}
@@ -902,7 +944,7 @@ function SetupBaker({
 
         {step === "plan" && (
           <div>
-            <h1 className="text-2xl font-bold text-[#edeae3]">You&apos;re all set 🎉</h1>
+            <h1 className="text-2xl font-bold text-[#edeae3]">You&apos;re all set</h1>
             <p className="mt-2 text-sm leading-relaxed text-[#edeae3]/55">
               You&apos;re starting on <b className="text-[#edeae3]/80">Spark — free for a month</b>. Explore the
               full 3D designer and start taking orders, then decide. When you want a public storefront and
@@ -981,11 +1023,6 @@ function SetupBaker({
           </div>
         )}
 
-        <div className="mt-6 text-sm">
-          <button type="button" onClick={onSignOut} className="font-semibold text-[#a8c5b5] hover:underline">
-            Sign out
-          </button>
-        </div>
       </div>
     </AuthShell>
   );
