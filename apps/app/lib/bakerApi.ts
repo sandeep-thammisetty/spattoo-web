@@ -163,6 +163,13 @@ export function makeBakerApiClient(supabase: SupabaseClient) {
         method: "POST",
         body: JSON.stringify({ template_id: templateId }),
       }),
+    // Snapshot a design thumbnail → { key, url } (no photo row); used to set the hero cake image.
+    // Presence unhides the customiser's "Hero cake → Choose from your designs" picker.
+    addStorefrontImageFromTemplate: (templateId: string) =>
+      authFetch("/api/baker/storefront-image/from-template", {
+        method: "POST",
+        body: JSON.stringify({ template_id: templateId }),
+      }),
     // Convert an uploaded storefront content image (e.g. a Highlight photo) to optimised WebP →
     // returns { key, url }. Used for section images that live in storefront_customizations jsonb.
     optimizeStorefrontImage: (key: string) =>
