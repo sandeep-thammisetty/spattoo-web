@@ -156,6 +156,13 @@ export function makeBakerApiClient(supabase: SupabaseClient) {
         method: "POST",
         body: JSON.stringify({ storage_key: key, caption }),
       }),
+    // Snapshot a cake design's thumbnail into the gallery as an independent photo (server copies the
+    // R2 object). Presence of this method unhides the customiser's "Choose from your designs" picker.
+    addStorefrontPhotoFromTemplate: (templateId: string) =>
+      authFetch("/api/baker/storefront-photos/from-template", {
+        method: "POST",
+        body: JSON.stringify({ template_id: templateId }),
+      }),
     // Convert an uploaded storefront content image (e.g. a Highlight photo) to optimised WebP →
     // returns { key, url }. Used for section images that live in storefront_customizations jsonb.
     optimizeStorefrontImage: (key: string) =>
