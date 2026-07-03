@@ -6,6 +6,7 @@ import { CustomerStorefront } from "@spattoo/designer";
 import { getSupabase } from "../../lib/supabase";
 import { API_BASE } from "../../lib/api";
 import { setTelemetryContext } from "../../lib/telemetry";
+import { stashResumeDesign } from "../../lib/resumeDesign";
 
 // Mounts the core CustomerStorefront and routes its callbacks. The whole journey
 // stays on this origin (the baker's subdomain) so the Supabase session set during
@@ -24,8 +25,12 @@ export default function StorefrontClient({ slug }: { slug: string }) {
       apiBaseUrl={API_BASE}
       supabase={supabase}
       // After OTP login (session is set), or a browse "start designing", go to the
-      // designer on this same origin.
-      onAuthenticated={() => router.push(`/${slug}/design`)}
+      // designer on this same origin. If the baker attached a starting design to the
+      // invite, core hands it here — stash it so the designer seeds from it on arrival.
+      onAuthenticated={(_session?: unknown, designSnapshot?: unknown) => {
+        stashResumeDesign(slug, designSnapshot);
+        router.push(`/${slug}/design`);
+      }}
       onStartDesign={() => router.push(`/${slug}/design`)}
     />
   );
