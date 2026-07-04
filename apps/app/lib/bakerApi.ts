@@ -212,6 +212,13 @@ export function makeBakerApiClient(supabase: SupabaseClient) {
         body: JSON.stringify({ tier, billing_period_id: billingPeriodId, intent: opts?.intent }),
       }),
     cancelSubscription: () => authFetch("/api/billing/cancel", { method: "POST" }),
+    // Save the baker's GSTIN (captured on the checkout screen). Persisted on the profile so automatic
+    // renewals reuse it. Send null/'' to clear. Server validates the 15-char GSTIN (format + checksum).
+    updateTaxProfile: (gstin: string | null) =>
+      authFetch("/api/billing/tax-profile", {
+        method: "PATCH",
+        body: JSON.stringify({ gstin }),
+      }),
 
     // ── Self-signup (free Spark tier; no payment) ─────────────────────────────
     checkSlug: (slug: string) =>
