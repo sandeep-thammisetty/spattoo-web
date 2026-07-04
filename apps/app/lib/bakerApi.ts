@@ -198,13 +198,14 @@ export function makeBakerApiClient(supabase: SupabaseClient) {
     fetchLatestPayment: () => authGet("/api/billing/payments?limit=1"),
     fetchPayments: () => authGet("/api/billing/payments?limit=24"),
     activateSparkPlan: () => authFetch("/api/billing/activate-spark", { method: "POST" }),
-    // `intent: 'change_method'` re-authorizes a NEW payment method (e.g. UPI→card) on the SAME plan —
-    // a deferred recreate that takes over at the next renewal (no double charge). Omitted for normal
-    // subscribe / upgrade / downgrade.
+    // `intent` tags a same-tier deferred recreate for clarity/logging (the server independently confirms
+    // the flow): 'change_method' re-authorizes a NEW payment method (e.g. UPI→card); 'switch_interval'
+    // moves monthly↔yearly on the same tier. Both take over at the next renewal (no double charge).
+    // Omitted for normal subscribe / upgrade / downgrade.
     createSubscription: (
       tier: string,
       billingPeriodId: string,
-      opts?: { intent?: "change_method" },
+      opts?: { intent?: "change_method" | "switch_interval" },
     ) =>
       authFetch("/api/billing/subscribe", {
         method: "POST",
