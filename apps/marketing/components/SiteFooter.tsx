@@ -1,4 +1,4 @@
-import { COMPANY, LEGAL_DOCS } from "@/lib/legal";
+import { SPATTOO_PROFILE, LEGAL_DOCS } from "@/lib/legal";
 
 // Shared site footer — used on the home page and every legal page. Legal links are
 // driven off the LEGAL_DOCS registry so adding a document surfaces it here for free.
@@ -23,7 +23,7 @@ export default function SiteFooter() {
         ))}
       </nav>
       <p className="mt-4 text-xs text-[#edeae3]/45">
-        Spattoo is a service operated by {COMPANY.legalName} · GSTIN: {COMPANY.gstin}
+        Spattoo is a service operated by {SPATTOO_PROFILE.legalName} · GSTIN: {SPATTOO_PROFILE.gstin}
       </p>
     </footer>
   );

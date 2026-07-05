@@ -3,7 +3,7 @@
 // components/LegalDocPage.tsx and the footer links in components/SiteFooter.tsx.
 //
 // TWO things to do before going live:
-//   1. Fill the COMPANY blanks + each doc's `effectiveDate`, then set LEGAL_STATUS
+//   1. Fill the SPATTOO_PROFILE blanks + each doc's `effectiveDate`, then set LEGAL_STATUS
 //      to "published". While anything is blank it renders a visible "[to be provided]"
 //      and the pages show a "draft — not yet in force" banner.
 //   2. Versioning here backs DPDP Act 2023 demonstrable-consent: every published
@@ -13,9 +13,10 @@
 
 export const LEGAL_STATUS: "draft" | "published" = "draft";
 
-// Registered company + statutory contact details.
+// Spattoo's OWN statutory identity + contacts (the platform operator FEELINGS&FLAVOURS —
+// NOT a baker/tenant company; named spattoo_profile to avoid that confusion).
 // TODO before publishing: registeredOffice, cin, grievanceEmail, grievanceOfficer*.
-export const COMPANY = {
+export const SPATTOO_PROFILE = {
   legalName: "FEELINGS&FLAVOURS (OPC) PRIVATE LIMITED",
   gstin: "36AAGCF5256J1ZD",
   cin: "", // e.g. "U15490TG2024OPC1XXXXX"
@@ -94,14 +95,14 @@ export const getLegalDoc = (slug: string): LegalDoc | undefined =>
 export function legalTokens(doc: LegalDoc): Record<string, string> {
   const todo = "[to be provided]";
   return {
-    LEGAL_NAME: COMPANY.legalName,
-    GSTIN: COMPANY.gstin,
-    CIN: COMPANY.cin || todo,
-    REGISTERED_OFFICE: COMPANY.registeredOffice || todo,
-    CONTACT_EMAIL: COMPANY.contactEmail,
-    GRIEVANCE_EMAIL: COMPANY.grievanceEmail || COMPANY.contactEmail,
-    GRIEVANCE_OFFICER_NAME: COMPANY.grievanceOfficerName || todo,
-    GRIEVANCE_OFFICER_DESIGNATION: COMPANY.grievanceOfficerDesignation || todo,
+    LEGAL_NAME: SPATTOO_PROFILE.legalName,
+    GSTIN: SPATTOO_PROFILE.gstin,
+    CIN: SPATTOO_PROFILE.cin || todo,
+    REGISTERED_OFFICE: SPATTOO_PROFILE.registeredOffice || todo,
+    CONTACT_EMAIL: SPATTOO_PROFILE.contactEmail,
+    GRIEVANCE_EMAIL: SPATTOO_PROFILE.grievanceEmail || SPATTOO_PROFILE.contactEmail,
+    GRIEVANCE_OFFICER_NAME: SPATTOO_PROFILE.grievanceOfficerName || todo,
+    GRIEVANCE_OFFICER_DESIGNATION: SPATTOO_PROFILE.grievanceOfficerDesignation || todo,
     EFFECTIVE_DATE: doc.effectiveDate || todo,
   };
 }
