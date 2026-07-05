@@ -61,6 +61,10 @@ export default function BakerApp() {
   // hanging on "Loading your shop…".
   const [needsSetup, setNeedsSetup] = useState(false);
   const [reloadKey, setReloadKey] = useState(0);
+  // Legal docs (ToS/Privacy) whose current version this baker hasn't accepted → show the
+  // first-login acceptance gate before the app. [] until Layer 1 is published, so dormant
+  // pre-launch. See docs/CONSENT_CAPTURE_PLAN.md.
+  const [pendingConsents, setPendingConsents] = useState<string[]>([]);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -87,7 +91,7 @@ export default function BakerApp() {
   const userId = session?.user?.id;
   useEffect(() => {
     setTelemetryContext({ surface: "baker-app", role: "baker", userId });
-    if (!userId) { setBaker(null); setNeedsSetup(false); return; }
+    if (!userId) { setBaker(null); setNeedsSetup(false); setPendingConsents([]); return; }
     bridgeCoreTelemetryToSentry("baker-app"); // route OrdersPanel's internal reportError to Sentry
     let alive = true;
     // Strict login-path enforcement: if the user came in via a specific path (Baker or
@@ -102,7 +106,7 @@ export default function BakerApp() {
 
     api
       .fetchBakerProfile()
-      .then((p: { baker?: Record<string, unknown>; user?: { role?: string } }) => {
+      .then((p: { baker?: Record<string, unknown>; user?: { role?: string }; pending_consents?: string[] }) => {
         if (!alive) return;
         const mode = ss.get(LS_LOGIN_MODE);            // 'baker' | 'staff' | null
         const isStaff = p?.user?.role === "staff";
@@ -113,6 +117,7 @@ export default function BakerApp() {
         }
         setBaker((p?.baker ?? p) as typeof baker);
         setNeedsSetup(false);
+        setPendingConsents(p?.pending_consents ?? []);
       })
       .catch((e: { message?: string }) => {
         if (!alive) return;
@@ -147,6 +152,21 @@ export default function BakerApp() {
     );
   }
   if (!baker) return <Centered>Loading your store…</Centered>;
+
+  // Legal consent gate — a baker must accept the current ToS/Privacy before using the app.
+  // Covers admin-onboarded bakers (who never saw the signup checkbox) + re-consent on a
+  // version bump. pendingConsents is [] until the docs are published, so this stays dormant
+  // pre-launch. Recording happens here (source 'gate'); self-signup records at signup time.
+  if (pendingConsents.length > 0) {
+    return (
+      <AcceptTerms
+        api={api}
+        docKeys={pendingConsents}
+        onAccepted={() => setPendingConsents([])}
+        onSignOut={() => supabase.auth.signOut()}
+      />
+    );
+  }
 
   // Full baker tool — lands on the designer; Orders (with Send quote) + edit-in-3D
   // live inside it, exactly like the :5173 dev harness. CakeDesigner self-loads
@@ -563,6 +583,7 @@ function BakerSignup({
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
+  const [agreed, setAgreed] = useState(false);   // ToS + Privacy — clear affirmative action (DPDP)
 
   // Mismatch surfaces only once they've started typing the confirmation.
   const mismatch = confirm.length > 0 && password !== confirm;
@@ -572,7 +593,7 @@ function BakerSignup({
   const phoneValid = phone.trim().length > 0 && isValidPhoneNumber(phone.trim(), phoneCountry as CountryCode);
   const phoneInvalid = phone.trim().length > 0 && !phoneValid;
   const canSubmit = !busy && firstName.trim() && lastName.trim() && phoneValid
-    && email && password.length >= 6 && password === confirm;
+    && email && password.length >= 6 && password === confirm && agreed;
 
   async function signUp(e: React.FormEvent) {
     e.preventDefault();
@@ -615,6 +636,10 @@ function BakerSignup({
           last_name: lastName.trim(),
           phone: phone.trim(),
           phone_country: phoneCountry,
+          // Affirmative agreement captured at signup. The consent EVENT is recorded once
+          // the user is authed with a baker (SetupBaker → recordConsent, source 'signup');
+          // this flag is a durable marker of the tick for audit.
+          terms_agreed: true,
         },
       },
     });
@@ -715,6 +740,18 @@ function BakerSignup({
             {mismatch && <p className="mt-1.5 text-xs font-semibold text-[#ef9a9a]">Passwords do not match.</p>}
           </label>
 
+          <label className="flex items-start gap-2.5 cursor-pointer">
+            <input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)}
+              className="mt-0.5 h-4 w-4 shrink-0 accent-[#6b8f7e]" />
+            <span className="text-xs leading-relaxed text-[#edeae3]/60">
+              I agree to Spattoo&apos;s{" "}
+              <a href={`${MARKETING_URL}/terms`} target="_blank" rel="noopener noreferrer"
+                className="font-semibold text-[#a8c5b5] hover:underline">Terms of Service</a>{" "}and{" "}
+              <a href={`${MARKETING_URL}/privacy`} target="_blank" rel="noopener noreferrer"
+                className="font-semibold text-[#a8c5b5] hover:underline">Privacy Policy</a>.
+            </span>
+          </label>
+
           {err && <p className="text-sm font-semibold text-[#ef9a9a]">{err}</p>}
 
           <button type="submit" disabled={!canSubmit}
@@ -729,6 +766,85 @@ function BakerSignup({
           </button>
         </div>
       </form>
+    </AuthShell>
+  );
+}
+
+// docKey → display label + public marketing path. Keys match the api's LEGAL_DOC_KEYS /
+// marketing lib/legal.ts docKey. Only tos/privacy are ever gated; the map covers all four
+// for safety if the server ever returns another.
+const LEGAL_DOC_LABELS: Record<string, { label: string; path: string }> = {
+  tos:       { label: "Terms of Service", path: "/terms" },
+  privacy:   { label: "Privacy Policy", path: "/privacy" },
+  refund:    { label: "Refund & Cancellation Policy", path: "/refund" },
+  grievance: { label: "Grievance & Contact", path: "/grievance" },
+};
+
+// First-login / re-consent gate. Full-screen, blocks the app until the baker accepts the
+// current version of the pending documents. Single UNTICKED checkbox (clear affirmative
+// action — DPDP), records ONE consent event per doc server-side. Mirrors the SetStaffPassword
+// gate's placement in the ladder.
+function AcceptTerms({
+  api, docKeys, onAccepted, onSignOut,
+}: {
+  api: ReturnType<typeof makeBakerApiClient>;
+  docKeys: string[];
+  onAccepted: () => void;
+  onSignOut: () => void;
+}) {
+  const [agreed, setAgreed] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+
+  const docs = docKeys.map((k) => LEGAL_DOC_LABELS[k]).filter(Boolean);
+
+  async function accept() {
+    if (!agreed || busy) return;
+    setBusy(true); setErr(null);
+    try {
+      await api.recordConsent(docKeys, "gate");
+      onAccepted();
+    } catch (e) {
+      setErr((e as { message?: string })?.message ?? "Could not save your response. Please try again.");
+      setBusy(false);
+    }
+  }
+
+  return (
+    <AuthShell>
+      <div className={AUTH_CARD}>
+        <h1 className="text-2xl font-bold text-[#edeae3]">Before you continue</h1>
+        <p className="mt-2 text-sm leading-relaxed text-[#edeae3]/55">
+          Please review and accept the terms that govern your use of Spattoo to continue.
+        </p>
+
+        <label className="mt-6 flex items-start gap-3 cursor-pointer">
+          <input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)}
+            className="mt-0.5 h-4 w-4 shrink-0 accent-[#6b8f7e]" />
+          <span className="text-sm leading-relaxed text-[#edeae3]/70">
+            I agree to Spattoo&apos;s{" "}
+            {docs.map((d, i) => (
+              <span key={d.path}>
+                <a href={`${MARKETING_URL}${d.path}`} target="_blank" rel="noopener noreferrer"
+                  className="font-semibold text-[#a8c5b5] hover:underline">{d.label}</a>
+                {i < docs.length - 2 ? ", " : i === docs.length - 2 ? " and " : ""}
+              </span>
+            ))}.
+          </span>
+        </label>
+
+        {err && <p className="mt-4 text-sm font-semibold text-[#ef9a9a]">{err}</p>}
+
+        <button type="button" disabled={!agreed || busy} onClick={accept} className={`${AUTH_BTN} mt-6 w-full`}>
+          {busy ? "Saving…" : "Agree and continue"}
+        </button>
+
+        <div className="mt-5 text-sm">
+          <button type="button" onClick={onSignOut} className="font-semibold text-[#a8c5b5] hover:underline">
+            Sign out
+          </button>
+        </div>
+      </div>
     </AuthShell>
   );
 }
@@ -794,6 +910,10 @@ function SetupBaker({
     setBusy(true); setErr(null);
     try {
       await api.createBakerSelf({ name: name.trim() });
+      // Record the agreement ticked at signup, now that the baker exists and the user is
+      // authed (source 'signup'). Best-effort: never block onboarding — if it fails, the
+      // first-login gate is the backstop. No-op server-side until the docs are published.
+      api.recordConsent(["tos", "privacy"], "signup").catch(() => {});
       setBusy(false);
       setStep("address");
     } catch (e2) {

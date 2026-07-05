@@ -53,6 +53,17 @@ export function makeBakerApiClient(supabase: SupabaseClient) {
     fetchBakerSettings: () => authGet("/api/baker/settings"),
     fetchMe: () => authGet("/api/me").catch(() => null),
 
+    // ── Legal / consent (DPDP "Layer 2") ──────────────────────────────────────
+    // Record the baker's acceptance of the CURRENT version of each doc. Idempotent
+    // per (subject, version) server-side. `source`: 'signup' (self-signup) | 'gate'
+    // (first-login / re-consent). The current version + whether acceptance is pending
+    // come from GET /api/baker/profile → pending_consents.
+    recordConsent: (docKeys: string[], source: "signup" | "gate" | "reconsent") =>
+      authFetch("/api/legal/consent", {
+        method: "POST",
+        body: JSON.stringify({ doc_keys: docKeys, source }),
+      }),
+
     // ── Catalog (baker Bearer; design:create) ─────────────────────────────────
     fetchElementTypes: () => authGet("/api/element-types"),
     fetchElements: (opts: { parentsOnly?: boolean; elementTypeId?: string } = {}) => {
