@@ -38,10 +38,10 @@ export default function SiteNav() {
       </a>
 
       <div className="hidden md:flex items-center gap-8 text-sm font-medium text-[#edeae3]/70">
-        <a href="#how-it-works" className="hover:text-[#edeae3] transition-colors">How It Works</a>
-        <a href="#pricing" className="hover:text-[#edeae3] transition-colors">Pricing</a>
-        <a href="#about" className="hover:text-[#edeae3] transition-colors">About Us</a>
-        <a href="#contact" className="hover:text-[#edeae3] transition-colors">Contact</a>
+        <a href="/#how-it-works" className="hover:text-[#edeae3] transition-colors">How It Works</a>
+        <a href="/#pricing" className="hover:text-[#edeae3] transition-colors">Pricing</a>
+        <a href="/#about" className="hover:text-[#edeae3] transition-colors">About Us</a>
+        <a href="/#contact" className="hover:text-[#edeae3] transition-colors">Contact</a>
       </div>
 
       <div className="hidden md:flex items-center gap-5">

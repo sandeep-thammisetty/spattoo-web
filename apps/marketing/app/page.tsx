@@ -5,6 +5,7 @@ import PricingCTA from "@/components/PricingCTA";
 import Contact from "@/components/Contact";
 import PainPoint from "@/components/PainPoint";
 import SiteNav from "@/components/SiteNav";
+import SiteFooter from "@/components/SiteFooter";
 
 export default function Home() {
   return (
@@ -85,19 +86,7 @@ export default function Home() {
 
       <Contact />
 
-      {/* Footer */}
-      {/* dev-deploy-pipeline-test — safe to revert */}
-      <footer className="py-10 px-8 border-t border-[#3d5247]/20 text-center">
-        <p className="text-sm text-[#edeae3]/75">
-          © {new Date().getFullYear()} Spattoo ·{" "}
-          <span className="font-[family-name:var(--font-fraunces)] italic text-sm text-[#edeae3]/90 tracking-tight">
-            From idea to Cake, Visually
-          </span>
-        </p>
-        <p className="mt-2 text-xs text-[#edeae3]/45">
-          Spattoo is a service operated by FEELINGS&amp;FLAVOURS (OPC) PRIVATE LIMITED · GSTIN: 36AAGCF5256J1ZD
-        </p>
-      </footer>
+      <SiteFooter />
 
     </main>
   );
