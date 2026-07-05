@@ -11,7 +11,7 @@
 //      consent log (Layer 2) records a user's acceptance against. Never mutate a
 //      published version in place — bump `version` and add a Document History row.
 
-export const LEGAL_STATUS: "draft" | "published" = "draft";
+export const LEGAL_STATUS: "draft" | "published" = "published";
 
 // Spattoo's OWN statutory identity + contacts (the platform operator FEELINGS&FLAVOURS —
 // NOT a baker/tenant company; named spattoo_profile to avoid that confusion).
@@ -19,12 +19,12 @@ export const LEGAL_STATUS: "draft" | "published" = "draft";
 export const SPATTOO_PROFILE = {
   legalName: "FEELINGS&FLAVOURS (OPC) PRIVATE LIMITED",
   gstin: "36AAGCF5256J1ZD",
-  cin: "", // e.g. "U15490TG2024OPC1XXXXX"
-  registeredOffice: "", // full registered office address (Telangana)
+  cin: "U10712TS2025OPC201388", // e.g. "U15490TG2024OPC1XXXXX"
+  registeredOffice: "VILLA NO 21,LIBDOM VILLAS, GANDHAMGUDA,PERENCHERUVU, Hydershahkote, Golconda, Hyderabad- 500091,Telangana", // full registered office address (Telangana)
   contactEmail: "care@spattoo.com",
-  grievanceEmail: "", // dedicated mailbox recommended; falls back to contactEmail
-  grievanceOfficerName: "", // a real person resident in India (IT Rules 2021 / DPDP)
-  grievanceOfficerDesignation: "",
+  grievanceEmail: "care@spattoo.com", // dedicated mailbox recommended; falls back to contactEmail
+  grievanceOfficerName: "Tammisetty Dayamani", // a real person resident in India (IT Rules 2021 / DPDP)
+  grievanceOfficerDesignation: "Director",
 } as const;
 
 export type LegalSlug = "terms" | "privacy" | "refund" | "grievance";
