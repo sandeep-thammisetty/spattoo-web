@@ -11,7 +11,7 @@
 //      consent log (Layer 2) records a user's acceptance against. Never mutate a
 //      published version in place — bump `version` and add a Document History row.
 
-export const LEGAL_STATUS: "draft" | "published" = "published";
+export const LEGAL_STATUS: "draft" | "published" = "draft";
 
 // Spattoo's OWN statutory identity + contacts (the platform operator FEELINGS&FLAVOURS —
 // NOT a baker/tenant company; named spattoo_profile to avoid that confusion).
