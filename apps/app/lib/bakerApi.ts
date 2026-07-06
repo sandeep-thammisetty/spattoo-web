@@ -64,6 +64,30 @@ export function makeBakerApiClient(supabase: SupabaseClient) {
         body: JSON.stringify({ doc_keys: docKeys, source }),
       }),
 
+    // ── Consent withdrawal + account erasure (DPDP "Layer 3") ──────────────────
+    // The Privacy & Data settings screen. Withdraw applies to OPTIONAL docs only —
+    // the API returns 409 { error:'necessary_consent', action:'delete_account' } for
+    // required docs (tos/privacy), which route into the account-deletion flow instead.
+    // Current published docs + which are `required` (drives the optional-consent list without a
+    // hardcoded doc allowlist). Public endpoint; [] while nothing is published (draft phase).
+    fetchLegalCurrent: () => authGet("/api/legal/current"),
+    fetchConsentHistory: () => authGet("/api/legal/consent/history"),
+    withdrawConsent: (docKeys: string[]) =>
+      authFetch("/api/legal/withdraw", {
+        method: "POST",
+        body: JSON.stringify({ doc_keys: docKeys }),
+      }),
+    // Account deletion is a lifecycle: request soft-deletes now (reversible until
+    // erase_after); a scheduled job erases after the retention window.
+    fetchDeletionStatus: () => authGet("/api/baker/account/deletion-status"),
+    requestAccountDeletion: (reason?: string) =>
+      authFetch("/api/baker/account/delete", {
+        method: "POST",
+        body: JSON.stringify({ reason: reason ?? null }),
+      }),
+    restoreAccount: () =>
+      authFetch("/api/baker/account/restore", { method: "POST" }),
+
     // ── Catalog (baker Bearer; design:create) ─────────────────────────────────
     fetchElementTypes: () => authGet("/api/element-types"),
     fetchElements: (opts: { parentsOnly?: boolean; elementTypeId?: string } = {}) => {
