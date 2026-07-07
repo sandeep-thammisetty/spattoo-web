@@ -48,6 +48,10 @@ const LoginGrid = dynamic(() => import("../components/LoginGrid"), { ssr: false 
 export default function BakerApp() {
   const supabase = getSupabase();
   const api = useMemo(() => makeBakerApiClient(supabase), [supabase]);
+  // Rejoining a live co-design session via the shared link (?session=<id>).
+  const [liveSessionId] = useState(() =>
+    typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("session") : null,
+  );
 
   const [session, setSession] = useState<Session | null>(null);
   const [ready, setReady] = useState(false);
@@ -173,7 +177,7 @@ export default function BakerApp() {
   // baker profile/settings/catalog via the apiClient (orderMode defaults to 'baker').
   return (
     <>
-      <CakeDesigner apiClient={api} supabase={supabase} cfAssetsBase={process.env.NEXT_PUBLIC_ASSETS_BASE} onShareStore={() => setShareStoreOpen(true)} />
+      <CakeDesigner apiClient={api} supabase={supabase} cfAssetsBase={process.env.NEXT_PUBLIC_ASSETS_BASE} onShareStore={() => setShareStoreOpen(true)} liveSessionId={liveSessionId} />
       {baker.slug && (
         <ShareStoreModal
           open={shareStoreOpen}

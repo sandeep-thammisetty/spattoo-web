@@ -107,6 +107,17 @@ export function makeCustomerApiClient(supabase: SupabaseClient, slug: string) {
         method: "POST",
         body: JSON.stringify({ message }),
       }),
+
+    // ── Live co-design sessions (the customer joins the baker's live session) ──
+    createDesignSession: (body: unknown) =>
+      authFetch("/api/design-sessions", { method: "POST", body: JSON.stringify(body) }),
+    getDesignSession: (id: string) => authGet(`/api/design-sessions/${id}`),
+    putDesignSessionDesign: (id: string, design: unknown) =>
+      authFetch(`/api/design-sessions/${id}/design`, { method: "PUT", body: JSON.stringify({ design }) }),
+    penDesignSession: (id: string, body: unknown) =>
+      authFetch(`/api/design-sessions/${id}/pen`, { method: "POST", body: JSON.stringify(body) }),
+    endDesignSession: (id: string) =>
+      authFetch(`/api/design-sessions/${id}/end`, { method: "POST" }),
   };
 }
 

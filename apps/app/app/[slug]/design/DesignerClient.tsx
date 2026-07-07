@@ -34,6 +34,10 @@ export default function DesignerClient({ slug }: { slug: string }) {
   // If the customer arrived from an invite the baker attached a design to, StorefrontClient stashed
   // it — take it once (read-and-clear) and seed the designer with it. Null → a normal blank start.
   const [initialDesign] = useState(() => takeResumeDesign(slug));
+  // Joining a baker's live co-design session via the shared link (?session=<id>).
+  const [liveSessionId] = useState(() =>
+    typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("session") : null,
+  );
 
   useEffect(() => {
     setTelemetryContext({ surface: "designer", bakerSlug: slug, role: "customer" });
@@ -47,6 +51,7 @@ export default function DesignerClient({ slug }: { slug: string }) {
       cfAssetsBase={process.env.NEXT_PUBLIC_ASSETS_BASE}
       orderMode="customer"
       initialDesign={initialDesign}
+      liveSessionId={liveSessionId}
       onQuoteRequested={(result: { orderId?: string }) => {
         const orderId = result?.orderId;
         router.push(orderId ? `/${slug}/quote-sent?order=${orderId}` : `/${slug}/orders`);

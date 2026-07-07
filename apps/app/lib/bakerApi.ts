@@ -264,6 +264,18 @@ export function makeBakerApiClient(supabase: SupabaseClient) {
     selectPlan: (plan: string) =>
       authFetch("/api/baker/plan/select", { method: "POST", body: JSON.stringify({ plan }) }),
 
+    // ── Live co-design sessions ───────────────────────────────────────────────
+    // Presence of these methods is what unhides the designer's "Design Together" entry.
+    createDesignSession: (body: unknown) =>
+      authFetch("/api/design-sessions", { method: "POST", body: JSON.stringify(body) }),
+    getDesignSession: (id: string) => authGet(`/api/design-sessions/${id}`),
+    putDesignSessionDesign: (id: string, design: unknown) =>
+      authFetch(`/api/design-sessions/${id}/design`, { method: "PUT", body: JSON.stringify({ design }) }),
+    penDesignSession: (id: string, body: unknown) =>
+      authFetch(`/api/design-sessions/${id}/pen`, { method: "POST", body: JSON.stringify(body) }),
+    endDesignSession: (id: string) =>
+      authFetch(`/api/design-sessions/${id}/end`, { method: "POST" }),
+
     // ── Account ───────────────────────────────────────────────────────────────
     signOut: () => supabase.auth.signOut(),
     changePassword: (password: string) => supabase.auth.updateUser({ password }),
