@@ -14,6 +14,8 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 //    customer FROM THE TOKEN, so the payload never carries a customer identity.
 export const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "";
 
+import { makeMyElementMethods } from "./myElements";
+
 export function makeCustomerApiClient(supabase: SupabaseClient, slug: string) {
   async function authFetch(path: string, opts: RequestInit = {}) {
     const {
@@ -73,6 +75,19 @@ export function makeCustomerApiClient(supabase: SupabaseClient, slug: string) {
     // design:create/order:place). Drives the designer's hasCap gating so the baker
     // chrome (Dashboard/Orders/Customers/Invite/Save-as-Template) stays hidden.
     fetchMe: () => authGet("/api/me").catch(() => null),
+
+    // "My Decorations" — a customer may upload their own decoration too. Identical methods to the
+    // baker's client: the API stamps ownership from the token, so a customer's upload is private to
+    // them and is never shown to another customer of the same bakery.
+    ...makeMyElementMethods(
+      authFetch,
+      (folder, filename, contentType) =>
+        authFetch("/api/storage/sign-upload", {
+          method: "POST",
+          body: JSON.stringify({ folder, filename, contentType }),
+        }),
+      async () => (await supabase.auth.getSession()).data.session?.access_token,
+    ),
 
     // ── Public reads ──────────────────────────────────────────────────────────
     fetchFlavours: (bakerSlug: string) =>

@@ -8,6 +8,8 @@ import { API_BASE } from "./api";
 // baker's Supabase session; every call carries the Bearer token and the API
 // resolves the baker from baker_appusers. The 'owner'/'staff' roles hold
 // design:create + order caps, so the global catalog endpoints work.
+import { makeMyElementMethods } from "./myElements";
+
 export function makeBakerApiClient(supabase: SupabaseClient) {
   async function authFetch(path: string, opts: RequestInit = {}) {
     const {
@@ -109,6 +111,18 @@ export function makeBakerApiClient(supabase: SupabaseClient) {
         method: "POST",
         body: JSON.stringify({ folder, filename, contentType }),
       }),
+
+    // "My Decorations" — upload your own decoration. Same methods the customer client gets; the API
+    // decides ownership from the token (a baker's is shared with their bakery).
+    ...makeMyElementMethods(
+      authFetch,
+      (folder, filename, contentType) =>
+        authFetch("/api/storage/sign-upload", {
+          method: "POST",
+          body: JSON.stringify({ folder, filename, contentType }),
+        }),
+      async () => (await supabase.auth.getSession()).data.session?.access_token,
+    ),
     placeOrder: async (payload: Record<string, unknown>) =>
       authFetch("/api/orders", {
         method: "POST",
