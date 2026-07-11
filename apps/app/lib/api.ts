@@ -65,6 +65,7 @@ export function makeCustomerApiClient(supabase: SupabaseClient, slug: string) {
     },
     fetchMaterials: () => authGet(`/api/materials`),
     fetchTextures: () => authGet(`/api/textures`),
+    fetchTextStyles: () => authGet(`/api/text-styles`),
     fetchTags: () => authGet(`/api/tags`),
     fetchTemplates: () => authGet(`/api/templates`).catch(() => []),
     fetchTemplate: (id: string) => authGet(`/api/templates/${id}`),
