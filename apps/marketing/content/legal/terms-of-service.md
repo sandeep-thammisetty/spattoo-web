@@ -165,6 +165,14 @@ You agree not to, and not to permit anyone to:
   infringing of intellectual property, invasive of privacy, or that violates the
   Information Technology Act, 2000 and the rules made under it (including the Information
   Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021);
+- upload, generate, publish, share, or otherwise use on the Platform any **cartoon or
+  animated character, film, television, game, comic, or literary property, celebrity
+  likeness, sports team or club insignia, brand name, trademark, logo, or other
+  third-party protected property** — or any imitation, adaptation, or derivative of one —
+  unless you own it or hold a valid licence or other lawful authorisation to use it in
+  that way (see Section 6);
+- upload any photograph or likeness of an identifiable person without that person's
+  consent (or, for a minor, the consent of a parent or lawful guardian);
 - upload malware, or attempt to gain unauthorised access to, disrupt, overload,
   reverse-engineer, scrape, or probe the Platform or its infrastructure;
 - misrepresent your identity or affiliation, or impersonate any person or business;
@@ -187,29 +195,115 @@ granted to you. The name and mark "Spattoo" may not be used without our written 
 6.2. **Your Content and uploads.** You retain ownership of Content you lawfully own and
 upload. By uploading or creating Content, you grant Spattoo (and, where relevant, the
 Baker) a worldwide, non-exclusive, royalty-free licence to host, store, reproduce,
-adapt, display, and process that Content **solely to operate, provide, secure, and
-improve the Platform** and to provide the services you request (for example, generating a
-3D model, removing an image background, or sharing a Design with the relevant Baker).
+adapt, display, transmit, and process that Content **solely to operate, provide, secure, and
+improve the Platform** and to carry out the actions you direct (for example, generating a
+3D model, removing an image background, publishing it to your storefront, or sharing a
+Design with a Baker or Customer). This licence is granted **only so that we can carry out
+your instructions**; it is not a representation by Spattoo that we hold, or can grant, any
+right in that Content.
 
 6.3. **Your warranties for uploads.** You represent and warrant that you own or have all
-necessary rights to any Content you upload, that it does not infringe any third party's
-intellectual property, privacy, publicity, or other rights, and that it is not unlawful.
-You are solely responsible for your Content.
+necessary rights, licences, and consents for any Content you upload, generate, publish, or
+share, that it does not infringe any third party's intellectual property, privacy,
+publicity, personality, or other rights, and that it is not unlawful. **You are solely
+responsible for your Content**, including for determining whether you are permitted to use
+it. Spattoo gives you no advice or assurance on that question.
 
-6.4. **Designs.** Rights in a Design created in the designer are subject to these Terms
+### 6.4. Third-party characters, brands, and other protected property
+
+6.4.1. Cakes are often themed around **cartoon and animated characters, films, television
+shows, games, comics, sports clubs, celebrities, and brands**. These are almost always
+protected by copyright, trademark, design, personality, or character-merchandising rights
+owned by third parties, and reproducing them — including on a cake, a photo cake, a
+storefront image, an uploaded element, a Design, or a template — **generally requires a
+licence from the rights holder**.
+
+6.4.2. **Spattoo grants you no rights in any third-party property, and provides none.**
+Nothing on the Platform — not the designer, the 3D element library, the templates, the AI
+tools, nor these Terms — grants, conveys, implies, or procures any licence, permission, or
+authorisation to use any third party's character, artwork, trademark, logo, brand, or
+likeness. Spattoo's own element library and templates are not supplied with, and must not
+be treated as carrying, any such licence. **The fact that the Platform is technically
+capable of rendering something is not permission to use it.**
+
+6.4.3. **Obtaining any necessary licence is entirely your responsibility.** If you upload,
+generate, publish, share, sell, or bake anything incorporating third-party protected
+property, **you** — the Baker or Customer who did so — are solely responsible for holding
+the necessary rights, and solely liable for any claim, demand, penalty, damages, or
+proceeding brought by any rights holder in respect of it. Spattoo has no responsibility or
+liability for it whatsoever.
+
+### 6.5. Spattoo does not select, review, or pre-screen Content
+
+6.5.1. Spattoo is an **intermediary** within the meaning of the Information Technology Act,
+2000. Content on the Platform is uploaded, created, published, and transmitted **by Users,
+at their own initiative and under their own direction**. Spattoo does **not** initiate the
+transmission of that Content, does not select its recipient, and does not select or modify
+the Content itself.
+
+6.5.2. **Spattoo does not pre-screen, review, moderate, verify, curate, approve, or endorse
+Content, and is under no obligation to do so.** No such review is performed or implied, and
+the availability of any Content on the Platform is not a representation by Spattoo that it
+is lawful, licensed, non-infringing, or otherwise permitted.
+
+6.5.3. **Bakers publish their own storefronts.** Any storefront, template, element, image,
+listing, or Design that a Baker publishes is published **by that Baker, as publisher**, and
+is merely hosted and displayed by Spattoo at that Baker's direction and on that Baker's
+instruction. **Sharing is a private transmission by the sender.** Where a Baker or a
+Customer shares a Design, image, quote, invite, or other Content with the other, that
+Content is transmitted **by the sender, at the sender's request and to a recipient the
+sender selects** — Spattoo merely carries it. In each case the Baker or the sending User,
+and not Spattoo, is the party making the Content available, and is solely responsible for
+their right to do so.
+
+### 6.6. Automated and AI processing of your Content
+
+6.6.1. Certain features process your Content automatically — for example, generating a 3D
+model from an image you upload, identifying decorative elements, or removing an image
+background (see Section 7). Where this happens, the processing is **initiated and directed
+by you**, is carried out **automatically and algorithmically, without human review,
+selection, or editorial judgement by Spattoo**, and is performed **on your behalf and on
+your instruction**.
+
+6.6.2. Any output of such processing (including any 3D model, adapted image, or Design)
+**is your Content**, is subject to your warranties in Sections 6.3 and 6.4, and is your sole
+responsibility. Spattoo claims no ownership of it, does not verify it, and **makes no
+representation or warranty that it, or the input you supplied, is lawful, licensed, or
+free of any third party's rights**. If you supply Content you are not entitled to use, the
+output will be equally unauthorised and that is your responsibility, not ours.
+
+6.7. **Designs.** Rights in a Design created in the designer are subject to these Terms
 and to any arrangement between the Baker and the Customer. Spattoo may store Designs to
 provide the service (for example, to attach a Design to a quote, order, or invite).
 Spattoo may use aggregated, anonymised, or de-identified data derived from use of the
 Platform to operate and improve its services.
 
-6.5. **Feedback.** If you give us suggestions or feedback, you grant us a perpetual,
+6.8. **Feedback.** If you give us suggestions or feedback, you grant us a perpetual,
 irrevocable, royalty-free right to use it without restriction or obligation to you.
 
-6.6. **Infringement / takedown.** If you believe Content on the Platform infringes your
-rights, contact our Grievance Officer (see
-[Grievance & Contact](/grievance)) with the details required under
-applicable law. We will act on valid notices in accordance with the IT Act and the
-Intermediary Guidelines.
+### 6.9. Notice and takedown
+
+6.9.1. If you believe Content on the Platform infringes your intellectual property or other
+rights, contact our Grievance Officer (see [Grievance & Contact](/grievance)) with the
+details required under applicable law, including identification of the Content and its
+location, the right you claim, the basis of your claim, your contact details, and a
+statement that the information you provide is accurate. We will **acknowledge within 24
+hours** and act on valid notices within the timelines and in the manner required by the IT
+Act and the Intermediary Guidelines.
+
+6.9.2. **We may remove Content at any time, without prior notice and without liability to
+you**, where we receive a complaint or a court or governmental order, where we have reason
+to believe the Content breaches these Terms or any law, or where required to protect the
+Platform or any person. We are not obliged to restore removed Content. Removing Content —
+or declining to — is not an admission, an endorsement, or a legal determination by Spattoo.
+
+6.9.3. **Repeat infringers.** We will **suspend or terminate**, without refund, the account
+and storefront of any User — including any Baker — who is the subject of repeated or
+serious substantiated infringement complaints, or who we reasonably believe is a repeat
+infringer.
+
+6.9.4. Nothing in this Section limits Sections 6.3, 6.4, 10, or 11: liability for infringing
+Content rests with the User who uploaded, generated, published, or shared it.
 
 ## 7. AI and Automated Features
 
@@ -217,7 +311,10 @@ Some features use automated or artificial-intelligence tools (for example, gener
 3D model from an image, identifying decorative elements, or removing image backgrounds).
 These features are provided **"as is"**, may be inaccurate, incomplete, or unexpected,
 and should not be relied on as authoritative. Spattoo does not warrant the accuracy or
-suitability of AI-generated output.
+suitability of AI-generated output. These features run **automatically, on your
+instruction, on the Content you supply**; as set out in Section 6.6, the output is your
+Content and your responsibility, and Spattoo does not warrant that it is lawful,
+licensed, or free of any third party's rights.
 
 ## 8. Third-Party Services
 
@@ -405,22 +502,54 @@ Customers;
 B5.3. all information, images, prices, and descriptions you publish on your storefront
 are accurate, lawful, and not misleading, and you own or are licensed to use them;
 
-B5.4. you are the **seller** in every transaction with your Customers, and you — not
+B5.4. **you are the publisher of your storefront and of everything you put on it.** You
+own or hold all necessary rights, licences, and consents for **every** item of Content you
+upload, create, generate, publish, share, or make available through the Platform —
+including storefront images, uploaded elements, photographs, **Designs, and templates you
+create, publish, or offer to your Customers** — and Spattoo merely hosts and displays them
+at your direction (see Section 6.5.3);
+
+B5.5. **you will not use any third-party protected property without a licence.** Without
+limiting B5.4, you will not upload, generate, publish, offer, share, or bake any cartoon
+or animated character, film, television, game, comic, sports club or celebrity likeness,
+brand, trademark, or logo — or any imitation, adaptation, or derivative of one — unless
+you hold a valid licence or other lawful authorisation to do so. **Obtaining any such
+licence is entirely your responsibility.** As set out in Section 6.4, Spattoo grants you no
+rights in any third-party property, and the Platform's technical ability to render
+something is not permission to use it. If a Customer asks you for such a cake, or supplies
+such an image, **it remains your responsibility as the Baker** to decide whether you may
+lawfully make and sell it;
+
+B5.6. you have the consent of every identifiable person (or, for a minor, of a parent or
+lawful guardian) appearing in any photograph or likeness you upload or use, including for
+photo cakes;
+
+B5.7. you are the **seller** in every transaction with your Customers, and you — not
 Spattoo — are responsible for your own terms of sale, cancellation and refund policy,
 invoicing, taxes, and customer service toward your Customers;
 
-B5.5. you will handle your Customers' personal data lawfully. As between you and Spattoo,
+B5.8. you will handle your Customers' personal data lawfully. As between you and Spattoo,
 **you are the Data Fiduciary** for your Customers' personal data collected through your
 storefront, and Spattoo processes it on your behalf as described in the
 [Privacy Policy](/privacy).
 
 ## B6. Baker Indemnity
 
-In addition to Section 11, you (the Baker) will indemnify and hold Spattoo harmless from
+B6.1. In addition to Section 11, you (the Baker) will indemnify and hold Spattoo harmless from
 any claim, demand, penalty, or liability brought by your Customers or any authority
 arising from any Cake you make or sell, your food-safety or licensing compliance, your
 pricing, fulfilment, or delivery, your storefront Content, or your dealings with your
 Customers.
+
+B6.2. **Intellectual property.** Without limiting B6.1, you will indemnify, defend, and
+hold Spattoo harmless from and against any claim, demand, notice, penalty, damages, loss,
+or proceeding — including by any **rights holder, licensor, or brand or character owner,
+or their agents** — alleging **copyright or trademark infringement, passing off, unlawful
+character merchandising, or violation of design, personality, publicity, or privacy
+rights**, arising from any Content you upload, generate, publish, share, or offer, from any
+template or Design you create or publish, from any image supplied to you by a Customer that
+you use or act upon, or from any Cake you make or sell. This applies whether the Content
+originated with you or with your Customer, and it survives termination.
 
 ## B7. Suspension for Non-Payment or Breach
 
@@ -455,17 +584,37 @@ verify a Baker's existence or genuineness, so you should also satisfy yourself a
 you are dealing with — **especially before paying any advance** — since any advance or
 payment for a Cake is made directly to the Baker, off the Platform.
 
-## C3. Payment, Cancellation, and Refunds for Cakes
+## C3. Images You Upload and Themed Cakes
 
-C3.1. Any advance or payment for a Cake is made **directly to the Baker**, off the
+C3.1. If you upload a photograph or image — for a photo cake, a themed cake, or any other
+purpose — you confirm that **you have the right to use it** and that you have the consent of
+every identifiable person in it (or, for a minor, of a parent or lawful guardian). See
+Sections 6.3 and 6.4.
+
+C3.2. **Cartoon characters, brands, and other themes are protected property.** Characters
+such as those from cartoons, films, television, games, or comics, and celebrity likenesses,
+club insignia, brands, and logos, are generally owned by third parties and normally require
+a **licence** to reproduce — including on a cake. Spattoo grants you no rights in them, and
+uploading such an image to the designer does not give you or the Baker permission to use it
+(Section 6.4). If you ask a Baker for such a cake, or supply such an image, you do so at
+your own risk and on your own responsibility, and it remains the Baker's decision whether
+they may lawfully make it. Spattoo is not a party to that and takes no responsibility for
+it.
+
+C3.3. Sharing a Design or image with a Baker is a **private transmission that you
+initiate and direct**; Spattoo merely carries it (Section 6.5.3).
+
+## C4. Payment, Cancellation, and Refunds for Cakes
+
+C4.1. Any advance or payment for a Cake is made **directly to the Baker**, off the
 Platform. Spattoo does not collect, hold, or refund Cake payments.
 
-C3.2. Cancellations, changes, refunds, and disputes for a Cake order are governed by the
+C4.2. Cancellations, changes, refunds, and disputes for a Cake order are governed by the
 **Baker's own policy** and your agreement with the Baker. Please raise them with the Baker
 directly. Our [Refund & Cancellation Policy](/refund)
 explains this further.
 
-## C4. No Spattoo Liability for Fulfilment
+## C5. No Spattoo Liability for Fulfilment
 
 Consistent with Sections 3 and 10, Spattoo is not responsible or liable for whether, when,
 or how a Baker fulfils your order, for the quality, safety, or appearance of the Cake, or

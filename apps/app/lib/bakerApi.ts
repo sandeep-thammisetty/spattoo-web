@@ -104,6 +104,17 @@ export function makeBakerApiClient(supabase: SupabaseClient) {
     fetchTemplates: () => authGet("/api/templates").catch(() => []),
     fetchTemplate: (id: string) => authGet(`/api/templates/${id}`),
 
+    // Saving a design as a template. Goes through the API (not a direct browser insert) so the
+    // tenant is SERVER-resolved — the designer used to choose baker_id client-side. No rights
+    // attestation here: a template is the baker's design library, seen only by their own invited
+    // customers. The rights gate is storefront publish (see publishStorefront).
+    createTemplate: (payload: Record<string, unknown>) =>
+      authFetch("/api/baker/templates", { method: "POST", body: JSON.stringify(payload) }),
+    // The exact sentence the baker affirms at publish, published + hashed server-side so we can
+    // later prove which wording they saw. Null while Layer 1 is still draft.
+    fetchAttestationStatement: () =>
+      publicGet("/api/legal/content-rights").catch(() => null),
+
     // ── Uploads + order create/design (baker placing an order; edit-in-3D save) ─
     getSignedUploadUrl: (folder: string, filename: string, contentType: string) =>
       authFetch("/api/storage/sign-upload", {
@@ -183,10 +194,19 @@ export function makeBakerApiClient(supabase: SupabaseClient) {
     updateBakerSettings: (settings: unknown) =>
       authFetch("/api/baker/settings", { method: "PUT", body: JSON.stringify(settings) }),
     fetchStorefrontThemes: () => authGet("/api/baker/storefront-themes"),
-    publishStorefront: () => authFetch("/api/baker/storefront/publish", { method: "POST" }),
+    // PUBLISH is the one rights gate: this is the moment the storefront becomes world-visible, so
+    // it carries the baker's content-rights attestation (the API refuses it without one, and records
+    // who vouched — content_attestations). `rightsAttested` MUST be the baker's real answer from the
+    // publish confirmation — never default it to true.
+    publishStorefront: (rightsAttested: boolean) =>
+      authFetch("/api/baker/storefront/publish", {
+        method: "POST",
+        body: JSON.stringify({ rights_attested: rightsAttested }),
+      }),
     unpublishStorefront: () => authFetch("/api/baker/storefront/unpublish", { method: "POST" }),
 
     // ── Storefront gallery + testimonials ─────────────────────────────────────
+    // Not attested: a photo isn't public until the storefront is published, and THAT is the gate.
     addStorefrontPhoto: (key: string, caption?: string) =>
       authFetch("/api/baker/storefront-photos", {
         method: "POST",

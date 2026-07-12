@@ -8,6 +8,7 @@ import { makeCustomerApiClient } from "../../../lib/api";
 import { setTelemetryContext } from "../../../lib/telemetry";
 import { bridgeCoreTelemetryToSentry } from "../../../lib/coreTelemetryBridge";
 import { takeResumeDesign } from "../../../lib/resumeDesign";
+import { MARKETING_URL } from "../../../lib/domain";
 
 // The designer is a heavy WebGL client component — load it client-only.
 const CakeDesigner = dynamic(
@@ -50,6 +51,9 @@ export default function DesignerClient({ slug }: { slug: string }) {
       supabase={supabase}
       cfAssetsBase={process.env.NEXT_PUBLIC_ASSETS_BASE}
       orderMode="customer"
+      // Where /terms + /privacy are served — the passive consent line under "Request a quote"
+      // links here, and submitting the quote records the customer's acceptance server-side.
+      legalBase={MARKETING_URL}
       initialDesign={initialDesign}
       liveSessionId={liveSessionId}
       onQuoteRequested={(result: { orderId?: string }) => {

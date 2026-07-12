@@ -157,6 +157,54 @@ export default function BakerApp() {
   }
   if (!baker) return <Centered>Loading your store…</Centered>;
 
+  // "Save as Template" — the host-callback path in CakeDesigner.handleSaveTemplate.
+  //
+  // Supplying this callback is what DISABLES core's legacy fallback, which inserted into
+  // cake_templates straight from the browser and resolved baker_id client-side. That path had no
+  // server-side chokepoint: baker_id was CLIENT-chosen, so a caller could write for another
+  // tenant. The API now resolves the tenant from the token (spattoo-api POST /api/baker/templates).
+  // The rights attestation is NOT here — it is at storefront publish, the one moment content
+  // becomes world-visible (supabase/content_attestations.sql).
+  //
+  async function saveTemplate(t: {
+    name: string;
+    offering: string;
+    tierCount: number;
+    designJson: { shape?: string } & Record<string, unknown>;
+    thumbnailBlob: Blob | null;
+    weightKg: number | null;
+    minAge: number | null;
+    maxAge: number | null;
+    occasionTagIds: string[];
+  }) {
+    let thumbnailKey: string | null = null;
+    if (t.thumbnailBlob) {
+      const contentType = t.thumbnailBlob.type || "image/webp";
+      const ext = contentType.split("/")[1] || "webp";   // must agree with the signed contentType — R2 signs it
+      const { url, key } = await api.getSignedUploadUrl(
+        "templates/thumbnails",
+        `${crypto.randomUUID()}.${ext}`,
+        contentType,
+      );
+      const put = await fetch(url, { method: "PUT", body: t.thumbnailBlob, headers: { "Content-Type": contentType } });
+      if (!put.ok) throw new Error("Thumbnail upload failed — please try again.");
+      thumbnailKey = key;
+    }
+
+    await api.createTemplate({
+      name:             t.name,
+      shape:            t.designJson?.shape ?? "round",
+      tier_count:       t.tierCount,
+      offering:         t.offering,
+      design:           t.designJson,
+      thumbnail_url:    thumbnailKey,
+      min_weight_kg:    t.weightKg,
+      min_age:          t.minAge,
+      max_age:          t.maxAge,
+      occasion_tag_ids: t.occasionTagIds,
+    });
+  }
+
   // Legal consent gate — a baker must accept the current ToS/Privacy before using the app.
   // Covers admin-onboarded bakers (who never saw the signup checkbox) + re-consent on a
   // version bump. pendingConsents is [] until the docs are published, so this stays dormant
@@ -177,7 +225,7 @@ export default function BakerApp() {
   // baker profile/settings/catalog via the apiClient (orderMode defaults to 'baker').
   return (
     <>
-      <CakeDesigner apiClient={api} supabase={supabase} cfAssetsBase={process.env.NEXT_PUBLIC_ASSETS_BASE} onShareStore={() => setShareStoreOpen(true)} liveSessionId={liveSessionId} />
+      <CakeDesigner apiClient={api} supabase={supabase} cfAssetsBase={process.env.NEXT_PUBLIC_ASSETS_BASE} onShareStore={() => setShareStoreOpen(true)} liveSessionId={liveSessionId} onSaveTemplate={saveTemplate} legalBase={MARKETING_URL} />
       {baker.slug && (
         <ShareStoreModal
           open={shareStoreOpen}
