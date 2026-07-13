@@ -115,6 +115,56 @@ export function makeBakerApiClient(supabase: SupabaseClient) {
     fetchAttestationStatement: () =>
       publicGet("/api/legal/content-rights").catch(() => null),
 
+    // ── My Assets — images a baker or customer uploads ────────────────────────
+    // An upload is PRIVATE: its owner can put it on their own cake, and nobody else sees it. That is
+    // the whole safety property — it is why none of this needs a consent gate. See
+    // spattoo-docs/plans/baker-uploads.md.
+    //
+    // `registerUpload` is what turns an R2 object into something we can manage: list it, delete it,
+    // and — the part no ToS clause substitutes for — find it when its owner asks for erasure. EVERY
+    // upload path calls it, including the photo-cake frame.
+    registerUpload: (payload: { storage_key: string; name?: string; for_customer_id?: string }) =>
+      authFetch("/api/uploads", { method: "POST", body: JSON.stringify(payload) }),
+    fetchUploads: () => authGet("/api/uploads").catch(() => []),
+    deleteUpload: (id: number | string) =>
+      authFetch(`/api/uploads/${id}`, { method: "DELETE" }),
+
+    // PROMOTE — a baker releases one of HIS OWN images into his library, where his customers can use
+    // it. Not gated (the ToS carries it), but the server refuses a CUSTOMER's upload: her photo is not
+    // his to re-offer to other customers (ToS 6.2 licenses it only for what SHE directed).
+    // Reversible: unlinkUpload deactivates the library copy and leaves cakes already using it intact.
+    promoteUpload: (id: number | string, payload: Record<string, unknown>) =>
+      authFetch(`/api/uploads/${id}/promote`, { method: "POST", body: JSON.stringify(payload) }),
+    unlinkUpload: (id: number | string) =>
+      authFetch(`/api/uploads/${id}/promote`, { method: "DELETE" }),
+
+    // Put the image bytes in R2 (signed URL) and return the KEY — what registerUpload records.
+    uploadElementImage: async (blob: Blob, filename: string) => {
+      const { url, key } = await authFetch("/api/storage/sign-upload", {
+        method: "POST",
+        body: JSON.stringify({ folder: "elements/files/2D", filename, contentType: blob.type || "image/png" }),
+      });
+      await fetch(url, { method: "PUT", headers: { "Content-Type": blob.type || "image/png" }, body: blob });
+      return key as string;
+    },
+
+    // Raw image bytes in, background-removed PNG out. One server chokepoint, so the model behind it
+    // can change without touching the designer. NOT authFetch: that one sends and parses JSON, and this
+    // is a binary round-trip in both directions.
+    removeElementBg: async (file: Blob) => {
+      const { data: { session } } = await supabase.auth.getSession();
+      const res = await fetch(`${API_BASE}/api/elements/remove-bg`, {
+        method: "POST",
+        headers: {
+          "Content-Type": file.type || "application/octet-stream",
+          ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
+        },
+        body: file,
+      });
+      if (!res.ok) throw new Error(`Background removal failed (${res.status})`);
+      return res.blob();
+    },
+
     // ── Uploads + order create/design (baker placing an order; edit-in-3D save) ─
     getSignedUploadUrl: (folder: string, filename: string, contentType: string) =>
       authFetch("/api/storage/sign-upload", {
