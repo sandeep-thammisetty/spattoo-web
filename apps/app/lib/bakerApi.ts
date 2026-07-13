@@ -148,6 +148,13 @@ export function makeBakerApiClient(supabase: SupabaseClient) {
       return key as string;
     },
 
+    // Cut the background out of an image ALREADY uploaded. A treatment of an image, not a step in a
+    // wizard — which is why it lives in My images and not only at upload: a customer (who cannot
+    // promote) must still be able to cut out a decoration she already uploaded, or it sits on the
+    // frosting looking like a photo of a butterfly on a desk. Runs server-side on the stored object.
+    removeUploadBg: (id: number | string) =>
+      authFetch(`/api/uploads/${id}/remove-bg`, { method: "POST" }),
+
     // Raw image bytes in, background-removed PNG out. One server chokepoint, so the model behind it
     // can change without touching the designer. NOT authFetch: that one sends and parses JSON, and this
     // is a binary round-trip in both directions.
