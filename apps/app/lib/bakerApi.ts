@@ -145,7 +145,7 @@ export function makeBakerApiClient(supabase: SupabaseClient) {
     uploadElementImage: async (blob: Blob, filename: string) => {
       const { url, key } = await authFetch("/api/storage/sign-upload", {
         method: "POST",
-        body: JSON.stringify({ folder: "elements/files/2D", filename, contentType: blob.type || "image/png" }),
+        body: JSON.stringify({ folder: "elements/files/2D", filename, contentType: blob.type || "image/png", contentLength: blob.size }),
       });
       await fetch(url, { method: "PUT", headers: { "Content-Type": blob.type || "image/png" }, body: blob });
       return key as string;
@@ -176,10 +176,16 @@ export function makeBakerApiClient(supabase: SupabaseClient) {
     },
 
     // ── Uploads + order create/design (baker placing an order; edit-in-3D save) ─
-    getSignedUploadUrl: (folder: string, filename: string, contentType: string) =>
+    // contentLength is REQUIRED and is signed INTO the URL: the body goes browser → R2 and never
+    // passes through the API, so a size limit checked in the client is advice, not a limit. R2 rejects
+    // a PUT whose body length differs from the one signed. Callers pass the blob's own .size.
+    // The upload size ceiling, as the API currently has it. Read, never copied: the limit is env-tuned
+    // on the API, and a hardcoded client would go on accepting files the API then 413s.
+    fetchUploadLimits: () => authFetch("/api/storage/limits"),
+    getSignedUploadUrl: (folder: string, filename: string, contentType: string, contentLength: number) =>
       authFetch("/api/storage/sign-upload", {
         method: "POST",
-        body: JSON.stringify({ folder, filename, contentType }),
+        body: JSON.stringify({ folder, filename, contentType, contentLength }),
       }),
     placeOrder: async (payload: Record<string, unknown>) =>
       authFetch("/api/orders", {

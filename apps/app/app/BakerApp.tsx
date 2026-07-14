@@ -185,6 +185,7 @@ export default function BakerApp() {
         "templates/thumbnails",
         `${crypto.randomUUID()}.${ext}`,
         contentType,
+        t.thumbnailBlob.size,   // signed into the URL — R2 rejects a body of any other length
       );
       const put = await fetch(url, { method: "PUT", body: t.thumbnailBlob, headers: { "Content-Type": contentType } });
       if (!put.ok) throw new Error("Thumbnail upload failed — please try again.");
@@ -991,7 +992,7 @@ function SetupBaker({
     try {
       const ext = (logoFile.name.split(".").pop() || "png").toLowerCase();
       const contentType = logoFile.type || "image/png";
-      const { url, key } = await api.getSignedUploadUrl("logos", `${crypto.randomUUID()}.${ext}`, contentType);
+      const { url, key } = await api.getSignedUploadUrl("logos", `${crypto.randomUUID()}.${ext}`, contentType, logoFile.size);
       const put = await fetch(url, { method: "PUT", body: logoFile, headers: { "Content-Type": contentType } });
       if (!put.ok) throw new Error("Logo upload failed — please try again.");
       await api.updateBakerProfile({ logo_url: key });
