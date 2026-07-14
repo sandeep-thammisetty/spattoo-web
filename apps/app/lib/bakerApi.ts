@@ -131,6 +131,10 @@ export function makeBakerApiClient(supabase: SupabaseClient) {
     fetchUploads: () => authGet("/api/uploads").catch(() => []),
     deleteUpload: (id: number | string) =>
       authFetch(`/api/uploads/${id}`, { method: "DELETE" }),
+    // Only the NAME is patchable — the storage key, the attribution and the tenant are server-derived
+    // and must stay that way (spattoo-api routes/uploads.js).
+    renameUpload: (id: number | string, name: string) =>
+      authFetch(`/api/uploads/${id}`, { method: "PATCH", body: JSON.stringify({ name }) }),
 
     // PROMOTE — a baker releases one of HIS OWN images into his library, where his customers can use
     // it. Not gated (the ToS carries it), but the server refuses a CUSTOMER's upload: her photo is not
