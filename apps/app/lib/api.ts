@@ -66,6 +66,9 @@ export function makeCustomerApiClient(supabase: SupabaseClient, slug: string) {
     fetchMaterials: () => authGet(`/api/materials`),
     fetchTextures: () => authGet(`/api/textures`),
     fetchTextStyles: () => authGet(`/api/text-styles`),
+    // The cake shapes admin authored. Without this the designer falls back to its seed — round and
+    // rectangle only — so a customer would never be offered the baker's heart or hexagon.
+    fetchCakeShapes: () => authGet(`/api/cake-shapes`),
     fetchTags: () => authGet(`/api/tags`),
     fetchTemplates: () => authGet(`/api/templates`).catch(() => []),
     fetchTemplate: (id: string) => authGet(`/api/templates/${id}`),

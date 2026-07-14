@@ -100,6 +100,9 @@ export function makeBakerApiClient(supabase: SupabaseClient) {
     fetchMaterials: () => authGet("/api/materials"),
     fetchTextures: () => authGet("/api/textures"),
     fetchTextStyles: () => authGet("/api/text-styles"),
+    // The cake shapes admin authored — the baker designing in his own storefront sees the same catalog
+    // his customers do.
+    fetchCakeShapes: () => authGet("/api/cake-shapes"),
     fetchTags: () => authGet("/api/tags"),
     fetchTemplates: () => authGet("/api/templates").catch(() => []),
     fetchTemplate: (id: string) => authGet(`/api/templates/${id}`),
