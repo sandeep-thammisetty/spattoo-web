@@ -176,6 +176,9 @@ export function makeBakerApiClient(supabase: SupabaseClient) {
     // contentLength is REQUIRED and is signed INTO the URL: the body goes browser → R2 and never
     // passes through the API, so a size limit checked in the client is advice, not a limit. R2 rejects
     // a PUT whose body length differs from the one signed. Callers pass the blob's own .size.
+    // The upload size ceiling, as the API currently has it. Read, never copied: the limit is env-tuned
+    // on the API, and a hardcoded client would go on accepting files the API then 413s.
+    fetchUploadLimits: () => authFetch("/api/storage/limits"),
     getSignedUploadUrl: (folder: string, filename: string, contentType: string, contentLength: number) =>
       authFetch("/api/storage/sign-upload", {
         method: "POST",
