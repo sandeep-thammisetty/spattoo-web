@@ -258,6 +258,14 @@ export function makeBakerApiClient(supabase: SupabaseClient) {
         body: JSON.stringify({ excluded_flavour_ids: excludedFlavourIds }),
       }),
 
+    // ── Templates (baker management: global Spattoo templates + this baker's exclusions) ──
+    fetchBakerTemplates: () => authGet("/api/baker/templates"),
+    updateBakerTemplateExclusions: (excludedTemplateIds: string[]) =>
+      authFetch("/api/baker/templates/exclusions", {
+        method: "PUT",
+        body: JSON.stringify({ excluded_template_ids: excludedTemplateIds }),
+      }),
+
     // ── Staff (owner adds a staff member) ─────────────────────────────────────
     addStaff: (payload: unknown) =>
       authFetch("/api/baker/staff", { method: "POST", body: JSON.stringify(payload) }),
