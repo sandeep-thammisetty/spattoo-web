@@ -200,6 +200,10 @@ export function makeBakerApiClient(supabase: SupabaseClient) {
         method: "POST",
         body: JSON.stringify({ ...payload, bakerSlug: await bakerSlug() }),
       }),
+    // "New Order" (manual): baker creates an order without the 3D designer. Baker is
+    // resolved server-side from the token, so no bakerSlug is sent.
+    createManualOrder: (payload: Record<string, unknown>) =>
+      authFetch("/api/orders/manual", { method: "POST", body: JSON.stringify(payload) }),
     updateOrderDesign: (id: string, payload: unknown) =>
       authFetch(`/api/orders/${id}/design`, { method: "PATCH", body: JSON.stringify(payload) }),
 
@@ -222,6 +226,13 @@ export function makeBakerApiClient(supabase: SupabaseClient) {
       authFetch(`/api/orders/${id}/photos`, { method: "POST", body: JSON.stringify({ keys }) }),
     deleteOrderPhoto: (id: string, photoId: string) =>
       authFetch(`/api/orders/${id}/photos/${photoId}`, { method: "DELETE" }),
+
+    // ── Reference photos (manual orders; ≤3; the order's picture) ───────────────
+    fetchOrderReferencePhotos: (id: string) => authGet(`/api/orders/${id}/reference-photos`),
+    saveOrderReferencePhotos: (id: string, keys: string[]) =>
+      authFetch(`/api/orders/${id}/reference-photos`, { method: "POST", body: JSON.stringify({ keys }) }),
+    deleteOrderReferencePhoto: (id: string, photoId: string) =>
+      authFetch(`/api/orders/${id}/reference-photos/${photoId}`, { method: "DELETE" }),
 
     // ── Reference data ────────────────────────────────────────────────────────
     fetchOrderStatuses: () => publicGet("/api/order-statuses"),
