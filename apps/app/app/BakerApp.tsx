@@ -71,6 +71,9 @@ export default function BakerApp() {
   // first-login acceptance gate before the app. [] until Layer 1 is published, so dormant
   // pre-launch. See docs/CONSENT_CAPTURE_PLAN.md.
   const [pendingConsents, setPendingConsents] = useState<string[]>([]);
+  // Arrived via a password-reset link → Supabase fires PASSWORD_RECOVERY with a short-lived
+  // recovery session. Gate the whole app behind ResetPassword until they set a new password.
+  const [recovery, setRecovery] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -85,6 +88,8 @@ export default function BakerApp() {
         if (ss.get(LS_SUPPRESS_REDIRECT)) { ss.del(LS_SUPPRESS_REDIRECT); setSession(null); return; }
         window.location.href = MARKETING_URL; return;
       }
+      // Reset link followed → show the set-new-password screen instead of routing into the app.
+      if (event === "PASSWORD_RECOVERY") { setRecovery(true); setSession(s); return; }
       setSession(s);
     });
     return () => sub.subscription.unsubscribe();
@@ -140,6 +145,18 @@ export default function BakerApp() {
   }, [userId, reloadKey]);
 
   if (!ready) return <Centered>Loading…</Centered>;
+  // Password-reset completion takes precedence over all normal routing (the recovery session
+  // would otherwise fall straight through into the app). Cancel signs out but stays on login.
+  if (recovery && session) {
+    return (
+      <ResetPassword
+        supabase={supabase}
+        email={session.user.email ?? ""}
+        onDone={() => setRecovery(false)}
+        onCancel={() => { ss.set(LS_SUPPRESS_REDIRECT, "1"); setRecovery(false); supabase.auth.signOut(); }}
+      />
+    );
+  }
   if (!session) return <AuthScreen supabase={supabase} />;
   // Invited staff arrive with a session but no password (must_set_password in metadata,
   // set at invite time). Gate the whole app behind setting one — clearing the flag lets
@@ -247,7 +264,7 @@ export default function BakerApp() {
 // Login by default. Self-signup is built but intentionally UNLINKED for now — it only
 // appears when the URL carries ?signup=1 (so marketing's CTA isn't wired to it yet).
 function AuthScreen({ supabase }: { supabase: ReturnType<typeof getSupabase> }) {
-  const [mode, setMode] = useState<"login" | "signup">("login");
+  const [mode, setMode] = useState<"login" | "signup" | "forgot">("login");
   const [signupAllowed, setSignupAllowed] = useState(false);
 
   useEffect(() => {
@@ -259,6 +276,9 @@ function AuthScreen({ supabase }: { supabase: ReturnType<typeof getSupabase> }) 
     if (wantsSignup) setMode("signup");
   }, []);
 
+  if (mode === "forgot") {
+    return <ForgotPassword supabase={supabase} onBack={() => setMode("login")} />;
+  }
   if (mode === "signup" && signupAllowed) {
     return <BakerSignup supabase={supabase} onBack={() => setMode("login")} />;
   }
@@ -267,6 +287,7 @@ function AuthScreen({ supabase }: { supabase: ReturnType<typeof getSupabase> }) 
       supabase={supabase}
       showSignup={signupAllowed}
       onSignup={() => setMode("signup")}
+      onForgot={() => setMode("forgot")}
     />
   );
 }
@@ -396,8 +417,8 @@ function ResendVerification({
 }
 
 function BakerLogin({
-  supabase, showSignup, onSignup,
-}: { supabase: ReturnType<typeof getSupabase>; showSignup?: boolean; onSignup?: () => void }) {
+  supabase, showSignup, onSignup, onForgot,
+}: { supabase: ReturnType<typeof getSupabase>; showSignup?: boolean; onSignup?: () => void; onForgot?: () => void }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
@@ -462,6 +483,11 @@ function BakerLogin({
           {busy ? "Signing in…" : "Sign in"}
         </button>
 
+        <button type="button" onClick={onForgot}
+          className="mt-3 block w-full text-center text-sm font-medium text-[#edeae3]/45 transition hover:text-[#edeae3]/80 hover:underline">
+          Forgot password?
+        </button>
+
         <div className="mt-6 flex items-center justify-between text-sm">
           {showSignup ? (
             <button type="button" onClick={onSignup} className="font-semibold text-[#a8c5b5] hover:underline">
@@ -475,7 +501,9 @@ function BakerLogin({
         </div>
       </form>
 
-      {showStaff && <StaffLoginModal supabase={supabase} onClose={() => setShowStaff(false)} />}
+      {showStaff && <StaffLoginModal supabase={supabase}
+        onClose={() => setShowStaff(false)}
+        onForgot={() => { setShowStaff(false); onForgot?.(); }} />}
     </AuthShell>
   );
 }
@@ -484,8 +512,8 @@ function BakerLogin({
 // so BakerApp strictly validates the staff role (and rejects owner credentials used here). No
 // "create account" — staff are invited by their bakery, they don't self-sign-up.
 function StaffLoginModal({
-  supabase, onClose,
-}: { supabase: ReturnType<typeof getSupabase>; onClose: () => void }) {
+  supabase, onClose, onForgot,
+}: { supabase: ReturnType<typeof getSupabase>; onClose: () => void; onForgot: () => void }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
@@ -526,17 +554,32 @@ function StaffLoginModal({
           <button type="submit" disabled={busy || !email || !password} className={`${AUTH_BTN} mt-4`}>
             {busy ? "Signing in…" : "Staff sign in"}
           </button>
+
+          <button type="button" onClick={onForgot}
+            className="mt-3 block w-full text-center text-sm font-medium text-[#edeae3]/45 transition hover:text-[#edeae3]/80 hover:underline">
+            Forgot password?
+          </button>
         </form>
       </div>
     </div>
   );
 }
 
-// Invited staff set their password here on first entry (they have a session but no
-// password). Clears must_set_password in the same update, so the app gate opens.
-function SetStaffPassword({
-  supabase, email, onSignOut,
-}: { supabase: ReturnType<typeof getSupabase>; email: string; onSignOut: () => void }) {
+// Shared "set a new password" card — password + confirm, live policy checklist, show/hide, and
+// a submit gated on isPasswordValid. DRY: used by BOTH staff activation and the forgot-password
+// reset, which are the same form with different copy + submit action (never a second copy).
+// onSubmit returns an error message to show, or null on success (the parent then advances).
+function PasswordSetCard({
+  title, subtitle, cta, busyCta, onSubmit, secondaryLabel, onSecondary,
+}: {
+  title: string;
+  subtitle: React.ReactNode;
+  cta: string;
+  busyCta: string;
+  onSubmit: (password: string) => Promise<string | null>;
+  secondaryLabel: string;
+  onSecondary: () => void;
+}) {
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [busy, setBusy] = useState(false);
@@ -550,19 +593,16 @@ function SetStaffPassword({
     e.preventDefault();
     setBusy(true);
     setErr(null);
-    // Set the password AND clear the gate flag atomically. USER_UPDATED → session
-    // refresh → the must_set_password gate in BakerApp recomputes to false → app opens.
-    const { error } = await supabase.auth.updateUser({ password, data: { must_set_password: false } });
-    if (error) { setErr(error.message); setBusy(false); }
+    const message = await onSubmit(password);
+    // On success the parent unmounts/advances; keep busy so the button stays disabled meanwhile.
+    if (message) { setErr(message); setBusy(false); }
   }
 
   return (
     <AuthShell>
       <form onSubmit={submit} className={AUTH_CARD}>
-        <h1 className="text-2xl font-bold text-[#edeae3]">Set your password</h1>
-        <p className="mt-1 text-sm leading-relaxed text-[#edeae3]/45">
-          Welcome! Choose a password for <b className="text-[#edeae3]/70">{email}</b> to finish activating your staff account.
-        </p>
+        <h1 className="text-2xl font-bold text-[#edeae3]">{title}</h1>
+        <p className="mt-1 text-sm leading-relaxed text-[#edeae3]/45">{subtitle}</p>
 
         <div className="mt-6 flex flex-col gap-4">
           <label className="block">
@@ -590,17 +630,129 @@ function SetStaffPassword({
           {err && <p className="text-sm font-semibold text-[#ef9a9a]">{err}</p>}
 
           <button type="submit" disabled={!canSubmit} className={`${AUTH_BTN} mt-1`}>
-            {busy ? "Saving…" : "Set password & continue"}
+            {busy ? busyCta : cta}
           </button>
         </div>
 
         <div className="mt-6 text-sm">
-          <button type="button" onClick={onSignOut} className="font-semibold text-[#edeae3]/45 transition hover:text-[#edeae3]/80">
-            Sign out
+          <button type="button" onClick={onSecondary} className="font-semibold text-[#edeae3]/45 transition hover:text-[#edeae3]/80">
+            {secondaryLabel}
           </button>
         </div>
       </form>
     </AuthShell>
+  );
+}
+
+// Invited staff set their password here on first entry (they have a session but no
+// password). Clears must_set_password in the same update, so the app gate opens.
+function SetStaffPassword({
+  supabase, email, onSignOut,
+}: { supabase: ReturnType<typeof getSupabase>; email: string; onSignOut: () => void }) {
+  return (
+    <PasswordSetCard
+      title="Set your password"
+      subtitle={<>Welcome! Choose a password for <b className="text-[#edeae3]/70">{email}</b> to finish activating your staff account.</>}
+      cta="Set password & continue" busyCta="Saving…"
+      // Set the password AND clear the gate flag atomically. USER_UPDATED → session refresh →
+      // the must_set_password gate in BakerApp recomputes to false → app opens.
+      onSubmit={async (password) => {
+        const { error } = await supabase.auth.updateUser({ password, data: { must_set_password: false } });
+        return error?.message ?? null;
+      }}
+      secondaryLabel="Sign out" onSecondary={onSignOut}
+    />
+  );
+}
+
+// Forgot-password step 1: request a reset link. The confirmation is neutral whether or not the
+// email maps to an account — Supabase resetPasswordForEmail doesn't error on unknown emails, so
+// we don't leak account existence. The link returns to THIS origin, where BakerApp's
+// PASSWORD_RECOVERY handler shows ResetPassword.
+function ForgotPassword({
+  supabase, onBack,
+}: { supabase: ReturnType<typeof getSupabase>; onBack: () => void }) {
+  const [email, setEmail] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+  const [sent, setSent] = useState(false);
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    setBusy(true);
+    setErr(null);
+    // redirectTo must be allow-listed in Supabase Auth → URL Configuration → Redirect URLs
+    // (same origin as the signup verification link).
+    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), { redirectTo: window.location.origin });
+    if (error) { setErr(error.message); setBusy(false); return; }
+    setSent(true);
+    setBusy(false);
+  }
+
+  if (sent) {
+    return (
+      <AuthShell>
+        <div className={AUTH_CARD}>
+          <h1 className="text-2xl font-bold text-[#edeae3]">Check your email</h1>
+          <p className="mt-2 text-sm leading-relaxed text-[#edeae3]/55">
+            If an account exists for <b className="text-[#edeae3]/80">{email}</b>, we&apos;ve sent a
+            password-reset link. Open it on this device to choose a new password.
+          </p>
+          <button type="button" onClick={onBack} className={`${AUTH_BTN} mt-5 w-full`}>Back to sign in</button>
+        </div>
+      </AuthShell>
+    );
+  }
+
+  return (
+    <AuthShell>
+      <form onSubmit={submit} className={AUTH_CARD}>
+        <h1 className="text-2xl font-bold text-[#edeae3]">Reset your password</h1>
+        <p className="mt-1 text-sm text-[#edeae3]/45">Enter your email and we&apos;ll send you a link to set a new one.</p>
+
+        <div className="mt-6 flex flex-col gap-4">
+          <label className="block">
+            <span className="mb-1.5 block text-sm font-medium text-[#edeae3]/70">Email</span>
+            <input type="email" autoComplete="email" value={email}
+              onChange={(e) => setEmail(e.target.value)} className={AUTH_FIELD} />
+          </label>
+
+          {err && <p className="text-sm font-semibold text-[#ef9a9a]">{err}</p>}
+
+          <button type="submit" disabled={busy || !email} className={`${AUTH_BTN} mt-1`}>
+            {busy ? "Sending…" : "Send reset link"}
+          </button>
+        </div>
+
+        <div className="mt-6 text-sm">
+          <button type="button" onClick={onBack} className="font-semibold text-[#a8c5b5] hover:underline">
+            Back to sign in
+          </button>
+        </div>
+      </form>
+    </AuthShell>
+  );
+}
+
+// Forgot-password step 2: the completion screen. BakerApp renders this when Supabase fires
+// PASSWORD_RECOVERY (the user arrived via the reset link, so they hold a short-lived recovery
+// session). Sets the new password on that session; onDone then lets BakerApp route into the app.
+function ResetPassword({
+  supabase, email, onDone, onCancel,
+}: { supabase: ReturnType<typeof getSupabase>; email: string; onDone: () => void; onCancel: () => void }) {
+  return (
+    <PasswordSetCard
+      title="Set a new password"
+      subtitle={<>Choose a new password for <b className="text-[#edeae3]/70">{email}</b>.</>}
+      cta="Update password" busyCta="Updating…"
+      onSubmit={async (password) => {
+        const { error } = await supabase.auth.updateUser({ password });
+        if (error) return error.message;
+        onDone();
+        return null;
+      }}
+      secondaryLabel="Cancel" onSecondary={onCancel}
+    />
   );
 }
 
