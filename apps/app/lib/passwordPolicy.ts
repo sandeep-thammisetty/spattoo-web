@@ -5,9 +5,14 @@
 // show the SAME rules as a live checklist and gate submit on them, so the client never
 // presents a green form for a password the server would reject.
 //
-// The policy changes rarely and lives in the Supabase dashboard, not in an API — so it
-// is mirrored HERE, in one place. If the dashboard policy ever changes, update this file
-// (and only this file); every consumer reads from it.
+// The policy changes rarely and lives in the Supabase dashboard, not in an API — so it is
+// mirrored in code. Within this repo it lives HERE, in one place (every web consumer reads
+// from it).
+//
+// ⚠ MIRROR: spattoo-core keeps an identical copy at src/auth/passwordPolicy.js (used by the
+// designer's Change Password modal). The two repos are joined only by the vendored
+// @spattoo/designer tgz, so this small policy is duplicated by design. If the Supabase
+// dashboard policy changes, update BOTH files.
 
 export const PASSWORD_MIN_LENGTH = 8;
 
