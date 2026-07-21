@@ -11,6 +11,8 @@ import { API_BASE } from "../lib/api";
 import { setTelemetryContext } from "../lib/telemetry";
 import { bridgeCoreTelemetryToSentry } from "../lib/coreTelemetryBridge";
 import ShareStoreModal from "../components/ShareStoreModal";
+import PasswordChecklist from "../components/PasswordChecklist";
+import { isPasswordValid } from "../lib/passwordPolicy";
 // FULL ("max") metadata — the default "min" bundle wrongly validates junk like
 // "123123123" for IN (it only length-checks). "max" enforces real patterns. Types come
 // from the main package (metadata-independent).
@@ -542,7 +544,7 @@ function SetStaffPassword({
   const [showPw, setShowPw] = useState(false);
 
   const mismatch = confirm.length > 0 && password !== confirm;
-  const canSubmit = !busy && password.length >= 6 && password === confirm;
+  const canSubmit = !busy && isPasswordValid(password) && password === confirm;
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -566,7 +568,7 @@ function SetStaffPassword({
           <label className="block">
             <span className="mb-1.5 block text-sm font-medium text-[#edeae3]/70">New password</span>
             <div className="relative">
-              <input type={showPw ? "text" : "password"} autoComplete="new-password" placeholder="At least 6 characters"
+              <input type={showPw ? "text" : "password"} autoComplete="new-password" placeholder="Create a password"
                 value={password} onChange={(e) => setPassword(e.target.value)} className={`${AUTH_FIELD} pr-11`} />
               <button type="button" onClick={() => setShowPw((v) => !v)}
                 aria-label={showPw ? "Hide password" : "Show password"}
@@ -574,6 +576,7 @@ function SetStaffPassword({
                 {showPw ? <EyeOff /> : <Eye />}
               </button>
             </div>
+            <PasswordChecklist password={password} />
           </label>
 
           <label className="block">
@@ -646,7 +649,7 @@ function BakerSignup({
   const phoneValid = phone.trim().length > 0 && isValidPhoneNumber(phone.trim(), phoneCountry as CountryCode);
   const phoneInvalid = phone.trim().length > 0 && !phoneValid;
   const canSubmit = !busy && firstName.trim() && lastName.trim() && phoneValid
-    && email && password.length >= 6 && password === confirm && agreed;
+    && email && isPasswordValid(password) && password === confirm && agreed;
 
   async function signUp(e: React.FormEvent) {
     e.preventDefault();
@@ -768,7 +771,7 @@ function BakerSignup({
           <label className="block">
             <span className="mb-1.5 block text-sm font-medium text-[#edeae3]/70">Password</span>
             <div className="relative">
-              <input type={showPw ? "text" : "password"} autoComplete="new-password" placeholder="At least 6 characters"
+              <input type={showPw ? "text" : "password"} autoComplete="new-password" placeholder="Create a password"
                 value={password} onChange={(e) => setPassword(e.target.value)} className={`${AUTH_FIELD} pr-11`} />
               <button type="button" onClick={() => setShowPw((v) => !v)}
                 aria-label={showPw ? "Hide password" : "Show password"}
@@ -776,6 +779,7 @@ function BakerSignup({
                 {showPw ? <EyeOff /> : <Eye />}
               </button>
             </div>
+            <PasswordChecklist password={password} />
           </label>
 
           <label className="block">
