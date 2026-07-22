@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { getSupabase } from "../lib/supabase";
 import { MARKETING_URL } from "../lib/domain";
@@ -12,6 +12,7 @@ import { setTelemetryContext } from "../lib/telemetry";
 import { bridgeCoreTelemetryToSentry } from "../lib/coreTelemetryBridge";
 import ShareStoreModal from "../components/ShareStoreModal";
 import PasswordChecklist from "../components/PasswordChecklist";
+import { Captcha, captchaConfigured, type CaptchaHandle } from "../components/Captcha";
 import { isPasswordValid } from "../lib/passwordPolicy";
 // FULL ("max") metadata — the default "min" bundle wrongly validates junk like
 // "123123123" for IN (it only length-checks). "max" enforces real patterns. Types come
@@ -427,6 +428,8 @@ function BakerLogin({
   const [showStaff, setShowStaff] = useState(false);
   const [unconfirmed, setUnconfirmed] = useState(false);
   const [linkExpired, setLinkExpired] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const captchaRef = useRef<CaptchaHandle>(null);
 
   useEffect(() => {
     ss.del(LS_LOGIN_NOTICE);                            // one-shot notice: shown once, then cleared
@@ -451,10 +454,18 @@ function BakerLogin({
     setErr(null);
     setUnconfirmed(false);
     ss.del(LS_LOGIN_MODE);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    // captchaToken flows to Supabase only when captcha is configured; it's ignored until the
+    // Supabase dashboard toggle is on, and undefined when no widget is present (no behaviour change).
+    const { error } = await supabase.auth.signInWithPassword({
+      email, password,
+      options: { captchaToken: captchaToken ?? undefined },
+    });
     if (error) {
       setErr(error.message);
       setBusy(false);
+      // Turnstile tokens are single-use — reset so a retry gets a fresh one.
+      captchaRef.current?.reset();
+      setCaptchaToken(null);
       // Unconfirmed email (expired / never-clicked link) → offer a resend inline.
       if (/not confirmed|confirm your email/i.test(error.message)) setUnconfirmed(true);
     }
@@ -479,7 +490,11 @@ function BakerLogin({
         {err && <p className="mt-4 text-sm font-semibold text-[#ef9a9a]">{err}</p>}
         {unconfirmed && <ResendVerification supabase={supabase} email={email} />}
 
-        <button type="submit" disabled={busy || !email || !password} className={`${AUTH_BTN} mt-4`}>
+        <Captcha ref={captchaRef} onVerify={setCaptchaToken} onExpire={() => setCaptchaToken(null)} className="mt-4" />
+
+        <button type="submit"
+          disabled={busy || !email || !password || (captchaConfigured && !captchaToken)}
+          className={`${AUTH_BTN} mt-4`}>
           {busy ? "Signing in…" : "Sign in"}
         </button>
 
@@ -518,14 +533,22 @@ function StaffLoginModal({
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const captchaRef = useRef<CaptchaHandle>(null);
 
   async function signIn(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
     setErr(null);
     ss.set(LS_LOGIN_MODE, "staff");                    // BakerApp's profile effect validates the staff role
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) { setErr(error.message); setBusy(false); ss.del(LS_LOGIN_MODE); }
+    const { error } = await supabase.auth.signInWithPassword({
+      email, password,
+      options: { captchaToken: captchaToken ?? undefined },
+    });
+    if (error) {
+      setErr(error.message); setBusy(false); ss.del(LS_LOGIN_MODE);
+      captchaRef.current?.reset(); setCaptchaToken(null);  // single-use token — fresh one for retry
+    }
     // On success the component unmounts → BakerApp validates the staff path.
   }
 
@@ -551,7 +574,11 @@ function StaffLoginModal({
 
           {err && <p className="mt-4 text-sm font-semibold text-[#ef9a9a]">{err}</p>}
 
-          <button type="submit" disabled={busy || !email || !password} className={`${AUTH_BTN} mt-4`}>
+          <Captcha ref={captchaRef} onVerify={setCaptchaToken} onExpire={() => setCaptchaToken(null)} className="mt-4" />
+
+          <button type="submit"
+            disabled={busy || !email || !password || (captchaConfigured && !captchaToken)}
+            className={`${AUTH_BTN} mt-4`}>
             {busy ? "Signing in…" : "Staff sign in"}
           </button>
 
@@ -676,6 +703,8 @@ function ForgotPassword({
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const captchaRef = useRef<CaptchaHandle>(null);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -683,8 +712,15 @@ function ForgotPassword({
     setErr(null);
     // redirectTo must be allow-listed in Supabase Auth → URL Configuration → Redirect URLs
     // (same origin as the signup verification link).
-    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), { redirectTo: window.location.origin });
-    if (error) { setErr(error.message); setBusy(false); return; }
+    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+      redirectTo: window.location.origin,
+      captchaToken: captchaToken ?? undefined,
+    });
+    if (error) {
+      setErr(error.message); setBusy(false);
+      captchaRef.current?.reset(); setCaptchaToken(null);  // single-use token — fresh one for retry
+      return;
+    }
     setSent(true);
     setBusy(false);
   }
@@ -719,7 +755,11 @@ function ForgotPassword({
 
           {err && <p className="text-sm font-semibold text-[#ef9a9a]">{err}</p>}
 
-          <button type="submit" disabled={busy || !email} className={`${AUTH_BTN} mt-1`}>
+          <Captcha ref={captchaRef} onVerify={setCaptchaToken} onExpire={() => setCaptchaToken(null)} />
+
+          <button type="submit"
+            disabled={busy || !email || (captchaConfigured && !captchaToken)}
+            className={`${AUTH_BTN} mt-1`}>
             {busy ? "Sending…" : "Send reset link"}
           </button>
         </div>
@@ -792,6 +832,8 @@ function BakerSignup({
   const [err, setErr] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
   const [agreed, setAgreed] = useState(false);   // ToS + Privacy — clear affirmative action (DPDP)
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const captchaRef = useRef<CaptchaHandle>(null);
 
   // Mismatch surfaces only once they've started typing the confirmation.
   const mismatch = confirm.length > 0 && password !== confirm;
@@ -801,7 +843,8 @@ function BakerSignup({
   const phoneValid = phone.trim().length > 0 && isValidPhoneNumber(phone.trim(), phoneCountry as CountryCode);
   const phoneInvalid = phone.trim().length > 0 && !phoneValid;
   const canSubmit = !busy && firstName.trim() && lastName.trim() && phoneValid
-    && email && isPasswordValid(password) && password === confirm && agreed;
+    && email && isPasswordValid(password) && password === confirm && agreed
+    && (!captchaConfigured || !!captchaToken);
 
   async function signUp(e: React.FormEvent) {
     e.preventDefault();
@@ -838,6 +881,7 @@ function BakerSignup({
       // verification gap and become the primary baker_appusers row at brand setup.
       options: {
         emailRedirectTo: window.location.origin,
+        captchaToken: captchaToken ?? undefined,
         data: {
           role: "baker",
           first_name: firstName.trim(),
@@ -851,7 +895,11 @@ function BakerSignup({
         },
       },
     });
-    if (error) { setErr(error.message); setBusy(false); return; }
+    if (error) {
+      setErr(error.message); setBusy(false);
+      captchaRef.current?.reset(); setCaptchaToken(null);  // single-use token — fresh one for retry
+      return;
+    }
     // If email confirmation is ON, there's no session yet → tell them to verify.
     // If OFF, the auth state change logs them in and BakerApp routes to setup.
     if (!data.session) setSent(true);
@@ -962,6 +1010,8 @@ function BakerSignup({
           </label>
 
           {err && <p className="text-sm font-semibold text-[#ef9a9a]">{err}</p>}
+
+          <Captcha ref={captchaRef} onVerify={setCaptchaToken} onExpire={() => setCaptchaToken(null)} />
 
           <button type="submit" disabled={!canSubmit}
             className={`${AUTH_BTN} mt-1`}>
