@@ -31,6 +31,9 @@ export default function StorefrontClient({ slug }: { slug: string }) {
       inviteId={inviteId}
       apiBaseUrl={API_BASE}
       supabase={supabase}
+      // Turnstile site key for the invite-OTP captcha (core forwards the token to /send-otp).
+      // Unset → the widget is a no-op. Secret lives only in the Supabase dashboard.
+      captchaSiteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
       // After OTP login (session is set), or a browse "start designing", go to the
       // designer on this same origin. If the baker attached a starting design to the
       // invite, core hands it here — stash it so the designer seeds from it on arrival.
