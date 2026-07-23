@@ -10,6 +10,7 @@ import { makeBakerApiClient } from "../lib/bakerApi";
 import { API_BASE } from "../lib/api";
 import { setTelemetryContext } from "../lib/telemetry";
 import { bridgeCoreTelemetryToSentry } from "../lib/coreTelemetryBridge";
+import { extractLogoPalette } from "@spattoo/designer";
 import ShareStoreModal from "../components/ShareStoreModal";
 import PasswordChecklist from "../components/PasswordChecklist";
 import { Captcha, captchaConfigured, type CaptchaHandle } from "../components/Captcha";
@@ -1188,6 +1189,18 @@ function SetupBaker({
   function pickLogo(f: File | null) {
     setLogoFile(f);
     setLogoPreview(f ? URL.createObjectURL(f) : null);
+    // Suggest brand colours from the logo — the two most dominant, perceptually distinct colours —
+    // pre-filling the primary/accent pickers shown on the NEXT (branding) step. Only fills a picker
+    // still at its default, so re-picking a logo never clobbers a colour the baker hand-changed.
+    // Best-effort: a greyscale/undecodable logo returns null and the defaults stand. Still editable.
+    if (f) {
+      extractLogoPalette(f).then((p) => {
+        if (!p) return;
+        const { primary, accent } = p;
+        if (primary) setPrimaryColor((cur) => (cur === "#6b8f7e" ? primary : cur));
+        if (accent)  setAccentColor((cur) => (cur === "#000000" ? accent : cur));
+      });
+    }
   }
 
   // Step 3 — optional logo upload (R2 → logo_url), then storefront details.

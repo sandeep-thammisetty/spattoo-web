@@ -13,4 +13,10 @@ declare module "@spattoo/designer" {
     transport?: { capture: (e: Error, c: Record<string, unknown>) => void; setContext?: (c: Record<string, unknown>) => void };
     surface?: string;
   }): void;
+  // Suggest brand colours from a logo (onboarding). Resolves to the two most dominant, distinct
+  // colours as '#rrggbb' (accent null for a one-colour logo), or null for a greyscale/undecodable file.
+  export function extractLogoPalette(
+    fileOrBlob: Blob,
+    opts?: { sample?: number }
+  ): Promise<{ primary: string; accent: string | null } | null>;
 }
