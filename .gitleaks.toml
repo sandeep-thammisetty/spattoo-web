@@ -1,0 +1,22 @@
+# gitleaks config — spattoo-web.
+# Extends gitleaks' default ruleset and adds Spattoo-specific allowlisting.
+#   Full history:  gitleaks git --no-banner
+#   Staged only:   gitleaks git --staged --no-banner
+# See spattoo-api/docs/SECURITY_REVIEW.md for the shift-left strategy this feeds.
+title = "spattoo-web gitleaks config"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Intentionally-public Supabase anon key (verified 2026-07-24)"
+
+# ── Intentionally-public key (NOT a secret) ──────────────────────────────────
+# lib/supabase-leads.ts hardcodes the Supabase *anon* key (role=anon) for the
+# marketing-leads project — public by design, access governed by Row-Level
+# Security. Scoped to the exact file so a real secret elsewhere still trips.
+# Hardening option (not a leak): move it to a NEXT_PUBLIC_SUPABASE_* env var.
+# If RLS is ever disabled on that project, this anon key becomes sensitive.
+paths = [
+  '''lib/supabase-leads\.ts''',
+]
