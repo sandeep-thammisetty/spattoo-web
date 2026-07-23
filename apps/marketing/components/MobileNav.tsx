@@ -11,7 +11,7 @@ const links = [
   { label: "Contact", href: "#contact" },
 ];
 
-export default function MobileNav({ onJoinWaitlist }: { onJoinWaitlist: () => void }) {
+export default function MobileNav() {
   const [open, setOpen] = useState(false);
 
   // Lock body scroll when open
@@ -99,16 +99,6 @@ export default function MobileNav({ onJoinWaitlist }: { onJoinWaitlist: () => vo
                   Get started
                 </motion.a>
               )}
-
-              <motion.button
-                onClick={() => { setOpen(false); onJoinWaitlist(); }}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.05 + (links.length + (SHOW_SIGNIN ? 2 : 0)) * 0.07, duration: 0.3 }}
-                className="mt-8 self-start px-8 py-3.5 rounded-full border border-[#6b8f7e]/50 text-[#a8c5b5] text-sm font-medium cursor-pointer"
-              >
-                Join Waitlist
-              </motion.button>
             </nav>
           </motion.div>
         )}

@@ -10,7 +10,8 @@ export const APP_URL = `https://app.${BASE_DOMAIN}`;
 // (nav "Get started", hero, pricing). They appear together (the app is live) or not
 // at all. Set NEXT_PUBLIC_SHOW_SIGNIN=true on the dev marketing project; leave it
 // unset on prod until the prod baker app exists, then flip it on — same code
-// everywhere. When off, the conversion CTAs fall back to the waitlist modal.
+// everywhere. When off, the conversion CTAs render nothing (we no longer collect
+// a pre-launch waitlist), so the marketing site simply shows no signup CTA yet.
 export const SHOW_SIGNIN = process.env.NEXT_PUBLIC_SHOW_SIGNIN === "true";
 
 // Baker signup entry — the app reveals its signup screen behind ?signup=1.

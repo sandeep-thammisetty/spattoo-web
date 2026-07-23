@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import WaitlistModal from "./WaitlistModal";
 import StartCta from "./StartCta";
 
 const tiers = [
@@ -95,7 +94,6 @@ function formatPrice(amount: number) {
 
 export default function Pricing() {
   const [annual, setAnnual] = useState(false);
-  const [waitlistOpen, setWaitlistOpen] = useState(false);
 
   return (
     <section id="pricing" className="pt-14 pb-6 px-4 md:px-8 bg-[#0a0a0a]">
@@ -182,7 +180,6 @@ export default function Pricing() {
 
               {/* CTA */}
               <StartCta
-                onWaitlist={() => setWaitlistOpen(true)}
                 className="block w-full text-center py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer"
                 style={
                   tier.ctaVariant === "filled"
@@ -224,7 +221,6 @@ export default function Pricing() {
         </p>
 
       </div>
-      {waitlistOpen && <WaitlistModal onClose={() => setWaitlistOpen(false)} />}
     </section>
   );
 }

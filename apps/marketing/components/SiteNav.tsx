@@ -3,12 +3,10 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import MobileNav from "./MobileNav";
-import WaitlistModal from "./WaitlistModal";
 import { APP_URL, SHOW_SIGNIN, SIGNUP_URL } from "../lib/domain";
 
 export default function SiteNav() {
   const [scrolled, setScrolled] = useState(false);
-  const [waitlistOpen, setWaitlistOpen] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -61,16 +59,9 @@ export default function SiteNav() {
             Get started
           </a>
         )}
-        <button
-          onClick={() => setWaitlistOpen(true)}
-          className="inline-flex px-6 py-2.5 rounded-full border border-[#6b8f7e]/50 text-[#a8c5b5] text-sm font-medium hover:border-[#6b8f7e] hover:text-[#edeae3] transition-all cursor-pointer"
-        >
-          Join Waitlist
-        </button>
       </div>
 
-      <MobileNav onJoinWaitlist={() => setWaitlistOpen(true)} />
-      {waitlistOpen && <WaitlistModal onClose={() => setWaitlistOpen(false)} />}
+      <MobileNav />
     </nav>
   );
 }
