@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Quicksand } from "next/font/google";
+import { Quicksand, Montserrat, Pacifico, Cormorant_Garamond } from "next/font/google";
 import "./globals.css";
 
 // SEC-WEB-7 — the UI font is loaded HERE, by the host app, not by @spattoo/designer.
@@ -25,6 +25,54 @@ const quicksand = Quicksand({
   variable: "--font-ui",
 });
 
+// SEC-WEB-7 follow-up — the storefront FONT_THEMES fonts. The designer's storefront
+// (and the baker-app theme preview, which renders the same component) picks its
+// typography at RUNTIME from the baker's saved `font_key`, choosing among these
+// families by their LITERAL names in inline styles (storefrontKit.js FONT_THEMES /
+// templates.js). next/font registers each `@font-face` under its real family name
+// (verified: it emits `font-family: Quicksand`, not a hashed alias), so those literal
+// names resolve. The bug this fixes: these were NEVER loaded — the comment in
+// FONT_THEMES claimed the host apps did, none did, so even the DEFAULT theme
+// (`montserrat`, needing Montserrat + Pacifico) rendered in a system fallback.
+//
+// `preload: false` on all three: which theme a given storefront uses isn't known at
+// build time, and on the baker app they're only touched when the Settings theme
+// preview opens — so preloading would download fonts most page views never show.
+// With `display: swap` they load on first use behind a fallback, which is correct for
+// theme-conditional typography. Quicksand (the always-on chrome) stays preloaded above.
+//
+// Weights match what the storefront styles actually request:
+//   Montserrat — body + most headings, at 400/600/700/800 (variable, one file).
+//   Pacifico   — the bakery wordmark only, single weight 400 (script, not variable).
+//   Cormorant Garamond — the "Classic serif" theme's headings, at 600/700.
+const montserrat = Montserrat({
+  subsets: ["latin", "latin-ext"],
+  display: "swap",
+  preload: false,
+  variable: "--font-storefront-sans",
+});
+const pacifico = Pacifico({
+  subsets: ["latin", "latin-ext"],
+  weight: ["400"],
+  display: "swap",
+  preload: false,
+  variable: "--font-storefront-brand",
+});
+const cormorant = Cormorant_Garamond({
+  subsets: ["latin", "latin-ext"],
+  weight: ["600", "700"],
+  display: "swap",
+  preload: false,
+  variable: "--font-storefront-serif",
+});
+
+const fontVariables = [
+  quicksand.variable,
+  montserrat.variable,
+  pacifico.variable,
+  cormorant.variable,
+].join(" ");
+
 export const metadata: Metadata = {
   title: "Spattoo",
   description: "Design your cake, request a quote.",
@@ -34,7 +82,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={quicksand.variable}>
+    <html lang="en" className={fontVariables}>
       <body className={quicksand.className}>{children}</body>
     </html>
   );
