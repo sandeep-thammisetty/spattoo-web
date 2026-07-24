@@ -12,6 +12,15 @@ import { BASE_DOMAIN } from "./lib/domain";
 // than the reserved ones are treated as a baker slug.
 const RESERVED = new Set(["www", "app", "api", "admin", "assets"]);
 
+// SEC-WEB-5 — the slug is taken from the attacker-supplied `Host` header and then
+// written into `url.pathname` for the rewrite, so constrain it to the charset a
+// real baker slug can actually use before it reaches the routed path. Vercel only
+// forwards hosts matching a configured (wildcard) domain and the single-label rule
+// below already excludes dots, so this is defence in depth rather than a known
+// hole — but a host-derived value flowing into a path deserves an explicit
+// allowlist, not an inferred one.
+const SLUG_RE = /^[a-z0-9-]+$/;
+
 // Only the production base domain (spattoo.com) is allowed into search indexes.
 // Every other host — the spattoo.dev dev environment, Vercel preview URLs,
 // localhost — gets X-Robots-Tag: noindex so it stays publicly reachable but
@@ -32,13 +41,19 @@ function bakerSubdomain(hostname: string): string | null {
     // Require exactly ONE label (no nested dots) so a.b.<base> never silently
     // resolves to "a"; reserved labels (app/www/…) are not bakers.
     if (!head || head.includes(".") || RESERVED.has(head)) return null;
+    if (!SLUG_RE.test(head)) return null;
     return head;
   }
   return null;
 }
 
 export function proxy(req: NextRequest) {
-  const hostname = (req.headers.get("host") ?? "").split(":")[0];
+  // Lower-case first: DNS host names are case-insensitive, so `Foo.spattoo.com`
+  // and `foo.spattoo.com` are the same tenant. Browsers already send lower-case,
+  // but a raw client need not — normalising here means the SEC-WEB-5 charset
+  // guard rejects genuinely invalid slugs without also rejecting a valid tenant
+  // that merely arrived oddly cased.
+  const hostname = (req.headers.get("host") ?? "").split(":")[0].toLowerCase();
   const slug = bakerSubdomain(hostname);
   if (!slug) return applyRobots(NextResponse.next(), hostname);
 
