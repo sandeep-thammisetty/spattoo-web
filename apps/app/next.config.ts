@@ -1,6 +1,13 @@
 import type { NextConfig } from "next";
+// Plain .mjs shared with apps/marketing — typed via its JSDoc annotations.
+import { securityHeadersConfig } from "../../shared/securityHeaders.mjs";
 
 const nextConfig: NextConfig = {
+  // Security response headers (CSP + friends), shared with apps/marketing.
+  // CSP is REPORT-ONLY until CSP_ENFORCE=true. See shared/securityHeaders.mjs.
+  async headers() {
+    return securityHeadersConfig(process.env);
+  },
   // The customer storefront mounts @spattoo/designer (a local-linked workspace
   // library); transpile it so its JSX/ESM is built with this app.
   // three/drei are EXTERNALIZED by the designer's Vite lib build, so they arrive
