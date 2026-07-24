@@ -16,9 +16,22 @@
 // ── Rollout ────────────────────────────────────────────────────────────────
 // CSP ships as `Content-Security-Policy-Report-Only` by default: the browser
 // evaluates the policy and reports violations to the console but BLOCKS
-// NOTHING. Set `CSP_ENFORCE=true` in the deploy env to switch to the enforcing
-// header once the violation list is clean. Flipping enforcement is therefore a
-// config change, not a code change.
+// NOTHING. Set `CSP_ENFORCE=true` to switch to the enforcing header once the
+// violation list is clean. Flipping enforcement is therefore a config change,
+// not a code change.
+//
+// ⚠️ `CSP_ENFORCE` is read at BUILD time, not request time — Next evaluates
+// `headers()` during `next build` and bakes the result into the routes
+// manifest. Setting it only as a runtime env var on Vercel does NOTHING; it
+// must be present for the build, and changing it requires a REDEPLOY, not just
+// a restart. (Verified the hard way: a server started without the var kept
+// serving the enforcing header from the previous build.)
+//
+// ⚠️ Violations raised inside a Web Worker never reach a document-level
+// `securitypolicyviolation` listener. A page can therefore look perfectly clean
+// while a worker is being blocked. When changing this policy, diff the NETWORK
+// LOG and check that the designer actually finishes rendering — do not trust an
+// empty console. Both third-party-CDN findings here were invisible that way.
 
 /** Origin (scheme://host[:port]) of a URL, or null if unset/unparseable. */
 function originOf(url) {
@@ -53,6 +66,22 @@ export function buildCsp(env = process.env) {
   // iframe, so it needs script-src AND frame-src.
   const TURNSTILE = "https://challenges.cloudflare.com";
 
+  // ── Third-party asset origins (allowlisted; self-hosting is the end state) ──
+  // Measured with a report-only pass on 2026-07-24 (see the security action
+  // plan, SEC-WEB-3). These are ALLOWLISTED for now so the policy can be
+  // enforced; SEC-WEB-7 tracks self-hosting them, after which they come out.
+  //
+  // Google Fonts — @spattoo/designer pulls Quicksand via an @import in a <style>
+  // block. googleapis serves the stylesheet, gstatic serves the .woff2 files.
+  const GFONTS_CSS = "https://fonts.googleapis.com";
+  const GFONTS_FILES = "https://fonts.gstatic.com";
+  // jsdelivr — troika-three-text (drei's <Text>) fetches unicode-font-resolver
+  // data at runtime. NOTE: it does so from inside a blob: Web Worker, so it
+  // raises NO document-level violation event; it was found by diffing the
+  // network log. Removing this without checking the network log will silently
+  // break 3D text.
+  const JSDELIVR = "https://cdn.jsdelivr.net";
+
   const directives = {
     "default-src": ["'self'"],
 
@@ -63,27 +92,45 @@ export function buildCsp(env = process.env) {
     "frame-ancestors": ["'none'"],
     "form-action": ["'self'"],
 
-    // NOTE: 'unsafe-inline' is deliberately ABSENT here for the report-only
-    // pass. Next.js injects inline hydration scripts, so this WILL report
-    // violations — that is the point: the report tells us exactly how many
-    // inline scripts exist and whether a nonce-based policy is viable before we
-    // decide to fall back to 'unsafe-inline'. Do not add it without reading the
-    // report first.
-    // 'unsafe-eval' is dev-only: the webpack/turbopack HMR runtime needs it,
-    // production builds do not.
-    "script-src": ["'self'", TURNSTILE, ...(isDev ? ["'unsafe-eval'"] : [])],
+    // 'unsafe-inline' — Next.js injects inline hydration/bootstrap scripts (52
+    // of them across the surface, measured 2026-07-24). A nonce would be the
+    // stronger policy but has to be minted per request in proxy.ts, which
+    // forces dynamic rendering and gives up the static prerender the marketing
+    // site gets on all its routes. Deliberate trade: the directive that
+    // actually blocks token exfiltration is connect-src, and that stays tight.
+    // 'wasm-unsafe-eval' — three.js Draco / meshopt / KTX2 decoders instantiate
+    // WebAssembly. Without it, compressed 3D assets fail to decode. It permits
+    // wasm compilation ONLY, not eval() of JS.
+    // 'unsafe-eval' is dev-only: the HMR runtime needs it, prod builds do not.
+    // blob: — REQUIRED, and the reason is non-obvious. troika-three-text (drei's
+    // <Text>, used by the designer) builds its Web Worker from a blob: URL and
+    // then calls importScripts(blob:…) INSIDE that worker. Creating the worker
+    // is governed by worker-src, but the importScripts call is governed by
+    // script-src, and a worker inherits the document's policy. Without blob:
+    // here the worker dies with "failed to rehydrate" and the cake never
+    // finishes loading — while raising NO violation event, because violations
+    // inside a worker never reach a document-level listener. Verified by
+    // driving the real designer under the enforcing policy (2026-07-24).
+    "script-src": [
+      "'self'",
+      "'unsafe-inline'",
+      "'wasm-unsafe-eval'",
+      "blob:",
+      TURNSTILE,
+      ...(isDev ? ["'unsafe-eval'"] : []),
+    ],
 
     // Inline styles are unavoidable and low-risk here: per-baker brand colours
     // are computed per render and applied as style attributes by design (see
     // the reuse/config-driven rule in CLAUDE.md), and Tailwind v4 + Next inject
     // inline <style>. 'unsafe-inline' for STYLES does not enable script exec.
-    "style-src": ["'self'", "'unsafe-inline'"],
+    "style-src": ["'self'", "'unsafe-inline'", GFONTS_CSS],
 
     // data: — canvas-generated thumbnails and inlined SVG/icon data URIs.
     // blob:  — designer share cards + client-side canvas snapshots.
     "img-src": ["'self'", "data:", "blob:", assets],
 
-    "font-src": ["'self'", "data:"],
+    "font-src": ["'self'", "data:", GFONTS_FILES, JSDELIVR],
 
     // The browser talks to: our API, Supabase (REST + auth + realtime), the
     // asset CDN (GLB models / textures fetched by three.js), Sentry ingest,
@@ -99,6 +146,7 @@ export function buildCsp(env = process.env) {
       assets,
       sentry,
       TURNSTILE,
+      JSDELIVR,
     ],
 
     // three.js decoders (KTX2 / Draco) instantiate their workers from blob:
