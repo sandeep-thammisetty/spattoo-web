@@ -57,6 +57,25 @@ export function buildCsp(env = process.env) {
   const assets = originOf(env.NEXT_PUBLIC_ASSETS_BASE);
   const sentry = originOf(env.NEXT_PUBLIC_SENTRY_DSN);
 
+  // ⚠️ ASSET ORIGINS ARE NOT FULLY KNOWABLE FROM THIS APP'S ENV. The API builds
+  // asset URLs as ABSOLUTE strings from ITS OWN `R2_PUBLIC_URL` (spattoo-api:
+  // routes/elements.js, templates.js, storefront.js, bakers.js, tags.js) and the
+  // designer uses an absolute URL verbatim — `NEXT_PUBLIC_ASSETS_BASE` is only
+  // the prefix for BARE KEYS (see CakeDesigner.jsx `new URL(key)` fallback). So:
+  //   1. `NEXT_PUBLIC_ASSETS_BASE` here MUST match the API's `R2_PUBLIC_URL`, and
+  //   2. rows written under an EARLIER `R2_PUBLIC_URL` still hold that OLD host
+  //      forever, because the absolute URL is persisted in the database.
+  // Either mismatch blocks every element thumbnail, GLB, template image and baker
+  // logo once CSP is enforced. `CSP_EXTRA_ORIGINS` is the escape hatch: a
+  // comma/space-separated list of additional origins added to img-src, connect-src
+  // and media-src, so an origin can be admitted from deploy config without a code
+  // change. Use it for legacy/second asset hosts (e.g. the raw `*.r2.dev` bucket
+  // URL alongside the CDN domain).
+  const extra = String(env.CSP_EXTRA_ORIGINS || "")
+    .split(/[\s,]+/)
+    .map((s) => originOf(s.trim()))
+    .filter(Boolean);
+
   // Supabase realtime (live co-design, auth refresh) upgrades to a WebSocket on
   // the same host — wss: is a distinct scheme and is NOT covered by the https:
   // entry, so it must be listed explicitly.
@@ -128,7 +147,7 @@ export function buildCsp(env = process.env) {
 
     // data: — canvas-generated thumbnails and inlined SVG/icon data URIs.
     // blob:  — designer share cards + client-side canvas snapshots.
-    "img-src": ["'self'", "data:", "blob:", assets],
+    "img-src": ["'self'", "data:", "blob:", assets, ...extra],
 
     "font-src": ["'self'", "data:", GFONTS_FILES, JSDELIVR],
 
@@ -147,13 +166,14 @@ export function buildCsp(env = process.env) {
       sentry,
       TURNSTILE,
       JSDELIVR,
+      ...extra,
     ],
 
     // three.js decoders (KTX2 / Draco) instantiate their workers from blob:
     // URLs — without this the compressed-asset path fails at runtime.
     "worker-src": ["'self'", "blob:"],
 
-    "media-src": ["'self'", "blob:", "data:"],
+    "media-src": ["'self'", "blob:", "data:", assets, ...extra],
     "frame-src": [TURNSTILE],
     "manifest-src": ["'self'"],
   };
