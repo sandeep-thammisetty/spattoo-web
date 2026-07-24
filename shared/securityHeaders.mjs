@@ -85,15 +85,20 @@ export function buildCsp(env = process.env) {
   // iframe, so it needs script-src AND frame-src.
   const TURNSTILE = "https://challenges.cloudflare.com";
 
-  // ── Third-party asset origins (allowlisted; self-hosting is the end state) ──
-  // Measured with a report-only pass on 2026-07-24 (see the security action
-  // plan, SEC-WEB-3). These are ALLOWLISTED for now so the policy can be
-  // enforced; SEC-WEB-7 tracks self-hosting them, after which they come out.
+  // ── No third-party font/asset CDNs (SEC-WEB-7, closed 2026-07-24) ──────────
+  // This policy used to allowlist fonts.googleapis.com + fonts.gstatic.com (the
+  // designer @import-ed Quicksand from 17 places) and cdn.jsdelivr.net (troika
+  // fetched its 3D-text font). Both are gone: the host apps now self-host the UI
+  // font (next/font/google here, @fontsource in spattoo-admin) and the designer
+  // bundles its 3D-text font. Everything is served from our own origin, so
+  // `default-src 'self'` covers it and NO font origin is needed.
   //
-  // Google Fonts — @spattoo/designer pulls Quicksand via an @import in a <style>
-  // block. googleapis serves the stylesheet, gstatic serves the .woff2 files.
-  const GFONTS_CSS = "https://fonts.googleapis.com";
-  const GFONTS_FILES = "https://fonts.gstatic.com";
+  // Do not re-add one without checking whether the font can be self-hosted first.
+  // spattoo-core's `check:fonts` gate fails the build if a font CDN reappears in
+  // its source, and its warnIfFontsMissing() warns at runtime if a host app
+  // forgets to load a required family (a missing webfont is otherwise INVISIBLE —
+  // it just falls back to a system font, which is how the storefront theme fonts
+  // went unloaded for months).
   // NOTE: cdn.jsdelivr.net USED to be required here — troika-three-text (drei's
   // <Text>) fetched unicode-font-resolver data at runtime. It was removed once
   // @spattoo/designer 0.1.147 bundled the font and passed it explicitly, so the
@@ -145,13 +150,13 @@ export function buildCsp(env = process.env) {
     // are computed per render and applied as style attributes by design (see
     // the reuse/config-driven rule in CLAUDE.md), and Tailwind v4 + Next inject
     // inline <style>. 'unsafe-inline' for STYLES does not enable script exec.
-    "style-src": ["'self'", "'unsafe-inline'", GFONTS_CSS],
+    "style-src": ["'self'", "'unsafe-inline'"],
 
     // data: — canvas-generated thumbnails and inlined SVG/icon data URIs.
     // blob:  — designer share cards + client-side canvas snapshots.
     "img-src": ["'self'", "data:", "blob:", assets, ...extra],
 
-    "font-src": ["'self'", "data:", GFONTS_FILES],
+    "font-src": ["'self'", "data:"],
 
     // The browser talks to: our API, Supabase (REST + auth + realtime), the
     // asset CDN (GLB models / textures fetched by three.js), Sentry ingest,
