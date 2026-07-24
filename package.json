@@ -5,6 +5,16 @@
   "workspaces": [
     "apps/*"
   ],
+  "// lockfile": [
+    "NEVER regenerate package-lock.json from scratch (rm package-lock.json, or rm -rf node_modules",
+    "followed by npm install) on macOS. npm then records ONLY the host platform's optional binaries:",
+    "sharp drops from 24 platform packages to 2 (darwin only), the linux ones vanish, and the Vercel",
+    "build — which runs npm ci on linux-x64 — fails. Verified: it broke a deploy on 2026-07-24.",
+    "To change a dependency, edit package.json and run plain `npm install` so the existing lock is",
+    "updated in place. Sanity check before pushing a lockfile change:",
+    "  grep -c '\"node_modules/@img/sharp-' package-lock.json   # expect 24, not 2",
+    "  grep -c '\"node_modules/@next/swc-' package-lock.json     # expect 8"
+  ],
   "// security": [
     "npm audit reports 3 remaining highs, all inside next@16.2.11's own dependency tree:",
     "postcss 8.4.31 (exact pin) and sharp 0.34.5 (optional). 16.2.11 IS npm's `latest` — there",
