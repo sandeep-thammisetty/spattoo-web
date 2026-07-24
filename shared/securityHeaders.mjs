@@ -94,12 +94,14 @@ export function buildCsp(env = process.env) {
   // block. googleapis serves the stylesheet, gstatic serves the .woff2 files.
   const GFONTS_CSS = "https://fonts.googleapis.com";
   const GFONTS_FILES = "https://fonts.gstatic.com";
-  // jsdelivr — troika-three-text (drei's <Text>) fetches unicode-font-resolver
-  // data at runtime. NOTE: it does so from inside a blob: Web Worker, so it
-  // raises NO document-level violation event; it was found by diffing the
-  // network log. Removing this without checking the network log will silently
-  // break 3D text.
-  const JSDELIVR = "https://cdn.jsdelivr.net";
+  // NOTE: cdn.jsdelivr.net USED to be required here — troika-three-text (drei's
+  // <Text>) fetched unicode-font-resolver data at runtime. It was removed once
+  // @spattoo/designer 0.1.147 bundled the font and passed it explicitly, so the
+  // fetch no longer happens. A `check:fonts` gate in spattoo-core fails the build
+  // if a <Text> is added without an explicit font, which is what would bring the
+  // CDN back. If it ever needs re-adding, remember troika fetches from inside a
+  // blob: Web Worker, so the breakage raises NO violation event — diff the
+  // NETWORK LOG, not the console.
 
   const directives = {
     "default-src": ["'self'"],
@@ -149,7 +151,7 @@ export function buildCsp(env = process.env) {
     // blob:  — designer share cards + client-side canvas snapshots.
     "img-src": ["'self'", "data:", "blob:", assets, ...extra],
 
-    "font-src": ["'self'", "data:", GFONTS_FILES, JSDELIVR],
+    "font-src": ["'self'", "data:", GFONTS_FILES],
 
     // The browser talks to: our API, Supabase (REST + auth + realtime), the
     // asset CDN (GLB models / textures fetched by three.js), Sentry ingest,
@@ -165,7 +167,6 @@ export function buildCsp(env = process.env) {
       assets,
       sentry,
       TURNSTILE,
-      JSDELIVR,
       ...extra,
     ],
 
