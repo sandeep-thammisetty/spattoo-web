@@ -82,6 +82,9 @@ export function makeCustomerApiClient(supabase: SupabaseClient, slug: string) {
     fetchFlavours: (bakerSlug: string) =>
       publicGet(`/api/flavours?bakerSlug=${encodeURIComponent(bakerSlug)}`),
     fetchOrderStatuses: () => publicGet(`/api/order-statuses`),
+    // Eggless / vegan / Jain / allergens. Reference data, not a tenant's data, so it
+    // is public — the order form needs it before anyone authenticates.
+    fetchDietaryRequirements: () => publicGet(`/api/dietary-requirements`),
 
     // ── Authenticated as the customer ─────────────────────────────────────────
     // contentLength is REQUIRED and is signed INTO the URL: the body goes browser → R2 and never

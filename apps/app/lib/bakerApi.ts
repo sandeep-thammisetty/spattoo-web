@@ -236,6 +236,8 @@ export function makeBakerApiClient(supabase: SupabaseClient) {
 
     // ── Reference data ────────────────────────────────────────────────────────
     fetchOrderStatuses: () => publicGet("/api/order-statuses"),
+    // Eggless / vegan / Jain / allergens — the vocabulary the order form offers.
+    fetchDietaryRequirements: () => publicGet("/api/dietary-requirements"),
     fetchFlavours: (bakerSlugArg?: string) =>
       bakerSlugArg
         ? publicGet(`/api/flavours?bakerSlug=${encodeURIComponent(bakerSlugArg)}`)
