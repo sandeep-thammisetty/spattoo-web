@@ -237,7 +237,23 @@ export function makeBakerApiClient(supabase: SupabaseClient) {
     // ── Reference data ────────────────────────────────────────────────────────
     fetchOrderStatuses: () => publicGet("/api/order-statuses"),
     // Eggless / vegan / Jain / allergens — the vocabulary the order form offers.
-    fetchDietaryRequirements: () => publicGet("/api/dietary-requirements"),
+    fetchDietaryRequirements: (bakerSlugArg?: string) =>
+      bakerSlugArg
+        ? publicGet(`/api/dietary-requirements?bakerSlug=${encodeURIComponent(bakerSlugArg)}`)
+        : publicGet("/api/dietary-requirements"),
+
+    // The same list flagged with THIS baker's on/off state, for the settings screen.
+    fetchBakerDietaryRequirements: () => authGet("/api/baker/dietary-requirements"),
+
+    // Which options this bakery doesn't deal in. A diet option switched off disappears
+    // from the order form; an allergen switched off stays visible and is still recorded,
+    // showing "can't guarantee" instead — a customer's allergy must never lose its home
+    // on the form just because the bakery can't cater to it.
+    updateBakerDietaryExclusions: (excludedKeys: string[]) =>
+      authFetch("/api/baker/dietary-requirements/exclusions", {
+        method: "PUT",
+        body: JSON.stringify({ excluded_keys: excludedKeys }),
+      }),
     fetchFlavours: (bakerSlugArg?: string) =>
       bakerSlugArg
         ? publicGet(`/api/flavours?bakerSlug=${encodeURIComponent(bakerSlugArg)}`)
@@ -269,6 +285,18 @@ export function makeBakerApiClient(supabase: SupabaseClient) {
       authFetch("/api/baker/flavours/exclusions", {
         method: "PUT",
         body: JSON.stringify({ excluded_flavour_ids: excludedFlavourIds }),
+      }),
+
+    // What this baker can't make a flavour as ("no eggless tiramisu"). Sent as the
+    // EFFECTIVE set per flavour; the API stores only what differs from Spattoo's global
+    // default, so the UI never has to know a baseline exists. Drives a warning on the
+    // order form and a band on the X-Ray sheet — it never blocks an order.
+    updateBakerFlavourDietaryConflicts: (
+      conflicts: { flavourId: string; source?: string; requirementKeys: string[] }[],
+    ) =>
+      authFetch("/api/baker/flavours/dietary-conflicts", {
+        method: "PUT",
+        body: JSON.stringify({ conflicts }),
       }),
 
     // ── Templates (baker management: global Spattoo templates + this baker's exclusions) ──

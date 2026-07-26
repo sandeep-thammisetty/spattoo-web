@@ -83,8 +83,14 @@ export function makeCustomerApiClient(supabase: SupabaseClient, slug: string) {
       publicGet(`/api/flavours?bakerSlug=${encodeURIComponent(bakerSlug)}`),
     fetchOrderStatuses: () => publicGet(`/api/order-statuses`),
     // Eggless / vegan / Jain / allergens. Reference data, not a tenant's data, so it
-    // is public — the order form needs it before anyone authenticates.
-    fetchDietaryRequirements: () => publicGet(`/api/dietary-requirements`),
+    // is public — the order form needs it before anyone authenticates. With a slug each
+    // row also carries `offered`: whether this bakery deals in it at all. The full list
+    // comes back either way, because a diet option that isn't offered is hidden while an
+    // allergen never is — that rule lives on the surface, not here.
+    fetchDietaryRequirements: (bakerSlugArg?: string) =>
+      bakerSlugArg
+        ? publicGet(`/api/dietary-requirements?bakerSlug=${encodeURIComponent(bakerSlugArg)}`)
+        : publicGet(`/api/dietary-requirements`),
 
     // ── Authenticated as the customer ─────────────────────────────────────────
     // contentLength is REQUIRED and is signed INTO the URL: the body goes browser → R2 and never
