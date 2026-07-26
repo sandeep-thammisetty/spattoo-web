@@ -120,12 +120,29 @@ Platform.** Compliance with all applicable food-safety laws — including regist
 licensing under the Food Safety and Standards Act, 2006 (FSSAI) and rules made under it,
 labelling, and hygiene standards — is the sole responsibility of the Baker.
 
-### 3.4. Allergens and dietary requirements — confirm with the Baker directly.
-Spattoo does **not** collect, verify, or represent the ingredients, allergens, or
-nutritional content of any Cake. **If you have any allergy, intolerance, medical,
-religious, or dietary requirement, you must confirm ingredients and suitability directly
-with the Baker before ordering or consuming any Cake.** Spattoo accepts no liability for
-any allergic reaction, illness, injury, or harm arising from the consumption of a Cake.
+### 3.4. Allergens and dietary requirements — you must still confirm with the Baker directly.
+The Platform lets you **record** a dietary or allergen requirement — for example eggless,
+vegan, Jain, nut-free, gluten-free, or dairy-free — on a quote or order, and passes what
+you record to the Baker. That feature **carries your message; it does not check anything**:
+
+- **You state the requirement.** What is recorded is your own statement of what you
+  require, exactly as it would be if you had written it in a note, sent it by message, or
+  said it on a call. Recording it does not make it a statement by Spattoo.
+- **The Baker decides and confirms.** Whether a Cake can be made to meet a requirement,
+  and whether it in fact was, is entirely for the Baker, using the Baker's own recipes,
+  ingredients, equipment, staff, and premises (Sections 3.1 and 3.3).
+- **Spattoo records; it does not verify.** Spattoo does **not** verify, check, test,
+  certify, or represent the ingredients, allergens, risk of cross-contamination, or
+  nutritional content of any Cake, and does **not** represent that anything you record has
+  been received, read, accepted, or acted on. Recording a requirement is **not** a
+  confirmation by Spattoo, or by the Baker, that it will be met.
+
+**Recording a requirement on the Platform is not a substitute for speaking to the Baker.
+If you have any allergy, intolerance, medical, religious, or dietary requirement, you must
+confirm ingredients and suitability directly with the Baker before ordering or consuming
+any Cake.** Spattoo accepts no liability for any allergic reaction, illness, injury, or
+harm arising from the consumption of a Cake, or from any requirement you record not being
+received, read, accepted, or met.
 
 ### 3.5. We do not deliver.
 **Spattoo does not make, pack, dispatch, deliver, or arrange delivery or logistics of
@@ -531,7 +548,16 @@ invoicing, taxes, and customer service toward your Customers;
 B5.8. you will handle your Customers' personal data lawfully. As between you and Spattoo,
 **you are the Data Fiduciary** for your Customers' personal data collected through your
 storefront, and Spattoo processes it on your behalf as described in the
-[Privacy Policy](/privacy).
+[Privacy Policy](/privacy);
+
+B5.9. **where a dietary or allergen requirement is recorded on a quote or order, it is
+your responsibility to read it, to decide whether you can meet it, and to confirm that
+directly with your Customer.** A requirement shown to you on the Platform is your
+Customer's own statement, passed to you unverified — Spattoo checks nothing about it and
+its appearance on your screen is not a confirmation that it can be, or has been, met.
+Nothing in that feature reduces your sole responsibility under B5.2 for ingredients,
+allergen information, cross-contamination, labelling, and food safety. If a Customer
+records a requirement you cannot meet, **you must tell them before accepting the order.**
 
 ## B6. Baker Indemnity
 
@@ -583,6 +609,13 @@ the Design or storefront alone for these. As set out in Section 1.6, Spattoo doe
 verify a Baker's existence or genuineness, so you should also satisfy yourself as to who
 you are dealing with — **especially before paying any advance** — since any advance or
 payment for a Cake is made directly to the Baker, off the Platform.
+
+C2.3. **Recording a dietary or allergen requirement does not discharge C2.2.** Where the
+designer or an order form lets you record a requirement such as eggless, vegan, Jain, or
+nut-free, doing so records your statement and passes it to the Baker. It is not a
+confirmation that the Baker has seen it, accepted it, or can meet it, and it is not a
+check by Spattoo of what any Cake contains. You must still confirm suitability with the
+Baker directly, as set out in Section 3.4.
 
 ## C3. Images You Upload and Themed Cakes
 

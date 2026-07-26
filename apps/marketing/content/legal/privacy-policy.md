@@ -57,6 +57,11 @@ Fiduciary, requests about that data may also need to be directed to the relevant
   amount, and order status.
 - **Optional images** you upload (for example, a portrait/reference image), where the
   storefront offers that.
+- **Dietary and allergen requirements you choose to state** on a quote or order (for
+  example eggless, vegan, Jain, nut-free). These are optional, are recorded as **your own
+  statement** and passed to the Baker so they can act on it, and are **not verified by
+  Spattoo** (see [Terms of Service](/terms) Section 3.4). We use them only to convey your
+  request to that Baker and to show it on their order screens and production sheets.
 
 ### 2.3. Collected automatically (technical data)
 - Basic device and usage data (for example, IP address, browser/device type, approximate
