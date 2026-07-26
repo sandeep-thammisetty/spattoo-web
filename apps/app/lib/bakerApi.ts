@@ -212,6 +212,11 @@ export function makeBakerApiClient(supabase: SupabaseClient) {
       const qs = new URLSearchParams(params).toString();
       return authGet(`/api/orders${qs ? `?${qs}` : ""}`);
     },
+    // Per-day counts for the Orders → Calendar month view. Returns one entry per day
+    // that has orders — never the orders themselves, so the payload stays the size of a
+    // month no matter how many orders the baker takes.
+    fetchOrdersCalendar: (from: string, to: string) =>
+      authGet(`/api/orders/calendar?${new URLSearchParams({ from, to }).toString()}`),
     updateOrderStatus: (id: string, status: string, comment?: string) =>
       authFetch(`/api/orders/${id}/status`, { method: "PATCH", body: JSON.stringify({ status, comment }) }),
     editOrder: (id: string, formData: unknown) =>
