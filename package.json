@@ -27,6 +27,8 @@
     "must be re-assessed. See SEC-WEB-2 in spattoo-docs/security/spattoo-web-SECURITY_ACTION_PLAN.md."
   ],
   "scripts": {
+    "prepare": "git config core.hooksPath .githooks 2>/dev/null || true",
+    "check:feature-docs": "node ../spattoo-docs/bin/check-feature-docs.mjs --repo spattoo-web",
     "dev:marketing": "npm run dev --workspace marketing",
     "dev:app": "npm run dev --workspace app",
     "build:marketing": "npm run build --workspace marketing",

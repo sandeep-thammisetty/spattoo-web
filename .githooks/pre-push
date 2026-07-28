@@ -1,0 +1,31 @@
+#!/bin/sh
+# Tracked hook - pre-push secret gate. Scans ONLY the commits being pushed (not full
+# history). Bypass: git push --no-verify
+#
+# No `npm audit` line here, unlike spattoo-core: this repo has 3 KNOWN high advisories
+# inside next@16.2.11's own tree that cannot be fixed without downgrading Next (see the
+# "// security" note in package.json). A warning that fires on every single push trains
+# you to ignore it, which is worse than not printing it. Re-assess when Next patches.
+. "$(git rev-parse --show-toplevel)/.githooks/_lib.sh"
+
+FAIL=0
+
+gitleaks_available
+case $? in
+  0)
+    while read -r local_ref local_sha remote_ref remote_sha; do
+      case "$local_sha"  in *0000000000000000*) continue ;; esac
+      case "$remote_sha" in
+        *0000000000000000*) RANGE="$local_sha" ;;      # new branch - scan all its commits
+        *)                  RANGE="$remote_sha..$local_sha" ;;
+      esac
+      secret_scan_range "$RANGE" || FAIL=1
+    done
+    ;;
+  2) exit 1 ;;                                          # missing scanner - already explained
+esac
+
+[ "$FAIL" -eq 0 ] || {
+  printf '\nx Push blocked: possible secret in pushed commits (see above). Bypass: git push --no-verify\n'
+  exit 1
+}
