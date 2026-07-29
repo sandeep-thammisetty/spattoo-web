@@ -232,6 +232,27 @@ export function makeBakerApiClient(supabase: SupabaseClient) {
     deleteOrderPhoto: (id: string, photoId: string) =>
       authFetch(`/api/orders/${id}/photos/${photoId}`, { method: "DELETE" }),
 
+    // ── Build guide from a reference photo (manual orders) ─────────────────────
+    // A manual order has no design_snapshot, so X-Ray has nothing to read. This asks the server to
+    // work one out from the order's primary reference photo; the response carries the estimate, so
+    // the designer opens the report from it directly rather than refetching the order.
+    //
+    // METERED — it spends an AI credit, but only when the reading is kept. Out of credits comes
+    // back as 402 INSUFFICIENT_CREDITS, which authFetch preserves as err.code/err.status so the
+    // caller can offer a top-up instead of showing a generic failure.
+    createDesignEstimate: (id: string, opts: { regenerate?: boolean } = {}) =>
+      authFetch(`/api/orders/${id}/design-estimate`, {
+        method: "POST",
+        body: JSON.stringify({ regenerate: opts.regenerate === true }),
+      }),
+    // The baker's corrections to that reading. Free — no model runs, and the raw estimate is left
+    // untouched on the server so estimate-vs-corrected stays a usable accuracy signal.
+    updateDesignEstimate: (id: string, estimate: unknown) =>
+      authFetch(`/api/orders/${id}/design-estimate`, {
+        method: "PATCH",
+        body: JSON.stringify({ estimate }),
+      }),
+
     // ── Reference photos (manual orders; ≤3; the order's picture) ───────────────
     fetchOrderReferencePhotos: (id: string) => authGet(`/api/orders/${id}/reference-photos`),
     saveOrderReferencePhotos: (id: string, keys: string[]) =>
@@ -374,6 +395,24 @@ export function makeBakerApiClient(supabase: SupabaseClient) {
     // baker — drives the "X of N orders used / upgrade" surface.
     fetchEntitlements: () => authGet("/api/baker/entitlements"),
     fetchBillingPeriods: () => authGet("/api/billing/periods"),
+
+    // ── AI credits (the metered "smart tools" allowance) ──────────────────────
+    // Returns the raw balance AND `actions` — each metered job with how many of it the baker can
+    // still run. Use the COUNTS, not the credits: the prices live in the credit_costs table so they
+    // can be retuned without a deploy, and a client that divides by its own copy starts lying the
+    // moment they move. `usedPct` carries the 70/90/100 nudge thresholds from one place.
+    // Unlimited plans report null counts, so the UI can say "included" instead of a countdown.
+    fetchAiCredits: () => authGet("/api/baker/ai-credits"),
+    // Top-up shelf. Each pack states what it BUYS ("20 build guides"), for the same reason.
+    fetchAiCreditPacks: () => authGet("/api/baker/ai-credits/packs"),
+    // Opens a Razorpay ORDER for a pack (one-time payment, not a subscription). Returns
+    // { key_id, order_id, amount } for Checkout. Credits are minted by the payment webhook, never
+    // here — so a Checkout the baker abandons costs nothing and credits nothing.
+    purchaseAiCredits: (packKey: string) =>
+      authFetch("/api/baker/ai-credits/purchase", {
+        method: "POST",
+        body: JSON.stringify({ packKey }),
+      }),
     // Public marketing plan catalog (one source for billing + onboarding).
     fetchPlans: () => publicGet("/api/plans"),
     fetchSubscriptionHistory: () => authGet("/api/baker/subscription/history"),
