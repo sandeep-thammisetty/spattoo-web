@@ -10,11 +10,23 @@ Real files land in `node_modules`, inside the repo root, which Turbopack resolve
 
 ### Regenerate after changing core
 ```sh
-cd <spattoo-core checkout> && npm run build && \
-  npm pack --pack-destination=<spattoo-web>/vendor
-# then bump the filename in apps/app/package.json if the version changed, and:
+cd <spattoo-core checkout>
+npm run pack:vendor -- <spattoo-web>/vendor
+# then bump the filename in apps/app/package.json, and:
 cd <spattoo-web> && npm install
 ```
+
+`pack:vendor` builds, packs, and refuses to produce a tarball that cannot be trusted. It
+stops if the tree is dirty (matches no commit), if HEAD is behind `origin/dev` (see below),
+if that version is already vendored (the double-pack trap below), and finally diffs the
+tarball's `src/` against `git archive HEAD src`.
+
+> **`npm pack` packs the working tree, not the commit.** Nothing in npm ties the two
+> together, so a tarball can carry a version whose source it does not contain. That has
+> shipped: `0.1.161`'s release commit contained the template-thumbnail crop, but the
+> tarball vendored as `0.1.161` did not — it was packed from a branch predating the merge.
+> The crop was live in core and absent from production, and every check run against the
+> repo passed. Packing from a stale branch is the failure mode; `pack:vendor` is the guard.
 
 > **Never re-pack the same version twice.** If you change core again, bump the version
 > and pack THAT — do not overwrite an existing `vendor/spattoo-designer-<v>.tgz`.
