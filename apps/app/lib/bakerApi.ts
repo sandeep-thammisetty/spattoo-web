@@ -253,6 +253,14 @@ export function makeBakerApiClient(supabase: SupabaseClient) {
         body: JSON.stringify({ estimate }),
       }),
 
+    // Generate a step-by-step build guide for ONE decoration. Stored on the ELEMENT, so it is
+    // charged once and every future cake using that decoration includes it for free.
+    //
+    // Returns { notModelled: true } — and charges nothing — when the decoration is clearly printed
+    // or pre-made rather than hand-modelled. That is an answer, not a failure.
+    createElementBuildGuide: (elementId: string) =>
+      authFetch(`/api/elements/${elementId}/build-guide`, { method: "POST" }),
+
     // ── Reference photos (manual orders; ≤3; the order's picture) ───────────────
     fetchOrderReferencePhotos: (id: string) => authGet(`/api/orders/${id}/reference-photos`),
     saveOrderReferencePhotos: (id: string, keys: string[]) =>
