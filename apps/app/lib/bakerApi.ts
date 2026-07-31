@@ -232,7 +232,7 @@ export function makeBakerApiClient(supabase: SupabaseClient) {
     deleteOrderPhoto: (id: string, photoId: string) =>
       authFetch(`/api/orders/${id}/photos/${photoId}`, { method: "DELETE" }),
 
-    // ── Build guide from a reference photo (manual orders) ─────────────────────
+    // ── X-Ray spec from a reference photo (manual orders) ──────────────────────
     // A manual order has no design_snapshot, so X-Ray has nothing to read. This asks the server to
     // work one out from the order's primary reference photo; the response carries the estimate, so
     // the designer opens the report from it directly rather than refetching the order.
@@ -240,14 +240,14 @@ export function makeBakerApiClient(supabase: SupabaseClient) {
     // METERED — it spends an AI credit, but only when the reading is kept. Out of credits comes
     // back as 402 INSUFFICIENT_CREDITS, which authFetch preserves as err.code/err.status so the
     // caller can offer a top-up instead of showing a generic failure.
-    createDesignEstimate: (id: string, opts: { regenerate?: boolean } = {}) =>
+    createXraySpec: (id: string, opts: { regenerate?: boolean } = {}) =>
       authFetch(`/api/orders/${id}/design-estimate`, {
         method: "POST",
         body: JSON.stringify({ regenerate: opts.regenerate === true }),
       }),
-    // The baker's corrections to that reading. Free — no model runs, and the raw estimate is left
-    // untouched on the server so estimate-vs-corrected stays a usable accuracy signal.
-    updateDesignEstimate: (id: string, estimate: unknown) =>
+    // The baker's corrections to that reading. Free — no model runs, and the raw spec is left
+    // untouched on the server so spec-vs-corrected stays a usable accuracy signal.
+    updateXraySpec: (id: string, estimate: unknown) =>
       authFetch(`/api/orders/${id}/design-estimate`, {
         method: "PATCH",
         body: JSON.stringify({ estimate }),
