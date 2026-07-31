@@ -253,13 +253,14 @@ export function makeBakerApiClient(supabase: SupabaseClient) {
         body: JSON.stringify({ estimate }),
       }),
 
-    // Generate a step-by-step build guide for ONE decoration. Stored on the ELEMENT, so it is
-    // charged once and every future cake using that decoration includes it for free.
+    // How to make ONE decoration, for a DESIGNED order where the decoration is a library element.
+    // Stored on the ELEMENT, so it is charged once and every future cake using that decoration
+    // includes it for free.
     //
     // Returns { notModelled: true } — and charges nothing — when the decoration is clearly printed
     // or pre-made rather than hand-modelled. That is an answer, not a failure.
-    createElementBuildGuide: (elementId: string) =>
-      authFetch(`/api/elements/${elementId}/build-guide`, { method: "POST" }),
+    createElementDecorationSteps: (elementId: string) =>
+      authFetch(`/api/elements/${elementId}/xray/decoration-steps`, { method: "POST" }),
 
     // The same question for a decoration that has NO library element — a reference-photo order,
     // where the decoration exists only in the customer's picture. Read from that photo and stored
