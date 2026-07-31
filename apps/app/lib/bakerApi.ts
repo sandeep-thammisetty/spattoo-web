@@ -261,6 +261,19 @@ export function makeBakerApiClient(supabase: SupabaseClient) {
     createElementBuildGuide: (elementId: string) =>
       authFetch(`/api/elements/${elementId}/build-guide`, { method: "POST" }),
 
+    // The same question for a decoration that has NO library element — a reference-photo order,
+    // where the decoration exists only in the customer's picture. Read from that photo and stored
+    // on the order, so nothing is matched against the library and nothing can be mismatched.
+    //
+    // `key` identifies the decoration inside the order's xray_spec; `label` is what to look for in
+    // the photo, and comes from what the model reported SEEING — never from a matched element's
+    // name, which is how a cake with a bow got a faithful guide to a fondant doll.
+    createXrayDecorationSteps: (orderId: string, body: { key: string; label: string }) =>
+      authFetch(`/api/orders/${orderId}/xray/decoration-steps`, {
+        method: "POST",
+        body: JSON.stringify(body),
+      }),
+
     // ── Reference photos (manual orders; ≤3; the order's picture) ───────────────
     fetchOrderReferencePhotos: (id: string) => authGet(`/api/orders/${id}/reference-photos`),
     saveOrderReferencePhotos: (id: string, keys: string[]) =>
