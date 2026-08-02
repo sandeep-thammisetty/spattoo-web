@@ -61,6 +61,16 @@ const trial = {
 //
 // Before adding a row: grep for the key outside constants/entitlements.js and the seed. If the only
 // hits are the declaration and the seed, it is not a feature yet.
+//
+// The reverse also happened: "Edible print sheet (A4)" shipped a long time ago, is gated by nothing,
+// and had never been sold. A baker arranges the customer's photo frames on an A4 sheet at true size,
+// checks them against cake-diameter guides, and exports a print-ready PDF with cut marks — on the
+// sheets they already buy. Unsold features are the cheaper mistake of the two, but still a mistake.
+//
+// CUSTOM TEMPLATES IS ✓ EVERYWHERE (2026-08-02). It was "—" on Flame and a named Blaze hook, and
+// `custom_templates` gates nothing — the registry calls it inert. Rather than keep selling a
+// difference that does not exist, the capability is simply available to everyone, and the row now
+// says so.
 // Where the two disagreed, the SEED won and this file changed: the page must never promise more
 // than a baker gets. Corrected 2026-08-02 — Spark's fictional "10 total orders" removed with the
 // column (no plan has an order cap; a trial is bounded by TIME).
@@ -87,8 +97,9 @@ const tiers = [
     features: [
       { label: "Storefront + 3D designer", value: "✓" },
       { label: "Orders & quotes", value: "Unlimited" },
-      { label: "Custom templates", value: "—" },
+      { label: "Custom templates", value: "✓" },
       { label: "X-Ray reports", value: "✓" },
+      { label: "Edible print sheet (A4)", value: "✓" },
       { label: "Background removal", value: "—" },
       { label: "Smart tool credits", value: "300 / mo" },
       { label: "Buy extra credits", value: "—" },
@@ -111,6 +122,7 @@ const tiers = [
       { label: "Orders & quotes", value: "Unlimited" },
       { label: "Custom templates", value: "✓" },
       { label: "X-Ray reports", value: "✓" },
+      { label: "Edible print sheet (A4)", value: "✓" },
       { label: "Background removal", value: "✓" },
       { label: "Smart tool credits", value: "800 / mo" },
       { label: "Buy extra credits", value: "✓" },
@@ -132,6 +144,7 @@ const tiers = [
       { label: "Orders & quotes", value: "Unlimited" },
       { label: "Custom templates", value: "✓" },
       { label: "X-Ray reports", value: "✓" },
+      { label: "Edible print sheet (A4)", value: "✓" },
       { label: "Background removal", value: "✓" },
       { label: "Smart tool credits", value: "2,000 / mo" },
       { label: "Buy extra credits", value: "✓" },
