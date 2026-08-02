@@ -28,6 +28,8 @@ Terms by reference.
   using the designer.
 - **"Content"** — any text, images, photographs, designs, logos, graphics, or other
   material uploaded, submitted, created, or displayed on the Platform.
+- **"Credits"** — the unit used to meter a Baker's use of certain AI-assisted features.
+  Credits are not money and have no cash value; see Section B8.
 
 ---
 
@@ -333,6 +335,9 @@ instruction, on the Content you supply**; as set out in Section 6.6, the output 
 Content and your responsibility, and Spattoo does not warrant that it is lawful,
 licensed, or free of any third party's rights.
 
+Some of these features consume **Credits** when used by a Baker. Credits are consumed when
+an action runs, whatever its result — see Section B8.
+
 ## 8. Third-Party Services
 
 The Platform relies on third-party service providers (for example, cloud hosting,
@@ -581,6 +586,80 @@ originated with you or with your Customer, and it survives termination.
 
 We may suspend or downgrade your storefront and features for non-payment, chargebacks, or
 breach of these Terms, after reasonable notice where practicable.
+
+## B8. AI Credits
+
+### B8.1. What Credits are — and are not
+
+Certain AI-assisted features consume **Credits**, a unit we use to meter usage of those
+features.
+
+**Credits are not money.** They are not currency, stored value, a deposit, a security, a
+gift card, or a prepaid payment instrument. They have **no cash value**, are not
+redeemable for cash, cannot be transferred, sold, gifted, or exchanged between accounts,
+and can be used only within the Platform for the features we make available from time to
+time.
+
+### B8.2. Two kinds of Credit, and the order they are used
+
+- **Monthly Credits** are included with your paid plan. They refresh at the start of each
+  calendar month (Indian Standard Time) and **do not carry over** — unused Monthly Credits
+  are not banked, refunded, or converted.
+- **Purchased Credits** are bought separately in packs. They **do not expire** for as long
+  as your account exists, subject to B8.6 and B8.8.
+
+When you use an AI feature, **your Monthly Credits are used first**; Purchased Credits are
+drawn on only once the month's included Credits are exhausted.
+
+### B8.3. Buying Credits
+
+B8.3.1. Credit packs are sold at the price shown at checkout. **Prices are exclusive of
+GST**, which is charged at the applicable rate (currently 18%), and a GST tax invoice is
+issued in accordance with law, as set out in B2.
+
+B8.3.2. Pack contents and prices may change. **The price shown to you at checkout is the
+price charged for that purchase**, regardless of any later change.
+
+B8.3.3. We may set a limit on the maximum balance of Purchased Credits an account may hold
+at one time, and may decline a purchase that would exceed it.
+
+### B8.4. How Credits are consumed
+
+B8.4.1. Credits are consumed **when an AI action runs**, not when you are satisfied with
+its result. As set out in Section 7, AI features may produce inaccurate, incomplete, or
+unexpected output. **A Credit pays for an attempt, not for a particular outcome**, and
+Credits are not refunded or restored because output was unsatisfactory, unusable, or not
+what you expected.
+
+B8.4.2. If an action **fails on our side before producing a result**, the Credits held for
+it are released back to your balance.
+
+B8.4.3. The number of Credits an action costs is shown in the Platform and may change. We
+will give reasonable notice of an increase.
+
+### B8.5. Free of charge to you in some cases
+
+Some AI output we generate for our own catalogue — for example a guide for a decoration we
+publish — is produced at our cost and **never charged to your Credits**, whether or not you
+use that item.
+
+### B8.6. Credits do not expire, but using them requires an active subscription
+
+Purchased Credits do not expire. **Using them requires an active paid subscription.** If
+your subscription is cancelled, lapses, or is suspended, your Purchased Credit balance is
+preserved and becomes available again if you resubscribe. It is **not refunded**, and it
+does not entitle you to continued access to the Platform on its own.
+
+### B8.7. Refunds
+
+Purchased Credits are **non-refundable**, including any unused balance on cancellation.
+Discretionary refunds (for example a duplicate charge or a proven billing error) are
+governed by our [Refund & Cancellation Policy](/refund).
+
+### B8.8. Credits end with the account
+
+Credits are tied to your Baker account and are **non-transferable**. On termination,
+closure, or erasure of your account, any unused balance is forfeited without refund.
 
 ---
 

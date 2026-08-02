@@ -64,6 +64,22 @@ the processor's and your bank's timelines. Taxes (GST) are handled in accordance
 If a renewal payment fails, we may retry the charge and may suspend or downgrade paid
 features after reasonable notice until payment is resolved.
 
+### 2.6. AI Credit packs
+- Credits meter your use of certain AI-assisted features. They are **not money**, have no
+  cash value, and cannot be transferred or exchanged (see Section B8 of the
+  [Terms of Service](/terms)).
+- Credit packs are **non-refundable**, including any **unused balance** if you cancel your
+  subscription or close your account.
+- Purchased Credits **do not expire**, but using them requires an active paid subscription.
+  If your subscription lapses, your balance is preserved and available again if you
+  resubscribe.
+- A Credit is used **when an AI action runs**, whatever the result. AI output may be
+  inaccurate or not what you expected, and Credits are **not refunded or restored because
+  output was unsatisfactory**. If an action fails on our side before producing a result,
+  the Credits held for it are released back to your balance automatically.
+- Section 2.3 (discretionary refunds) applies to Credit purchases in the same way — for
+  example a duplicate charge or a proven billing error.
+
 ---
 
 ## Contact
