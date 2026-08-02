@@ -50,7 +50,17 @@ const trial = {
 };
 
 // ── The plans ───────────────────────────────────────────────────────────────────────────────────
-// Every value here mirrors seed_plan_entitlements.sql, which is what the API actually enforces.
+// Every row here must be something the API ACTUALLY ENFORCES — not merely something declared in
+// seed_plan_entitlements.sql. Those are not the same set, and the difference is how fiction reaches
+// this page: someone reads a value in the seed and writes a row for it.
+//
+// "Saved templates 30 / Unlimited / Unlimited" was exactly that (removed 2026-08-02).
+// `max_saved_templates` exists in the entitlement registry and in the seed and is checked by
+// NOTHING — no route, no component. We were advertising a cap on Flame that does not exist, which
+// under-sells the plan and would be indefensible if a baker ever counted.
+//
+// Before adding a row: grep for the key outside constants/entitlements.js and the seed. If the only
+// hits are the declaration and the seed, it is not a feature yet.
 // Where the two disagreed, the SEED won and this file changed: the page must never promise more
 // than a baker gets. Corrected 2026-08-02 — Spark's fictional "10 total orders" removed with the
 // column (no plan has an order cap; a trial is bounded by TIME).
@@ -77,7 +87,6 @@ const tiers = [
     features: [
       { label: "Storefront + 3D designer", value: "✓" },
       { label: "Orders & quotes", value: "Unlimited" },
-      { label: "Saved templates", value: "30" },
       { label: "Custom templates", value: "—" },
       { label: "X-Ray reports", value: "✓" },
       { label: "Background removal", value: "—" },
@@ -100,7 +109,6 @@ const tiers = [
     features: [
       { label: "Storefront + 3D designer", value: "✓" },
       { label: "Orders & quotes", value: "Unlimited" },
-      { label: "Saved templates", value: "Unlimited" },
       { label: "Custom templates", value: "✓" },
       { label: "X-Ray reports", value: "✓" },
       { label: "Background removal", value: "✓" },
@@ -122,7 +130,6 @@ const tiers = [
     features: [
       { label: "Storefront + 3D designer", value: "✓" },
       { label: "Orders & quotes", value: "Unlimited" },
-      { label: "Saved templates", value: "Unlimited" },
       { label: "Custom templates", value: "✓" },
       { label: "X-Ray reports", value: "✓" },
       { label: "Background removal", value: "✓" },
