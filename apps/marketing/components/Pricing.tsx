@@ -22,8 +22,12 @@ import StartCta from "./StartCta";
 // row"; it was "never let it become a comparison column".
 //
 // The word TRIAL is deliberately absent from the card. "Trial" is what WE call it internally; what
-// a baker is being offered is a month of using the thing. Hence "Experience Spattoo for a month,
-// then decide."
+// a baker is being offered is a month of using the thing.
+//
+// The headline leads on the OFFER, not the price. "Free for 30 days" spent the largest line on
+// something the CTA ("Start free") and the footnote ("No credit card") already say twice over —
+// three ways of saying free, and nothing saying what the month is FOR. Free is the condition;
+// a month of running your bakery on it is the proposition.
 //
 // And it does NOT say "every plan starts free for 30 days", which the strip did. The trial grants
 // FLAME's features — a Blaze buyer reading that line reasonably expects 30 free days of Blaze and
@@ -35,8 +39,8 @@ import StartCta from "./StartCta";
 // put on a card.
 const trial = {
   badge: "START HERE",
-  headline: "Free for 30 days",
-  body: "Experience Spattoo for a month, then decide.",
+  headline: "Experience Spattoo for a full month",
+  body: "Then decide which plan fits.",
   detail: "Everything in Flame — your storefront, the 3D designer, unlimited orders and quotes — plus a starter allowance of smart-tool credits.",
   foot: "No credit card. Nothing is charged until you pick a plan.",
   accent: "#6b8f7e",
