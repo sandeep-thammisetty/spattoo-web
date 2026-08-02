@@ -327,12 +327,35 @@ export function makeBakerApiClient(supabase: SupabaseClient) {
     fetchDashboardBreakdown: (period: string) =>
       authGet(`/api/baker/dashboard/breakdown?period=${encodeURIComponent(period)}`),
 
-    // ── Flavours (baker management: global list + this baker's exclusions) ──────
+    // ── Flavours (baker management: the global list, overlaid with this baker's ──
+    //    on/off state, per-kg rates and menu names, plus who may see the prices)
     fetchBakerFlavours: () => authGet("/api/baker/flavours"),
-    updateBakerFlavourExclusions: (excludedFlavourIds: string[]) =>
-      authFetch("/api/baker/flavours/exclusions", {
+
+    // Replaces updateBakerFlavourExclusions, which is GONE rather than deprecated. That
+    // one PUT a bare id list to an endpoint that replaced the whole set by deleting and
+    // re-inserting — safe while a row carried nothing but its own existence, and fatal
+    // once it carries a price, because a client sending only flags would wipe every rate
+    // the baker had entered. Leaving it callable would have meant prices "randomly
+    // failing to save" with the cause in a screen nobody was looking at.
+    updateBakerFlavours: (body: {
+      flavours?: {
+        flavour_id: string;
+        excluded?: boolean;
+        // null means "not priced" — the storefront says "ask". Never 0, which would be
+        // a baker advertising a free cake.
+        price_per_kg?: number | null;
+        display_name?: string | null;
+      }[];
+      visibility?: {
+        show_flavours?: boolean;
+        // 'private' is the default and stays true until the baker says otherwise:
+        // entering a rate and publishing it are separate acts.
+        price_visibility?: "private" | "verified" | "public";
+      };
+    }) =>
+      authFetch("/api/baker/flavours", {
         method: "PUT",
-        body: JSON.stringify({ excluded_flavour_ids: excludedFlavourIds }),
+        body: JSON.stringify(body),
       }),
 
     // What this baker can't make a flavour as ("no eggless tiramisu"). Sent as the
