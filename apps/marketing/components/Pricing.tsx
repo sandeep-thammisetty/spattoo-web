@@ -32,9 +32,19 @@ const trial = {
 // ── The plans ───────────────────────────────────────────────────────────────────────────────────
 // Every value here mirrors seed_plan_entitlements.sql, which is what the API actually enforces.
 // Where the two disagreed, the SEED won and this file changed: the page must never promise more
-// than a baker gets. Corrected 2026-08-02 — Blaze seats 5→4, Forge "Unlimited"→10 (a deliberate
-// anti-resale cap, not an oversight), and Spark's fictional "10 total orders" removed with the
+// than a baker gets. Corrected 2026-08-02 — Spark's fictional "10 total orders" removed with the
 // column (no plan has an order cap; a trial is bounded by TIME).
+//
+// TEAM SEATS ARE DELIBERATELY ABSENT, AND NOT MERELY DEFERRED. `max_team_members` exists in the
+// entitlement registry (1/2/4/10) but nothing customer-facing enforces or shows it, staff seats are
+// not a shipped feature, and it is NOT settled that they will be one.
+//
+// So: no row, and no "coming soon" either. A "coming soon" is a promise — cheap to print, expensive
+// to withdraw — and the numbers beside it would commit us to 2/4/10 before the feature has a
+// design. A pricing page should sell what a baker can use on the day they pay.
+//
+// Do not restore the row because the entitlement exists. If seats ever ship it comes back with
+// values read from the seed, like every other row here.
 const tiers = [
   {
     name: "Flame",
