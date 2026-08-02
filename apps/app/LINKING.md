@@ -8,13 +8,37 @@ install core as a **packed tarball** committed at `vendor/spattoo-designer-*.tgz
 (referenced by `apps/app/package.json` → `"@spattoo/designer": "file:../../vendor/..."`).
 Real files land in `node_modules`, inside the repo root, which Turbopack resolves fine.
 
-### Regenerate after changing core
+### Shipping a core change — use `npm run release`
+```sh
+cd <spattoo-core checkout>
+npm run release              # rebase → verify → bump → push+tag → pack → bump web → install → commit → push
+npm run release -- --dry-run # print the plan, change nothing
+npm run release -- --no-push # do it all locally, push by hand
+```
+
+**Prefer this over doing the steps by hand.** Shipping core is seven steps across two
+repos, and the failure when one is missed is never "it broke" — it is "it deployed and
+nothing changed", which looks like the code not working and sends you debugging the
+wrong thing.
+
+It also closes a hole no amount of care covers: **`npm version patch` increments the
+LOCAL package.json and asks nobody.** Two sessions on the same afternoon both read
+`0.1.192`, both cut `0.1.193`, and the second push is rejected *after* the tag exists
+locally — so it has to be deleted and re-cut by hand. That happened twice in one day.
+`release` derives the next version from the highest tag **on origin**, so a parallel
+release is stepped over instead of collided with, and pushes the branch and tag with
+`--atomic` so a rejected branch push can never leave a tag pointing at a commit nobody
+has.
+
+<details><summary>The underlying steps, if you ever need them by hand</summary>
+
 ```sh
 cd <spattoo-core checkout>
 npm run pack:vendor -- <spattoo-web>/vendor
 # then bump the filename in apps/app/package.json, and:
 cd <spattoo-web> && npm install
 ```
+</details>
 
 `pack:vendor` builds, packs, and refuses to produce a tarball that cannot be trusted. It
 stops if the tree is dirty (matches no commit), if HEAD is behind `origin/dev` (see below),
