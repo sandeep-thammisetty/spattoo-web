@@ -49,7 +49,7 @@ const tiers = [
       { label: "Orders & quotes", value: "Unlimited" },
       { label: "Saved templates", value: "30" },
       { label: "Custom templates", value: "—" },
-      { label: "X-Ray reports", value: "From photos" },
+      { label: "X-Ray reports", value: "✓" },
       { label: "Background removal", value: "—" },
       { label: "Smart tool credits", value: "300 / mo" },
       { label: "Buy extra credits", value: "—" },
@@ -72,7 +72,7 @@ const tiers = [
       { label: "Orders & quotes", value: "Unlimited" },
       { label: "Saved templates", value: "Unlimited" },
       { label: "Custom templates", value: "✓" },
-      { label: "X-Ray reports", value: "+ your 3D designs" },
+      { label: "X-Ray reports", value: "✓" },
       { label: "Background removal", value: "✓" },
       { label: "Smart tool credits", value: "800 / mo" },
       { label: "Buy extra credits", value: "✓" },
@@ -94,7 +94,7 @@ const tiers = [
       { label: "Orders & quotes", value: "Unlimited" },
       { label: "Saved templates", value: "Unlimited" },
       { label: "Custom templates", value: "✓" },
-      { label: "X-Ray reports", value: "+ your 3D designs" },
+      { label: "X-Ray reports", value: "✓" },
       { label: "Background removal", value: "✓" },
       { label: "Smart tool credits", value: "2,000 / mo" },
       { label: "Buy extra credits", value: "✓" },
@@ -257,9 +257,10 @@ export default function Pricing() {
             No job counts ("≈50 photo reads"): what an action costs is DATA that can move, and the
             app shows the live price list. A number printed here would go stale silently. */}
         <p className="text-center text-[#edeae3]/45 text-xs mt-8 max-w-2xl mx-auto leading-relaxed">
-          Credits power the smart tools — reading a reference photo into an X-Ray report, and
-          working out how a decoration was made. Your monthly credits refresh on the 1st. Credits
-          you buy never expire and are only used once the monthly ones are gone.
+          X-Ray works on every plan, for cakes you design and for orders that are just a reference
+          photo. Credits pay for the AI part — reading a photo, and working out how a decoration was
+          made; an X-Ray of a cake you designed costs nothing. Monthly credits refresh on the 1st.
+          Credits you buy never expire and are only used once the monthly ones are gone.
         </p>
 
         {/* Data retention note */}
