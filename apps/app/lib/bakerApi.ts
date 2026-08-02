@@ -427,6 +427,11 @@ export function makeBakerApiClient(supabase: SupabaseClient) {
     fetchAiCredits: () => authGet("/api/baker/ai-credits"),
     // Top-up shelf. Each pack states what it BUYS ("20 build guides"), for the same reason.
     fetchAiCreditPacks: () => authGet("/api/baker/ai-credits/packs"),
+    // Where the credits went. Each row carries the BUCKET SPLIT recorded at spend time, so a
+    // baker can see the monthly-first order the terms promise rather than being asked to trust it.
+    // Keyset paged — pass the `nextBefore` the server hands back, never an offset.
+    fetchAiCreditHistory: (before?: string | null) =>
+      authGet(`/api/baker/ai-credits/history${before ? `?before=${encodeURIComponent(before)}` : ""}`),
     // Opens a Razorpay ORDER for a pack (one-time payment, not a subscription). Returns
     // { key_id, order_id, amount } for Checkout. Credits are minted by the payment webhook, never
     // here — so a Checkout the baker abandons costs nothing and credits nothing.
