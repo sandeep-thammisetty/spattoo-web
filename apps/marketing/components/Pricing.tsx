@@ -67,6 +67,11 @@ const trial = {
 // checks them against cake-diameter guides, and exports a print-ready PDF with cut marks — on the
 // sheets they already buy. Unsold features are the cheaper mistake of the two, but still a mistake.
 //
+// BACKGROUND REMOVAL IS NOT A ROW (removed 2026-08-02). It is plumbing inside the upload flow, not
+// a feature anyone shops for — a baker uploads a photo of their decoration and expects the cut-out;
+// they do not compare plans on it. It also gated nothing. Where it belongs is inside the smart-tool
+// story, which the credits row already carries.
+//
 // CUSTOM TEMPLATES IS ✓ EVERYWHERE (2026-08-02). It was "—" on Flame and a named Blaze hook, and
 // `custom_templates` gates nothing — the registry calls it inert. Rather than keep selling a
 // difference that does not exist, the capability is simply available to everyone, and the row now
@@ -100,7 +105,6 @@ const tiers = [
       { label: "Custom templates", value: "✓" },
       { label: "X-Ray reports", value: "✓" },
       { label: "Edible print sheet (A4)", value: "✓" },
-      { label: "Background removal", value: "—" },
       { label: "Smart tool credits", value: "300 / mo" },
       { label: "Buy extra credits", value: "—" },
       { label: "Support", value: "Email" },
@@ -123,7 +127,6 @@ const tiers = [
       { label: "Custom templates", value: "✓" },
       { label: "X-Ray reports", value: "✓" },
       { label: "Edible print sheet (A4)", value: "✓" },
-      { label: "Background removal", value: "✓" },
       { label: "Smart tool credits", value: "800 / mo" },
       { label: "Buy extra credits", value: "✓" },
       { label: "Support", value: "Priority Chat" },
@@ -145,7 +148,6 @@ const tiers = [
       { label: "Custom templates", value: "✓" },
       { label: "X-Ray reports", value: "✓" },
       { label: "Edible print sheet (A4)", value: "✓" },
-      { label: "Background removal", value: "✓" },
       { label: "Smart tool credits", value: "2,000 / mo" },
       { label: "Buy extra credits", value: "✓" },
       { label: "Support", value: "Account Manager" },
