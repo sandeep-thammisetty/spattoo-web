@@ -3,27 +3,39 @@
 import { useState } from "react";
 import StartCta from "./StartCta";
 
+// ── Spark is a TRIAL, not a tier ────────────────────────────────────────────────────────────────
+// Deliberately NOT in `tiers`, and this is the whole point of the layout (spattoo-core
+// docs/SUBSCRIPTION_TIERS.md, "Spark is a TRIAL, not a tier").
+//
+// As the first of four columns, a reader ran their eye across the rows, saw ✓/✓/✓/✓ on designer,
+// storefront, branding and orders, and concluded Flame added nothing. That was not a product
+// problem — it was manufactured by the layout. Flame looked like a paywall because it was being
+// measured against a free tier that has everything.
+//
+// So Spark is a strip above the table: visibly a different KIND of thing, an on-ramp rather than a
+// competitor, with MESSAGING instead of a feature list. Flame is then measured against what a baker
+// actually uses today — a notebook, a phone gallery, Instagram DMs — which it beats comfortably.
+//
+// The copy only works because the trial equals ONE tier (decided 2026-08-02: Flame for 30 days).
+// "Everything in Flame except three things you have not heard of yet" is not a sentence anyone can
+// put on a card.
+const trial = {
+  headline: "Every plan starts free for 30 days",
+  body: "Everything in Flame — your storefront, the 3D designer, unlimited orders and quotes — plus a starter allowance of smart-tool credits. No credit card required.",
+  foot: "After 30 days, pick a plan. Nothing is charged until you do.",
+  accent: "#6b8f7e",
+  border: "rgba(107,143,126,0.25)",
+  glow: "rgba(107,143,126,0.08)",
+  cta: "Start free",
+};
+
+// ── The plans ───────────────────────────────────────────────────────────────────────────────────
+// Every value here mirrors seed_plan_entitlements.sql, which is what the API actually enforces.
+// Where the two disagreed, the SEED won and this file changed: the page must never promise more
+// than a baker gets. Corrected 2026-08-02 — Blaze seats 5→4, Forge "Unlimited"→10 (a deliberate
+// anti-resale cap, not an oversight), and Spark's fictional "10 total orders" removed with the
+// column (no plan has an order cap; a trial is bounded by TIME).
 const tiers = [
-  {
-    name: "Spark",
-    tagline: "Try before you commit",
-    monthly: 0,
-    annual: 0,
-    accent: "#6b8f7e",
-    border: "rgba(107,143,126,0.25)",
-    glow: "rgba(107,143,126,0.08)",
-    features: [
-      { label: "Design Canvas", value: "✓" },
-      { label: "Custom Templates", value: "—" },
-      { label: "yourname.spattoo.com", value: "—" },
-      { label: "Custom Branding", value: "—" },
-      { label: "Team Members", value: "1" },
-      { label: "Support", value: "Help Docs" },
-      { label: "Orders", value: "10 total" },
-    ],
-    cta: "Get Started Free",
-    ctaVariant: "ghost" as const,
-  },
   {
     name: "Flame",
     tagline: "Less than the price of one cake",
@@ -33,13 +45,16 @@ const tiers = [
     border: "rgba(196,133,42,0.3)",
     glow: "rgba(196,133,42,0.07)",
     features: [
-      { label: "Design Canvas", value: "✓" },
-      { label: "Custom Templates", value: "—" },
-      { label: "yourname.spattoo.com", value: "✓" },
-      { label: "Custom Branding", value: "—" },
-      { label: "Team Members", value: "2" },
+      { label: "Storefront + 3D designer", value: "✓" },
+      { label: "Orders & quotes", value: "Unlimited" },
+      { label: "Saved templates", value: "30" },
+      { label: "Custom templates", value: "—" },
+      { label: "X-Ray reports", value: "From photos" },
+      { label: "Background removal", value: "—" },
+      { label: "Smart tool credits", value: "300 / mo" },
+      { label: "Buy extra credits", value: "—" },
+      { label: "Team members", value: "2" },
       { label: "Support", value: "Email" },
-      { label: "Orders", value: "Unlimited" },
     ],
     cta: "Start with Flame",
     ctaVariant: "ghost" as const,
@@ -54,13 +69,16 @@ const tiers = [
     glow: "rgba(196,81,42,0.12)",
     recommended: true,
     features: [
-      { label: "Design Canvas", value: "✓" },
-      { label: "Custom Templates", value: "✓" },
-      { label: "yourname.spattoo.com", value: "✓" },
-      { label: "Custom Branding", value: "✓" },
-      { label: "Team Members", value: "5" },
+      { label: "Storefront + 3D designer", value: "✓" },
+      { label: "Orders & quotes", value: "Unlimited" },
+      { label: "Saved templates", value: "Unlimited" },
+      { label: "Custom templates", value: "✓" },
+      { label: "X-Ray reports", value: "+ your 3D designs" },
+      { label: "Background removal", value: "✓" },
+      { label: "Smart tool credits", value: "800 / mo" },
+      { label: "Buy extra credits", value: "✓" },
+      { label: "Team members", value: "4" },
       { label: "Support", value: "Priority Chat" },
-      { label: "Orders", value: "Unlimited" },
     ],
     cta: "Start with Blaze",
     ctaVariant: "filled" as const,
@@ -74,13 +92,16 @@ const tiers = [
     border: "rgba(139,58,42,0.4)",
     glow: "rgba(139,58,42,0.08)",
     features: [
-      { label: "Design Canvas", value: "✓" },
-      { label: "Custom Templates", value: "✓" },
-      { label: "yourname.spattoo.com", value: "✓" },
-      { label: "Custom Branding", value: "✓" },
-      { label: "Team Members", value: "Unlimited" },
+      { label: "Storefront + 3D designer", value: "✓" },
+      { label: "Orders & quotes", value: "Unlimited" },
+      { label: "Saved templates", value: "Unlimited" },
+      { label: "Custom templates", value: "✓" },
+      { label: "X-Ray reports", value: "+ your 3D designs" },
+      { label: "Background removal", value: "✓" },
+      { label: "Smart tool credits", value: "2,000 / mo" },
+      { label: "Buy extra credits", value: "✓" },
+      { label: "Team members", value: "10" },
       { label: "Support", value: "Account Manager" },
-      { label: "Orders", value: "Unlimited" },
     ],
     cta: "Start with Forge",
     ctaVariant: "ghost" as const,
@@ -105,6 +126,29 @@ export default function Pricing() {
         </h2>
 
 
+        {/* ── The trial ──────────────────────────────────────────────────────────────────────
+            Full width, above everything, in its own colour. It cannot be mistaken for a fourth
+            column, which is the entire reason it is shaped this way — see the note on `trial`. */}
+        <div
+          className="mt-8 rounded-2xl p-6 md:p-7 flex flex-col md:flex-row md:items-center gap-5 md:gap-8"
+          style={{
+            border: `1px solid ${trial.border}`,
+            background: `radial-gradient(ellipse at left, ${trial.glow}, transparent 70%), #111111`,
+          }}
+        >
+          <div className="flex-1">
+            <p className="text-lg md:text-xl font-bold text-[#edeae3]">{trial.headline}</p>
+            <p className="text-sm text-[#edeae3]/65 mt-1.5 leading-relaxed">{trial.body}</p>
+            <p className="text-xs text-[#edeae3]/45 mt-2">{trial.foot}</p>
+          </div>
+          <StartCta
+            className="block shrink-0 text-center px-7 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer"
+            style={{ backgroundColor: trial.accent, color: "#fff" }}
+          >
+            {trial.cta}
+          </StartCta>
+        </div>
+
         {/* Toggle */}
         <div className="flex items-center justify-center gap-4 mb-8 mt-6">
           <span className={`text-sm transition-colors ${!annual ? "text-[#edeae3]" : "text-[#edeae3]/40"}`}>
@@ -127,7 +171,7 @@ export default function Pricing() {
         </div>
 
         {/* Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {tiers.map((tier) => (
             <div
               key={tier.name}
@@ -173,9 +217,6 @@ export default function Pricing() {
                     </span>
                   )}
                 </div>
-                {tier.monthly === 0 && (
-                  <p className="text-xs text-[#edeae3]/55 mt-1">No credit card required</p>
-                )}
               </div>
 
               {/* CTA */}
@@ -215,8 +256,17 @@ export default function Pricing() {
           ))}
         </div>
 
+        {/* Credits footnote — the two credit rows above are meaningless without it.
+            No job counts ("≈50 photo reads"): what an action costs is DATA that can move, and the
+            app shows the live price list. A number printed here would go stale silently. */}
+        <p className="text-center text-[#edeae3]/45 text-xs mt-8 max-w-2xl mx-auto leading-relaxed">
+          Credits power the smart tools — reading a reference photo into an X-Ray report, and
+          working out how a decoration was made. Your monthly credits refresh on the 1st. Credits
+          you buy never expire and are only used once the monthly ones are gone.
+        </p>
+
         {/* Data retention note */}
-        <p className="text-center text-[#edeae3]/45 text-xs mt-10">
+        <p className="text-center text-[#edeae3]/45 text-xs mt-4">
           Cancel anytime. Your designs are retained for 30 days after cancellation.
         </p>
 
