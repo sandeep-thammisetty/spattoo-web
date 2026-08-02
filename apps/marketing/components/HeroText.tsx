@@ -105,6 +105,12 @@ export default function HeroText() {
             Get Started Free
           </StartCta>
         </div>
+        {/* "Free" on a button is a word every SaaS uses and nobody believes. What earns the click is
+            the SHAPE of the offer — how long, and whether a card is needed — and it costs one line
+            to say here rather than making someone reach the pricing section to find out. */}
+        <p className="mt-3 text-xs text-[#edeae3]/55">
+          Use Spattoo free for a month. No credit card needed.
+        </p>
       </div>
 
       {/* Mobile */}
@@ -160,6 +166,11 @@ export default function HeroText() {
             Get Started Free
           </StartCta>
         </div>
+        {/* Mobile carries its own copy of the CTA row, so it needs its own copy of this line —
+            and it matters more here, where the pricing section is a long scroll away. */}
+        <p className="mt-3 text-center text-xs text-[#edeae3]/55">
+          Use Spattoo free for a month. No credit card needed.
+        </p>
       </div>
     </>
   );

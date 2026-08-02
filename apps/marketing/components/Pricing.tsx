@@ -12,20 +12,36 @@ import StartCta from "./StartCta";
 // problem — it was manufactured by the layout. Flame looked like a paywall because it was being
 // measured against a free tier that has everything.
 //
-// So Spark is a strip above the table: visibly a different KIND of thing, an on-ramp rather than a
-// competitor, with MESSAGING instead of a feature list. Flame is then measured against what a baker
+// So it is the FIRST CARD in the row, visibly a different kind of thing: messaging and a CTA, no
+// price row, no ticks, nothing to run an eye across. Flame is then measured against what a baker
 // actually uses today — a notebook, a phone gallery, Instagram DMs — which it beats comfortably.
+//
+// It was a full-width strip above the table until 2026-08-02, and that failed the other way: a
+// reader who came for prices scrolled past it into the columns, so the free month — the cheapest
+// thing we have to offer — was the one thing they never saw. The rule was never "keep it out of the
+// row"; it was "never let it become a comparison column".
+//
+// The word TRIAL is deliberately absent from the card. "Trial" is what WE call it internally; what
+// a baker is being offered is a month of using the thing. Hence "Experience Spattoo for a month,
+// then decide."
+//
+// And it does NOT say "every plan starts free for 30 days", which the strip did. The trial grants
+// FLAME's features — a Blaze buyer reading that line reasonably expects 30 free days of Blaze and
+// does not get it. Saying "Everything in Flame" is both accurate and a better sell, because it
+// names what they actually get.
 //
 // The copy only works because the trial equals ONE tier (decided 2026-08-02: Flame for 30 days).
 // "Everything in Flame except three things you have not heard of yet" is not a sentence anyone can
 // put on a card.
 const trial = {
-  headline: "Every plan starts free for 30 days",
-  body: "Everything in Flame — your storefront, the 3D designer, unlimited orders and quotes — plus a starter allowance of smart-tool credits. No credit card required.",
-  foot: "After 30 days, pick a plan. Nothing is charged until you do.",
+  badge: "START HERE",
+  headline: "Free for 30 days",
+  body: "Experience Spattoo for a month, then decide.",
+  detail: "Everything in Flame — your storefront, the 3D designer, unlimited orders and quotes — plus a starter allowance of smart-tool credits.",
+  foot: "No credit card. Nothing is charged until you pick a plan.",
   accent: "#6b8f7e",
-  border: "rgba(107,143,126,0.25)",
-  glow: "rgba(107,143,126,0.08)",
+  border: "rgba(107,143,126,0.35)",
+  glow: "rgba(107,143,126,0.10)",
   cta: "Start free",
 };
 
@@ -133,29 +149,6 @@ export default function Pricing() {
         </h2>
 
 
-        {/* ── The trial ──────────────────────────────────────────────────────────────────────
-            Full width, above everything, in its own colour. It cannot be mistaken for a fourth
-            column, which is the entire reason it is shaped this way — see the note on `trial`. */}
-        <div
-          className="mt-8 rounded-2xl p-6 md:p-7 flex flex-col md:flex-row md:items-center gap-5 md:gap-8"
-          style={{
-            border: `1px solid ${trial.border}`,
-            background: `radial-gradient(ellipse at left, ${trial.glow}, transparent 70%), #111111`,
-          }}
-        >
-          <div className="flex-1">
-            <p className="text-lg md:text-xl font-bold text-[#edeae3]">{trial.headline}</p>
-            <p className="text-sm text-[#edeae3]/65 mt-1.5 leading-relaxed">{trial.body}</p>
-            <p className="text-xs text-[#edeae3]/45 mt-2">{trial.foot}</p>
-          </div>
-          <StartCta
-            className="block shrink-0 text-center px-7 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer"
-            style={{ backgroundColor: trial.accent, color: "#fff" }}
-          >
-            {trial.cta}
-          </StartCta>
-        </div>
-
         {/* Toggle */}
         <div className="flex items-center justify-center gap-4 mb-8 mt-6">
           <span className={`text-sm transition-colors ${!annual ? "text-[#edeae3]" : "text-[#edeae3]/40"}`}>
@@ -178,7 +171,50 @@ export default function Pricing() {
         </div>
 
         {/* Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+
+          {/* ── The trial, as the FIRST card ────────────────────────────────────────────
+              It was a full-width strip above the table, and a reader who came for prices
+              scrolled past it straight into the columns — so the free month, which is the
+              cheapest thing we have to offer, was the one thing they never saw.
+              In the row it cannot be missed. What it must NOT become is a comparison column:
+              a trial with a feature list that matches Flame row for row is what made Flame look
+              like a paywall in the first place (SUBSCRIPTION_TIERS.md). So it carries MESSAGING
+              and a CTA — no price row, no ticks, nothing to run an eye across. It reads as an
+              on-ramp beside three plans, not a fourth plan. */}
+          <div
+            className="relative rounded-2xl p-6 flex flex-col gap-4 transition-all"
+            style={{
+              border: `1px solid ${trial.border}`,
+              background: `radial-gradient(ellipse at top, ${trial.glow}, transparent 70%), #111111`,
+            }}
+          >
+            <div
+              className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-xs font-semibold text-white whitespace-nowrap"
+              style={{ backgroundColor: trial.accent }}
+            >
+              {trial.badge}
+            </div>
+
+            <div className="relative pt-1">
+              {/* Deliberately NOT styled as a price. The three cards beside this one open with a
+                  number; this one opens with a sentence, which is most of what stops it reading
+                  as a fourth tier. */}
+              <p className="text-2xl font-black leading-tight text-[#edeae3]">{trial.headline}</p>
+              <p className="text-sm text-[#edeae3]/70 mt-2 leading-relaxed">{trial.body}</p>
+            </div>
+
+            <p className="text-xs text-[#edeae3]/55 leading-relaxed">{trial.detail}</p>
+
+            <StartCta
+              className="block w-full text-center py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer mt-auto"
+              style={{ backgroundColor: trial.accent, color: "#fff" }}
+            >
+              {trial.cta}
+            </StartCta>
+            <p className="text-xs text-[#edeae3]/45 leading-relaxed">{trial.foot}</p>
+          </div>
+
           {tiers.map((tier) => (
             <div
               key={tier.name}
