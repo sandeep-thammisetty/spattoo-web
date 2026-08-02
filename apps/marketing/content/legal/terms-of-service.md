@@ -652,9 +652,14 @@ does not entitle you to continued access to the Platform on its own.
 
 ### B8.7. Refunds
 
-Purchased Credits are **non-refundable**, including any unused balance on cancellation.
-Discretionary refunds (for example a duplicate charge or a proven billing error) are
-governed by our [Refund & Cancellation Policy](/refund).
+**A Credit pack is non-refundable once purchased.** This includes an unused or partly used
+balance, a balance remaining when your subscription is cancelled, lapses, or your account is
+closed, and a change of mind after purchase.
+
+Credits are **delivered to your account immediately** on successful payment and can be spent
+at once; unlike a subscription period, there is nothing left to stop. Discretionary refunds
+(for example a duplicate charge or a proven billing error) are governed by our
+[Refund & Cancellation Policy](/refund), Part 3.
 
 ### B8.8. Credits end with the account
 

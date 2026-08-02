@@ -1,8 +1,9 @@
 # Spattoo — Refund & Cancellation Policy
 
-This policy explains cancellations and refunds for two clearly separate things. Please
-read the part that applies to you. Capitalised terms have the meaning given in our
-[Terms of Service](/terms).
+This policy explains cancellations and refunds for three clearly separate things — a
+**cake** you ordered from a Baker, a Baker's **subscription** to Spattoo, and **AI
+Credits** a Baker buys. Please read the part that applies to you. Capitalised terms have
+the meaning given in our [Terms of Service](/terms).
 
 ---
 
@@ -64,21 +65,58 @@ the processor's and your bank's timelines. Taxes (GST) are handled in accordance
 If a renewal payment fails, we may retry the charge and may suspend or downgrade paid
 features after reasonable notice until payment is resolved.
 
-### 2.6. AI Credit packs
-- Credits meter your use of certain AI-assisted features. They are **not money**, have no
-  cash value, and cannot be transferred or exchanged (see Section B8 of the
-  [Terms of Service](/terms)).
-- Credit packs are **non-refundable**, including any **unused balance** if you cancel your
-  subscription or close your account.
-- Purchased Credits **do not expire**, but using them requires an active paid subscription.
-  If your subscription lapses, your balance is preserved and available again if you
-  resubscribe.
-- A Credit is used **when an AI action runs**, whatever the result. AI output may be
-  inaccurate or not what you expected, and Credits are **not refunded or restored because
-  output was unsatisfactory**. If an action fails on our side before producing a result,
-  the Credits held for it are released back to your balance automatically.
-- Section 2.3 (discretionary refunds) applies to Credit purchases in the same way — for
-  example a duplicate charge or a proven billing error.
+### 2.6. AI Credits are separate
+Credit packs are not part of your subscription and are not covered by this Part. See
+**Part 3**.
+
+---
+
+## Part 3 — AI Credits (Between the Baker and Spattoo)
+
+This part applies to Bakers who buy Credit packs. Credits are **not** part of a
+subscription: they are a separate, one-time purchase, so Part 2 does not govern them.
+
+### 3.1. Credit purchases are final
+
+**A Credit pack is non-refundable once purchased.** This includes:
+
+- an **unused or partly used balance** — we do not refund Credits you have not spent;
+- a balance remaining when you **cancel your subscription**, let it lapse, or **close your
+  account**;
+- a **change of mind** after purchase.
+
+Credits are **delivered to your account immediately** when your payment succeeds, and can
+be spent straight away. That is why a purchase cannot be undone: unlike a subscription
+period, there is nothing left to stop.
+
+### 3.2. What you keep
+
+Purchased Credits **do not expire**. Spending them requires an active paid subscription,
+but they are not lost if it ends — your balance is preserved and is available again if you
+resubscribe. It is not refunded, and it does not by itself give you access to the Platform.
+
+### 3.3. AI output is not a ground for a refund
+
+A Credit is used **when an AI action runs**, whatever the result. AI features may produce
+output that is inaccurate, incomplete, or simply not what you wanted, and **Credits are not
+refunded or restored because you were unhappy with the output** — a Credit pays for the
+attempt, not for a particular result.
+
+**If an action fails on our side** before producing any result, the Credits held for it are
+released back to your balance automatically. You are not charged for our failures.
+
+### 3.4. What Credits are
+
+Credits meter your use of certain AI features. They are **not money**: they have no cash
+value, are not a deposit or a prepaid payment instrument, cannot be transferred, sold, or
+exchanged, and cannot be redeemed for cash. See Section B8 of the
+[Terms of Service](/terms).
+
+### 3.5. When we will still look at it
+
+Section 2.3 (discretionary refunds) applies to Credit purchases in the same way — for
+example a **duplicate charge** or a **proven billing error**. Email `care@spattoo.com`
+within **7 days** of the charge with your account details and what happened.
 
 ---
 
