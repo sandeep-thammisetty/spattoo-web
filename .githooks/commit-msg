@@ -6,4 +6,10 @@
 DOCS_DIR="${SPATTOO_DOCS_DIR:-$(git rev-parse --show-toplevel)/../spattoo-docs}"
 BIN="$DOCS_DIR/bin/check-feature-docs.mjs"
 [ -f "$BIN" ] || { echo "i spattoo-docs not found next to repo - skipping feature-doc gate"; exit 0; }
-COMMIT_MSG_FILE="$1" node "$BIN" --repo spattoo-web
+COMMIT_MSG_FILE="$1" node "$BIN" --repo spattoo-web || exit 1
+
+# Rollout-config liveness gate — every process.env the code reads must appear in
+# deployment/production-rollout.md. Honors [skip-rollout-config].
+ROLLOUT_BIN="$DOCS_DIR/bin/check-rollout-config.mjs"
+[ -f "$ROLLOUT_BIN" ] || exit 0
+COMMIT_MSG_FILE="$1" node "$ROLLOUT_BIN" --repo spattoo-web
