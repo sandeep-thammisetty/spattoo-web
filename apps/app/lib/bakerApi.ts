@@ -347,9 +347,12 @@ export function makeBakerApiClient(supabase: SupabaseClient) {
         display_name?: string | null;
       }[];
       visibility?: {
-        show_flavours?: boolean;
-        // 'private' is the default and stays true until the baker says otherwise:
-        // entering a rate and publishing it are separate acts.
+        // 'private' is the default and stays so until the baker says otherwise: entering
+        // a rate and publishing it are separate acts.
+        //
+        // No `show_flavours` here. Whether a storefront DISPLAYS the flavour list is the
+        // menu section's own on/off; it briefly lived on the baker and also emptied the
+        // API response, which broke the order form's flavour picker.
         price_visibility?: "private" | "verified" | "public";
       };
     }) =>
