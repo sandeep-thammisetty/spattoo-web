@@ -48,6 +48,13 @@ export function makeBakerApiClient(supabase: SupabaseClient) {
   }
 
   return {
+    // Where this client points. Every method below closes over API_BASE, so nothing here needed it
+    // — but the storefront PREVIEW in Settings renders the real <CustomerStorefront>, which takes an
+    // apiBaseUrl and does its own public unauthenticated fetches (templates, flavours, settings).
+    // Exposing it here beats threading a second "where is the API" prop through the designer and
+    // settings panel, when apiClient already IS that channel.
+    baseUrl: API_BASE,
+
     // ── Baker context ─────────────────────────────────────────────────────────
     fetchBakerProfile: () => authGet("/api/baker/profile"),
     fetchBakerSettings: () => authGet("/api/baker/settings"),
