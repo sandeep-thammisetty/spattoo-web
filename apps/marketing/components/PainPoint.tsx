@@ -24,7 +24,7 @@ export default function PainPoint() {
             {[
               "Twenty messages to pin down one cake",
               "\u201cWhat flavours do you have?\u201d \u2014 every single time",
-              "A photo on WhatsApp, and a lot of guessing",
+              "A photo in your DMs, and a lot of guessing",
               "Scrolling back through chats on bake day",
             ].map((line) => (
               <div key={line} className="flex items-start gap-3">

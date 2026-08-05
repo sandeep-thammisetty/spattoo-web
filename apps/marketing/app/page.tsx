@@ -52,7 +52,7 @@ export default function Home() {
               {
                 step: "02",
                 title: "Spattoo Helps Them Decide",
-                desc: "Can't choose a flavour? Your storefront suggests one from what you actually offer, and says why — \u201ca first birthday is usually mild\u201d. Every question it answers is a WhatsApp message you never have to send.",
+                desc: "Can't choose a flavour? Your storefront suggests one from what you actually offer, and says why — \u201ca first birthday is usually mild\u201d. Every question it answers is a message you never have to reply to.",
               },
               {
                 step: "03",
