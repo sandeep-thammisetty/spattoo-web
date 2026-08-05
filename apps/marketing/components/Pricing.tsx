@@ -82,13 +82,16 @@ const trial = {
 //   "Edible prints, sized to the cake" said the right thing in the wrong register: a description
 //                                      with a comma clause, sitting in a column of headings.
 //
-// "Planner" is the noun. The tool (src/chefsdesk/a4/A4Sheet.jsx) holds the page to scale and puts
-// cake-diameter guides on it, so a baker checks the image against the cake BEFORE printing, then
-// exports with cut marks — that is planning a sheet, and it is what stops an expensive sheet going
-// in the bin at the wrong size.
+// "Edible Print Studio" is the noun. The tool (src/chefsdesk/a4/A4Sheet.jsx) holds the page to
+// scale and puts cake-diameter guides on it, so a baker checks the image against the cake BEFORE
+// printing, then exports with cut marks — which is what stops an expensive sheet going in the bin
+// at the wrong size.
 //
-// Not "Studio", though the product has Glaze/Bow/Relief Sticker Studios: those are decoration-DESIGN
-// tools and this is print prep. Borrowing the name would promise a creative surface that is not here.
+// I first argued AGAINST "Studio", on the grounds that it would collide with a family of
+// decoration-design tools. It does not: the studios (Glaze, Bow, Relief Sticker, Chocolate Drip) are
+// ADMIN surfaces — a baker never meets one, and the only mention outside admin is a comment naming
+// "the admin Chocolate Drip Studio". So the word is unclaimed on the baker side and the objection
+// was about a collision that cannot happen.
 //
 // A4 is dropped deliberately: it is the sheet they already buy, not something we provide, and it is
 // visible inside the tool itself.
@@ -146,7 +149,7 @@ const tiers = [
       { label: "Orders & quotes", value: "Unlimited" },
       { label: "Custom templates", value: "✓" },
       { label: "X-Ray reports", value: "✓" },
-      { label: "Edible print planner", value: "✓" },
+      { label: "Edible Print Studio", value: "✓" },
       { label: "Smart tool credits", value: "300 / mo" },
       { label: "Buy extra credits", value: "—" },
       { label: "Support", value: "Email" },
@@ -169,7 +172,7 @@ const tiers = [
       { label: "Orders & quotes", value: "Unlimited" },
       { label: "Custom templates", value: "✓" },
       { label: "X-Ray reports", value: "✓" },
-      { label: "Edible print planner", value: "✓" },
+      { label: "Edible Print Studio", value: "✓" },
       { label: "Smart tool credits", value: "800 / mo" },
       { label: "Buy extra credits", value: "✓" },
       { label: "Support", value: "Priority Chat" },
@@ -191,7 +194,7 @@ const tiers = [
       { label: "Orders & quotes", value: "Unlimited" },
       { label: "Custom templates", value: "✓" },
       { label: "X-Ray reports", value: "✓" },
-      { label: "Edible print planner", value: "✓" },
+      { label: "Edible Print Studio", value: "✓" },
       { label: "Smart tool credits", value: "2,000 / mo" },
       { label: "Buy extra credits", value: "✓" },
       { label: "Support", value: "Account Manager" },
