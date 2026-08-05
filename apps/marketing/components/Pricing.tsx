@@ -71,11 +71,19 @@ const trial = {
 // Before adding a row: grep for the key outside constants/entitlements.js and the seed. If the only
 // hits are the declaration and the seed, it is not a feature yet.
 //
-// RENAMED 2026-08-05: "Edible print sheet (A4)" → "Edible sheet layout (A4)". The old label read as
-// though Spattoo supplies the sheets. It does not — the baker buys those; what we give them is the
-// LAYOUT: a to-scale A4 page they arrange images on, with cake-diameter guides, exported as a
-// print-ready PDF with cut marks (src/chefsdesk/a4/A4Sheet.jsx). Naming the tool rather than the
-// consumable also stops a reader wondering whether sheets are included in the price.
+// RENAMED 2026-08-05: "Edible print sheet (A4)" → "Edible prints, sized to the cake".
+//
+// The original named the CONSUMABLE, and read as though Spattoo supplies the sheets — it does not,
+// the baker buys those. The first rewrite, "Edible sheet layout (A4)", fixed that and introduced a
+// different fault: A4 IS a layout, so the row named the paper twice and us not at all.
+//
+// What the tool actually does (src/chefsdesk/a4/A4Sheet.jsx) is hold the page TO SCALE and put
+// cake-diameter guides on it, so a baker checks the image against the cake BEFORE printing, then
+// exports with cut marks. The pain that removes is printing at the wrong size and binning a sheet
+// that costs real money — so the row names the outcome, which is the thing a baker recognises.
+//
+// A4 is dropped deliberately: it is the sheet they already buy, not something we provide, and it is
+// visible inside the tool itself.
 //
 // The reverse also happened: "Edible print sheet (A4)" shipped a long time ago, is gated by nothing,
 // and had never been sold. A baker arranges the customer's photo frames on an A4 sheet at true size,
@@ -130,7 +138,7 @@ const tiers = [
       { label: "Orders & quotes", value: "Unlimited" },
       { label: "Custom templates", value: "✓" },
       { label: "X-Ray reports", value: "✓" },
-      { label: "Edible sheet layout (A4)", value: "✓" },
+      { label: "Edible prints, sized to the cake", value: "✓" },
       { label: "Smart tool credits", value: "300 / mo" },
       { label: "Buy extra credits", value: "—" },
       { label: "Support", value: "Email" },
@@ -153,7 +161,7 @@ const tiers = [
       { label: "Orders & quotes", value: "Unlimited" },
       { label: "Custom templates", value: "✓" },
       { label: "X-Ray reports", value: "✓" },
-      { label: "Edible sheet layout (A4)", value: "✓" },
+      { label: "Edible prints, sized to the cake", value: "✓" },
       { label: "Smart tool credits", value: "800 / mo" },
       { label: "Buy extra credits", value: "✓" },
       { label: "Support", value: "Priority Chat" },
@@ -175,7 +183,7 @@ const tiers = [
       { label: "Orders & quotes", value: "Unlimited" },
       { label: "Custom templates", value: "✓" },
       { label: "X-Ray reports", value: "✓" },
-      { label: "Edible sheet layout (A4)", value: "✓" },
+      { label: "Edible prints, sized to the cake", value: "✓" },
       { label: "Smart tool credits", value: "2,000 / mo" },
       { label: "Buy extra credits", value: "✓" },
       { label: "Support", value: "Account Manager" },
