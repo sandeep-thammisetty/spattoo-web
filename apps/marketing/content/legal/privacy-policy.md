@@ -60,8 +60,22 @@ Fiduciary, requests about that data may also need to be directed to the relevant
 - **Dietary and allergen requirements you choose to state** on a quote or order (for
   example eggless, vegan, Jain, nut-free). These are optional, are recorded as **your own
   statement** and passed to the Baker so they can act on it, and are **not verified by
-  Spattoo** (see [Terms of Service](/terms) Section 3.4). We use them only to convey your
-  request to that Baker and to show it on their order screens and production sheets.
+  Spattoo** (see [Terms of Service](/terms) Section 3.4). We use them to convey your
+  request to that Baker, to show it on their order screens and production sheets, and —
+  where you ask the Platform to help you choose a flavour — to **filter out options that
+  Baker has said they cannot make that way**. That filtering uses the Baker's own
+  information and is not a check by us; see Terms Section 3.8.
+- **Details about the cake and the occasion**, where you choose to give them: the occasion
+  (for example birthday, wedding), roughly who the cake is for, an approximate age band
+  where you tell us one, any number or wording you want on the cake, the size, and how
+  many tiers. These are optional. They reach the Baker so they can make the right cake,
+  and they help the Platform suggest a flavour.
+
+  **Some of this may be about someone other than you** — the person the cake is for.
+  Please give only what you are comfortable sharing. We ask for an **approximate age band**
+  (for example "a toddler", "a teenager") and never a date of birth or an exact age; where
+  you type a number for the cake itself, we store it as **decoration**, not as anyone's
+  age.
 
 ### 2.3. Collected automatically (technical data)
 - Basic device and usage data (for example, IP address, browser/device type, approximate
@@ -91,8 +105,12 @@ We use personal data to:
 - process Baker subscription payments and issue GST invoices;
 - provide support and respond to grievances;
 - detect, prevent, and address fraud, abuse, security, and technical issues;
+- **suggest a flavour, size, or design** when you ask the Platform to help you choose,
+  using what you have told us about the cake and what the Baker offers — a suggestion is
+  a convenience, not advice (see [Terms of Service](/terms) Section 3.8);
 - operate, analyse, and improve the Platform (including using aggregated or de-identified
-  data); and
+  data) — this includes learning, **across orders and in aggregate**, which flavours suit
+  which occasions, so that suggestions get better over time; and
 - comply with legal obligations and enforce our Terms.
 
 ## 4. Legal Basis and Consent (DPDP Act)
