@@ -29,19 +29,28 @@ import StartCta from "./StartCta";
 // three ways of saying free, and nothing saying what the month is FOR. Free is the condition;
 // a month of running your bakery on it is the proposition.
 //
-// And it does NOT say "every plan starts free for 30 days", which the strip did. The trial grants
-// FLAME's features — a Blaze buyer reading that line reasonably expects 30 free days of Blaze and
-// does not get it. Saying "Everything in Flame" is both accurate and a better sell, because it
-// names what they actually get.
+// And it does NOT say "every plan starts free for 30 days", which the strip did — a Blaze buyer
+// reading that reasonably expects 30 free days of Blaze and does not get it.
 //
-// The copy only works because the trial equals ONE tier (decided 2026-08-02: Flame for 30 days).
-// "Everything in Flame except three things you have not heard of yet" is not a sentence anyone can
-// put on a card.
+// ⚠️ IT ALSO NO LONGER SAYS "EVERYTHING IN FLAME" (changed 2026-08-05). That was accurate, and it
+// was still the wrong sentence, for two reasons:
+//
+//   * It is a PROMISE OF PARITY, and the trial does not have to be a tier. A trial exists to let a
+//     baker experience Spattoo; there is no reason its credit allowance must match Flame's, and
+//     seed_plan_entitlements.sql records "trial = Blaze for 30 days" as still pending precisely
+//     because the AI allowance is "the one way a trial can cost real money". Copy that names a tier
+//     pins a decision that is still open, and goes false the moment it moves.
+//   * The line contradicted itself — "everything in Flame PLUS a starter allowance of credits",
+//     when Flame's allowance IS 300/mo. "Plus" implied extra.
+//
+// So it now names what a baker GETS, in their own terms, and leaves the credit allowance
+// deliberately unquantified. True today, and still true if the trial changes tier or allowance
+// tomorrow. The card's job was never comparison anyway — see the block above it.
 const trial = {
   badge: "START HERE",
   headline: "Experience Spattoo for a full month",
   body: "Then decide which plan fits.",
-  detail: "Everything in Flame — your storefront, the 3D designer, unlimited orders and quotes — plus a starter allowance of smart-tool credits.",
+  detail: "Your own storefront, the 3D designer, flavour suggestions, and unlimited orders and quotes — with credits to try the smart tools.",
   foot: "No credit card. Nothing is charged until you pick a plan.",
   accent: "#6b8f7e",
   border: "rgba(107,143,126,0.35)",
