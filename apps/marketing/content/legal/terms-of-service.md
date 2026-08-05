@@ -165,6 +165,40 @@ and the Baker**, outside the Platform. Spattoo is not a payment agent, escrow ag
 guarantor for any Cake transaction. (This is separate from Baker subscription payments to
 Spattoo, which are covered in Part B.)
 
+### 3.8. Flavour and design suggestions are suggestions — not advice, and never a safety statement.
+
+The Platform may **suggest** a flavour, a size, a design, or a template — for example when
+you ask it to help you choose a flavour — and may show a short reason for the suggestion.
+Any such suggestion is a **convenience only**:
+
+- **It is a general guess, not advice.** A suggestion is produced automatically from
+  limited, general information — such as the occasion, roughly who the Cake is for, the
+  time of year, and which flavours the Baker offers — together with general assumptions
+  about what people commonly choose. It is **not** a professional, dietary, nutritional,
+  medical, or culinary recommendation, it is not tailored to you, and it is not a
+  statement about any particular Cake.
+- **Spattoo does not know what is in a Cake.** A suggestion is based on a flavour's
+  **name and general description**, not on any Baker's recipe, ingredients, method,
+  equipment, or premises. **A suggestion is never a statement about ingredients,
+  allergens, cross-contamination, nutrition, or suitability for any diet, allergy,
+  intolerance, medical condition, or religious requirement.**
+- **Filtering is not verification.** Where the Platform hides or excludes options based
+  on a dietary or allergen requirement you have recorded, it does so using **information
+  the Baker has supplied about their own offering**, which Spattoo does not verify,
+  check, or test. That an option is still shown to you is **not** a confirmation by
+  Spattoo or by the Baker that it meets your requirement, and that an option is hidden is
+  not a statement that it is unsafe. Section 3.4 applies in full.
+- **The Baker decides.** Whether a Cake can in fact be made as suggested — and at what
+  price — is entirely for the Baker. A suggestion is not an offer, a quote, a
+  confirmation, or a promise that anything is available.
+- **Taste is subjective.** Spattoo does not warrant that you, or anyone eating the Cake,
+  will like a suggested flavour or design.
+
+**If you have any allergy, intolerance, medical, religious, or dietary requirement, you
+must confirm ingredients and suitability directly with the Baker before ordering or
+consuming any Cake, whether or not the Platform suggested that option to you.** Spattoo
+accepts no liability arising from your reliance on any suggestion.
+
 ## 4. Accounts and Security
 
 4.1. Some features require an account or verification (for example, phone or email OTP
@@ -718,6 +752,11 @@ nut-free, doing so records your statement and passes it to the Baker. It is not 
 confirmation that the Baker has seen it, accepted it, or can meet it, and it is not a
 check by Spattoo of what any Cake contains. You must still confirm suitability with the
 Baker directly, as set out in Section 3.4.
+
+C2.4. **If the Platform suggests a flavour or a design to you**, that suggestion is a
+convenience based on general information and on what the Baker offers — not advice, and
+never a statement about ingredients, allergens, or suitability for any diet or allergy.
+Confirm with the Baker before you order, as set out in Section 3.8.
 
 ## C3. Images You Upload and Themed Cakes
 
