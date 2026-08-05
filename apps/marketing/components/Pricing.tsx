@@ -71,16 +71,24 @@ const trial = {
 // Before adding a row: grep for the key outside constants/entitlements.js and the seed. If the only
 // hits are the declaration and the seed, it is not a feature yet.
 //
-// RENAMED 2026-08-05: "Edible print sheet (A4)" → "Edible prints, sized to the cake".
+// RENAMED 2026-08-05, three times, and the last one is the point. Every row in this table is a
+// NOUN naming a thing you get — Custom templates, X-Ray reports, Smart tool credits, Support. A row
+// that reads as a sentence stops being scannable next to them.
 //
-// The original named the CONSUMABLE, and read as though Spattoo supplies the sheets — it does not,
-// the baker buys those. The first rewrite, "Edible sheet layout (A4)", fixed that and introduced a
-// different fault: A4 IS a layout, so the row named the paper twice and us not at all.
+//   "Edible print sheet (A4)"          named the CONSUMABLE, and read as though we supply sheets.
+//                                      We do not; the baker buys those.
+//   "Edible sheet layout (A4)"         fixed that, then named the paper twice — A4 IS a layout —
+//                                      and named us not at all.
+//   "Edible prints, sized to the cake" said the right thing in the wrong register: a description
+//                                      with a comma clause, sitting in a column of headings.
 //
-// What the tool actually does (src/chefsdesk/a4/A4Sheet.jsx) is hold the page TO SCALE and put
+// "Planner" is the noun. The tool (src/chefsdesk/a4/A4Sheet.jsx) holds the page to scale and puts
 // cake-diameter guides on it, so a baker checks the image against the cake BEFORE printing, then
-// exports with cut marks. The pain that removes is printing at the wrong size and binning a sheet
-// that costs real money — so the row names the outcome, which is the thing a baker recognises.
+// exports with cut marks — that is planning a sheet, and it is what stops an expensive sheet going
+// in the bin at the wrong size.
+//
+// Not "Studio", though the product has Glaze/Bow/Relief Sticker Studios: those are decoration-DESIGN
+// tools and this is print prep. Borrowing the name would promise a creative surface that is not here.
 //
 // A4 is dropped deliberately: it is the sheet they already buy, not something we provide, and it is
 // visible inside the tool itself.
@@ -138,7 +146,7 @@ const tiers = [
       { label: "Orders & quotes", value: "Unlimited" },
       { label: "Custom templates", value: "✓" },
       { label: "X-Ray reports", value: "✓" },
-      { label: "Edible prints, sized to the cake", value: "✓" },
+      { label: "Edible print planner", value: "✓" },
       { label: "Smart tool credits", value: "300 / mo" },
       { label: "Buy extra credits", value: "—" },
       { label: "Support", value: "Email" },
@@ -161,7 +169,7 @@ const tiers = [
       { label: "Orders & quotes", value: "Unlimited" },
       { label: "Custom templates", value: "✓" },
       { label: "X-Ray reports", value: "✓" },
-      { label: "Edible prints, sized to the cake", value: "✓" },
+      { label: "Edible print planner", value: "✓" },
       { label: "Smart tool credits", value: "800 / mo" },
       { label: "Buy extra credits", value: "✓" },
       { label: "Support", value: "Priority Chat" },
@@ -183,7 +191,7 @@ const tiers = [
       { label: "Orders & quotes", value: "Unlimited" },
       { label: "Custom templates", value: "✓" },
       { label: "X-Ray reports", value: "✓" },
-      { label: "Edible prints, sized to the cake", value: "✓" },
+      { label: "Edible print planner", value: "✓" },
       { label: "Smart tool credits", value: "2,000 / mo" },
       { label: "Buy extra credits", value: "✓" },
       { label: "Support", value: "Account Manager" },
