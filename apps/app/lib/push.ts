@@ -26,6 +26,18 @@ const config = {
 };
 const VAPID_KEY = process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY ?? "";
 
+// Which env var(s) supply each config field. Kept explicit so a failure can name the thing an
+// operator actually sets — "messagingSenderId is missing" sends you looking for a config field;
+// "NEXT_PUBLIC_FIREBASE_SENDER_ID is missing" sends you to the right screen.
+const SOURCES: Record<string, string[]> = {
+  apiKey:            ["NEXT_PUBLIC_FIREBASE_API_KEY"],
+  authDomain:        ["NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN"],
+  projectId:         ["NEXT_PUBLIC_FIREBASE_PROJECT_ID"],
+  messagingSenderId: ["NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID", "NEXT_PUBLIC_FIREBASE_SENDER_ID"],
+  appId:             ["NEXT_PUBLIC_FIREBASE_APP_ID"],
+  vapidKey:          ["NEXT_PUBLIC_FIREBASE_VAPID_KEY"],
+};
+
 // Every value the SDK needs. Checked as a SET rather than on projectId alone: a config missing any
 // one of these throws from inside Firebase with a message that names the field but not the
 // environment variable behind it, at the moment a baker taps the button.
@@ -41,11 +53,16 @@ export const pushConfigured = () => MISSING.length === 0;
 // misconfigured, it simply has no Firebase project. Half-configured is the case worth shouting
 // about, because it looks configured right up until the click.
 if (typeof window !== "undefined" && MISSING.length && MISSING.length < 6) {
+  const wanted = MISSING.map(k => `${k} ← ${(SOURCES[k] ?? []).join(" or ")}`);
   console.warn(
-    `[push] disabled — missing Firebase config: ${MISSING.join(", ")}. ` +
-    `Check the NEXT_PUBLIC_FIREBASE_* vars on this deployment; they are inlined at BUILD time, ` +
-    `so setting them requires a redeploy.`,
+    `[push] disabled — missing Firebase config:\n  ${wanted.join("\n  ")}\n` +
+    `These are inlined at BUILD time, so a value set after the last build is not in this bundle. ` +
+    `Check the var is set for the ENVIRONMENT you are loading (Vercel scopes Production, Preview ` +
+    `and Development separately) and redeploy WITHOUT the build cache.`,
   );
+  // What the bundle actually received, so "I set it" and "the build has it" stop being the same
+  // claim. Values are public by design; the secret is the service account on the API.
+  console.warn("[push] config as built:", { ...config, vapidKey: VAPID_KEY ? "(set)" : "" });
 }
 
 /**
