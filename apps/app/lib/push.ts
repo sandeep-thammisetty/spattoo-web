@@ -14,14 +14,39 @@ const config = {
   apiKey:            process.env.NEXT_PUBLIC_FIREBASE_API_KEY ?? "",
   authDomain:        process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN ?? "",
   projectId:         process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID ?? "",
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_SENDER_ID ?? "",
+  // BOTH names accepted. The Firebase config field is `messagingSenderId`, so anyone copying from
+  // the console names the var ..._MESSAGING_SENDER_ID — while the short form is what was documented
+  // first. Getting it wrong produces `Missing App configuration value: "messagingSenderId"` from
+  // deep inside the SDK, which says nothing about env vars at all. Cheaper to accept both than to
+  // make every future operator decode that.
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+                  ?? process.env.NEXT_PUBLIC_FIREBASE_SENDER_ID
+                  ?? "",
   appId:             process.env.NEXT_PUBLIC_FIREBASE_APP_ID ?? "",
 };
 const VAPID_KEY = process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY ?? "";
 
+// Every value the SDK needs. Checked as a SET rather than on projectId alone: a config missing any
+// one of these throws from inside Firebase with a message that names the field but not the
+// environment variable behind it, at the moment a baker taps the button.
+const MISSING = Object.entries({ ...config, vapidKey: VAPID_KEY })
+  .filter(([, v]) => !v)
+  .map(([k]) => k);
+
 // Unconfigured is a NORMAL state, not an error: a host that has not set these should render no
 // notification UI at all rather than a control that fails when tapped.
-export const pushConfigured = () => !!config.projectId && !!VAPID_KEY;
+export const pushConfigured = () => MISSING.length === 0;
+
+// Said once, at load, and only when SOME of it is present — a host that configured nothing is not
+// misconfigured, it simply has no Firebase project. Half-configured is the case worth shouting
+// about, because it looks configured right up until the click.
+if (typeof window !== "undefined" && MISSING.length && MISSING.length < 6) {
+  console.warn(
+    `[push] disabled — missing Firebase config: ${MISSING.join(", ")}. ` +
+    `Check the NEXT_PUBLIC_FIREBASE_* vars on this deployment; they are inlined at BUILD time, ` +
+    `so setting them requires a redeploy.`,
+  );
+}
 
 /**
  * Can this browser receive push at all?
