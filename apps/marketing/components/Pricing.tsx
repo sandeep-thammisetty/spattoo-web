@@ -96,10 +96,34 @@ const trial = {
 // A4 is dropped deliberately: it is the sheet they already buy, not something we provide, and it is
 // visible inside the tool itself.
 //
-// The reverse also happened: "Edible print sheet (A4)" shipped a long time ago, is gated by nothing,
-// and had never been sold. A baker arranges the customer's photo frames on an A4 sheet at true size,
-// checks them against cake-diameter guides, and exports a print-ready PDF with cut marks — on the
-// sheets they already buy. Unsold features are the cheaper mistake of the two, but still a mistake.
+// The reverse also happened: "Edible print sheet (A4)" shipped a long time ago and had never been
+// sold. A baker arranges the customer's photo frames on an A4 sheet at true size, checks them
+// against cake-diameter guides, and exports a print-ready PDF with cut marks — on the sheets they
+// already buy. Unsold features are the cheaper mistake of the two, but still a mistake.
+//
+// ── IT IS NO LONGER ONE ROW-VALUE FOR EVERYONE (2026-08-05) ──────────────────────────────────────
+// This row said ✓ on all three tiers, and that stopped being true when the studio became a place a
+// baker can WALK INTO rather than a view of an order. There are now two things with one name:
+//
+//   ORDER PHOTOS — the sheet reached from an order, on EVERY plan. Deliberately ungated: printing a
+//                  photo a customer attached is part of fulfilling an order they have already paid
+//                  for, and taking it away would withhold work in progress.
+//   ANY IMAGE    — the standalone studio, Blaze and Forge. Printing things NO order asked for: a
+//                  name, a logo, a sheet of the same rose to cut out. That is the bakery's own
+//                  productivity, which is a fair thing to sell; the customer's order is not.
+//
+// So the values name the SCOPE — whose images you may print — and not the access ("Anytime" vs "On
+// orders" would describe when, when the real difference is what.
+//
+// This one passes the "grep for the key" test at the top of this block, and that test is why the row
+// is worth trusting: `edible_print_studio` is enforced on every route in spattoo-api
+// src/routes/printSheets.js via requireEntitlement, and the menu item in CakeDesigner.jsx is hidden
+// unless `ent.edible_print_studio` resolves true. It is a real gate, not a seed value.
+//
+// ⚠️ AND THE GATE MUST BE OPEN BEFORE THIS SHIPS. The entitlement is declared with fallback:false and
+// the plan rows did not carry the key, so it resolved FALSE on every tier — Blaze and Forge included.
+// spattoo-api migration 050 grants it, and the seed carries it so a re-run cannot silently drop it
+// again. If that migration has not been applied, this row promises Blaze something it does not have.
 //
 // FLAVOUR SUGGESTIONS IS A ROW (added 2026-08-05), and it is the same tick on all three. It passes
 // the test above: not plumbing, but a capability a baker recognises — a customer who cannot decide
@@ -149,7 +173,7 @@ const tiers = [
       { label: "Orders & quotes", value: "Unlimited" },
       { label: "Custom templates", value: "✓" },
       { label: "X-Ray reports", value: "✓" },
-      { label: "Edible Print Studio", value: "✓" },
+      { label: "Edible Print Studio", value: "Order photos" },
       { label: "Smart tool credits", value: "300 / mo" },
       { label: "Buy extra credits", value: "—" },
       { label: "Support", value: "Email" },
@@ -172,7 +196,7 @@ const tiers = [
       { label: "Orders & quotes", value: "Unlimited" },
       { label: "Custom templates", value: "✓" },
       { label: "X-Ray reports", value: "✓" },
-      { label: "Edible Print Studio", value: "✓" },
+      { label: "Edible Print Studio", value: "Any image" },
       { label: "Smart tool credits", value: "800 / mo" },
       { label: "Buy extra credits", value: "✓" },
       { label: "Support", value: "Priority Chat" },
@@ -194,7 +218,7 @@ const tiers = [
       { label: "Orders & quotes", value: "Unlimited" },
       { label: "Custom templates", value: "✓" },
       { label: "X-Ray reports", value: "✓" },
-      { label: "Edible Print Studio", value: "✓" },
+      { label: "Edible Print Studio", value: "Any image" },
       { label: "Smart tool credits", value: "2,000 / mo" },
       { label: "Buy extra credits", value: "✓" },
       { label: "Support", value: "Account Manager" },
@@ -376,8 +400,10 @@ export default function Pricing() {
             No job counts ("≈50 photo reads"): what an action costs is DATA that can move, and the
             app shows the live price list. A number printed here would go stale silently. */}
         <p className="text-center text-[#edeae3]/45 text-xs mt-8 max-w-2xl mx-auto leading-relaxed">
-          X-Ray works on every plan, for cakes you design and for orders that are just a reference
-          photo. Credits pay for the AI part — reading a photo, and working out how a decoration was
+          Every plan prints the photos a customer attaches to an order. Blaze and Forge also open the
+          Edible Print Studio on its own, for anything no order asked for — a name, a logo, a sheet
+          of the same rose to cut out. X-Ray works on every plan, for cakes you design and for orders
+          that are just a reference photo. Credits pay for the AI part — reading a photo, and working out how a decoration was
           made; an X-Ray of a cake you designed costs nothing. Monthly credits refresh on the 1st.
           Credits you buy never expire and are only used once the monthly ones are gone.
         </p>
