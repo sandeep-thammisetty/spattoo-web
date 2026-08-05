@@ -46,18 +46,18 @@ export default function Home() {
             {[
               {
                 step: "01",
-                title: "Design in 3D Cake Designer",
-                desc: "You or your customer can build a custom cake in our 3D designer — choose the shape, tiers, cream, toppings, and message. What you see is exactly what gets made.",
+                title: "Your Customer Starts Anywhere",
+                desc: "Design, flavour, size or date — whichever they already have in mind. They can build it in 3D, pick one of your cakes, or just send a photo. No form to work through.",
               },
               {
                 step: "02",
-                title: "Customer Confirms & Orders",
-                desc: "Once the design is finalised, your customer reviews and places the order directly. No back-and-forth. No miscommunication. Just a confirmed design.",
+                title: "Spattoo Helps Them Decide",
+                desc: "Can't choose a flavour? Your storefront suggests one from what you actually offer, and says why — \u201ca first birthday is usually mild\u201d. Every question it answers is a WhatsApp message you never have to send.",
               },
               {
                 step: "03",
-                title: "Orders Land in Your Dashboard",
-                desc: "Every order is stored and organised in one place. Get instant notifications the moment an order comes in — so you never miss a cake.",
+                title: "A Complete Enquiry Lands With You",
+                desc: "Flavour, size, date, occasion, reference photos \u2014 with a verified phone number, so you can call straight back. Every order in one place, with a notification the moment it arrives.",
               },
               {
                 step: "04",

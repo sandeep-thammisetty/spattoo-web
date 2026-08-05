@@ -16,6 +16,11 @@ const slides = [
     highlight: "More baking.",
   },
   {
+    eyebrow: "Your storefront does the asking",
+    headline: ["They tell you the flavour,", "size and date.", "Before they message you."],
+    highlight: "Before they message you.",
+  },
+  {
     eyebrow: "No design skills needed.",
     headline: ["No design skills needed.", "Start from a template."],
     highlight: "Start from a template.",
