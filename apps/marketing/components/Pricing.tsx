@@ -71,6 +71,12 @@ const trial = {
 // Before adding a row: grep for the key outside constants/entitlements.js and the seed. If the only
 // hits are the declaration and the seed, it is not a feature yet.
 //
+// RENAMED 2026-08-05: "Edible print sheet (A4)" → "Edible sheet layout (A4)". The old label read as
+// though Spattoo supplies the sheets. It does not — the baker buys those; what we give them is the
+// LAYOUT: a to-scale A4 page they arrange images on, with cake-diameter guides, exported as a
+// print-ready PDF with cut marks (src/chefsdesk/a4/A4Sheet.jsx). Naming the tool rather than the
+// consumable also stops a reader wondering whether sheets are included in the price.
+//
 // The reverse also happened: "Edible print sheet (A4)" shipped a long time ago, is gated by nothing,
 // and had never been sold. A baker arranges the customer's photo frames on an A4 sheet at true size,
 // checks them against cake-diameter guides, and exports a print-ready PDF with cut marks — on the
@@ -124,7 +130,7 @@ const tiers = [
       { label: "Orders & quotes", value: "Unlimited" },
       { label: "Custom templates", value: "✓" },
       { label: "X-Ray reports", value: "✓" },
-      { label: "Edible print sheet (A4)", value: "✓" },
+      { label: "Edible sheet layout (A4)", value: "✓" },
       { label: "Smart tool credits", value: "300 / mo" },
       { label: "Buy extra credits", value: "—" },
       { label: "Support", value: "Email" },
@@ -147,7 +153,7 @@ const tiers = [
       { label: "Orders & quotes", value: "Unlimited" },
       { label: "Custom templates", value: "✓" },
       { label: "X-Ray reports", value: "✓" },
-      { label: "Edible print sheet (A4)", value: "✓" },
+      { label: "Edible sheet layout (A4)", value: "✓" },
       { label: "Smart tool credits", value: "800 / mo" },
       { label: "Buy extra credits", value: "✓" },
       { label: "Support", value: "Priority Chat" },
@@ -169,7 +175,7 @@ const tiers = [
       { label: "Orders & quotes", value: "Unlimited" },
       { label: "Custom templates", value: "✓" },
       { label: "X-Ray reports", value: "✓" },
-      { label: "Edible print sheet (A4)", value: "✓" },
+      { label: "Edible sheet layout (A4)", value: "✓" },
       { label: "Smart tool credits", value: "2,000 / mo" },
       { label: "Buy extra credits", value: "✓" },
       { label: "Support", value: "Account Manager" },
