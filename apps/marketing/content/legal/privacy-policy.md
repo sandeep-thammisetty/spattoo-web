@@ -71,11 +71,14 @@ Fiduciary, requests about that data may also need to be directed to the relevant
   many tiers. These are optional. They reach the Baker so they can make the right cake,
   and they help the Platform suggest a flavour.
 
-  **Some of this may be about someone other than you** — the person the cake is for.
-  Please give only what you are comfortable sharing. We ask for an **approximate age band**
-  (for example "a toddler", "a teenager") and never a date of birth or an exact age; where
-  you type a number for the cake itself, we store it as **decoration**, not as anyone's
-  age.
+  **We do not ask how old anybody is.** Where the Platform helps you choose a flavour it
+  asks what **kind of celebration** it is — for example "a first birthday" or "a children's
+  party" — because that is what changes the cake, and we record that party type rather than
+  any person's age. Where you type a number to go **on** the cake, we store it as
+  **decoration**, not as anyone's age. We never ask for or store a date of birth.
+
+  Some of what you give us describes **someone other than you** — the person the cake is
+  for. Please give only what you are comfortable sharing; all of it is optional.
 
 ### 2.3. Collected automatically (technical data)
 - Basic device and usage data (for example, IP address, browser/device type, approximate
@@ -206,6 +209,14 @@ The Platform is intended for users **18 years and older** and is not directed to
 We do not knowingly collect personal data from children without verifiable parental or
 guardian consent as required by the DPDP Act. If you believe a child has provided personal
 data, contact us and we will take appropriate steps to delete it.
+
+**Cakes are often for children, and we have designed around that.** A Customer ordering a
+child's birthday cake tells us about the **occasion** — for example that it is a first
+birthday or a children's party — and never the child's age or date of birth. We do not ask
+a child for anything, do not knowingly let a child use the Platform, and do not build a
+profile of, track, monitor, or direct advertising at any child. Where we use order
+information to improve our flavour suggestions, we use it **in aggregate, across orders**
+— not to profile any individual, adult or child.
 
 ## 11. Third-Party Links
 
