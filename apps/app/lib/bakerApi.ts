@@ -152,6 +152,26 @@ export function makeBakerApiClient(supabase: SupabaseClient) {
     unlinkUpload: (id: number | string) =>
       authFetch(`/api/uploads/${id}/promote`, { method: "DELETE" }),
 
+    // ── Edible Print Studio: saved sheets ──────────────────────────────────────────────────────
+    // A sheet is a LAYOUT — which images, where on the A4, how big. Blaze+; every route is gated
+    // server-side on the entitlement as well (spattoo-api routes/printSheets.js), so a 403 here is
+    // the plan answering, not a bug.
+    //
+    // The LIST deliberately carries no `items`: the library screen draws names and dates, and one
+    // sheet's layout is fetched only when it is opened.
+    fetchPrintSheets: () => authGet("/api/print-sheets").then((r) => r.sheets ?? []),
+    fetchPrintSheet: (id: number | string) => authGet(`/api/print-sheets/${id}`),
+    createPrintSheet: (payload: { name: string; items?: unknown[]; guide?: unknown }) =>
+      authFetch("/api/print-sheets", { method: "POST", body: JSON.stringify(payload) }),
+    // PATCH is both "save" and "rename" — an omitted field means "leave it", so a rename need not
+    // send the layout back and a save need not know the current name.
+    updatePrintSheet: (
+      id: number | string,
+      payload: { name?: string; items?: unknown[]; guide?: unknown },
+    ) => authFetch(`/api/print-sheets/${id}`, { method: "PATCH", body: JSON.stringify(payload) }),
+    deletePrintSheet: (id: number | string) =>
+      authFetch(`/api/print-sheets/${id}`, { method: "DELETE" }),
+
     // Put the image bytes in R2 (signed URL) and return the KEY — what registerUpload records.
     uploadElementImage: async (blob: Blob, filename: string) => {
       const { url, key } = await authFetch("/api/storage/sign-upload", {
