@@ -172,6 +172,13 @@ export function makeBakerApiClient(supabase: SupabaseClient) {
     deletePrintSheet: (id: number | string) =>
       authFetch(`/api/print-sheets/${id}`, { method: "DELETE" }),
 
+    // ── Push: this device asking to be notified ────────────────────────────────────────────────
+    // Safe to call on every load — the FCM SDK returns the same token and the API upserts on it.
+    registerDeviceToken: (token: string, platform: "web" | "android" | "ios" = "web") =>
+      authFetch("/api/device-tokens", { method: "POST", body: JSON.stringify({ token, platform }) }),
+    unregisterDeviceToken: (token: string) =>
+      authFetch("/api/device-tokens", { method: "DELETE", body: JSON.stringify({ token }) }),
+
     // Put the image bytes in R2 (signed URL) and return the KEY — what registerUpload records.
     uploadElementImage: async (blob: Blob, filename: string) => {
       const { url, key } = await authFetch("/api/storage/sign-upload", {

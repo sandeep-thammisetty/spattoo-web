@@ -6,6 +6,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { getSupabase } from "../lib/supabase";
 import { MARKETING_URL } from "../lib/domain";
+import EnableNotifications from "./EnableNotifications";
 import { makeBakerApiClient } from "../lib/bakerApi";
 import { API_BASE } from "../lib/api";
 import { setTelemetryContext } from "../lib/telemetry";
@@ -248,6 +249,13 @@ export default function BakerApp() {
   return (
     <>
       <CakeDesigner apiClient={api} supabase={supabase} cfAssetsBase={process.env.NEXT_PUBLIC_ASSETS_BASE} onShareStore={() => setShareStoreOpen(true)} liveSessionId={liveSessionId} onSaveTemplate={saveTemplate} legalBase={MARKETING_URL} />
+      {/* ⚠️ TEMPORARY placement, while FCM is being wired. The designer owns the whole screen, so
+          there is no chrome here to hold this — its real home is the Chef's Desk / settings menu in
+          spattoo-core, which is a core change plus a release. Floating for now so the permission
+          flow can be tested; renders nothing at all unless push is available and not yet granted. */}
+      <div style={{ position: "fixed", left: 16, bottom: 16, zIndex: 5000 }}>
+        <EnableNotifications api={api} />
+      </div>
       {baker.slug && (
         <ShareStoreModal
           open={shareStoreOpen}
