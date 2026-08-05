@@ -78,6 +78,36 @@ export async function pushSupported(): Promise<boolean> {
   return isSupported().catch(() => false);
 }
 
+/**
+ * Resolve once this registration has an ACTIVE worker.
+ *
+ * Watches the specific registration rather than `navigator.serviceWorker.ready`, which resolves for
+ * whichever worker controls the PAGE — not necessarily this one, and not at all if the page is
+ * uncontrolled on its first load.
+ */
+function activated(reg: ServiceWorkerRegistration): Promise<void> {
+  if (reg.active) return Promise.resolve();
+  const sw = reg.installing ?? reg.waiting;
+  if (!sw) return navigator.serviceWorker.ready.then(() => undefined);
+
+  return new Promise((resolve, reject) => {
+    // A worker that fails to install never reaches 'activated', so without a timeout this would hang
+    // and the baker would watch "Turning on…" forever.
+    const timer = setTimeout(() => reject(new Error("service worker did not activate in time")), 10_000);
+    sw.addEventListener("statechange", function onChange() {
+      if (sw.state === "activated") {
+        clearTimeout(timer);
+        sw.removeEventListener("statechange", onChange);
+        resolve();
+      } else if (sw.state === "redundant") {
+        clearTimeout(timer);
+        sw.removeEventListener("statechange", onChange);
+        reject(new Error("service worker became redundant before activating"));
+      }
+    });
+  });
+}
+
 let app: FirebaseApp | null = null;
 let messaging: Messaging | null = null;
 
@@ -105,6 +135,15 @@ export async function enablePush(): Promise<string | null> {
   const registration = await navigator.serviceWorker.register(
     `/firebase-messaging-sw.js?${new URLSearchParams(config).toString()}`,
   );
+
+  // WAIT FOR IT TO BE ACTIVE. register() resolves as soon as the worker is REGISTERED, which on a
+  // first load means it is still `installing` — and pushManager.subscribe() requires an ACTIVE
+  // worker, failing with "Subscription failed - no active Service Worker".
+  //
+  // The bug only appears on the FIRST visit after a deploy, because afterwards the worker is
+  // already activated and register() resolves against it. So it looks intermittent, and it lands on
+  // exactly the baker who has never had notifications before.
+  await activated(registration);
 
   return getToken(client(), { vapidKey: VAPID_KEY, serviceWorkerRegistration: registration });
 }
