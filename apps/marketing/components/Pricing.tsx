@@ -67,6 +67,16 @@ const trial = {
 // checks them against cake-diameter guides, and exports a print-ready PDF with cut marks — on the
 // sheets they already buy. Unsold features are the cheaper mistake of the two, but still a mistake.
 //
+// FLAVOUR SUGGESTIONS IS A ROW (added 2026-08-05), and it is the same tick on all three. It passes
+// the test above: not plumbing, but a capability a baker recognises — a customer who cannot decide
+// is offered flavours from THIS baker's list, with the reason for each. It had shipped and was
+// unsold, which is the mistake this file already names.
+//
+// Identical across tiers ON PURPOSE, and not an oversight to be "fixed" later by gating it. It is
+// customer-facing: restricting it would give some bakers' CUSTOMERS worse recommendations, which is
+// a strange thing to sell. It also improves with order volume, so limiting who can use it slows the
+// data it runs on. There is no entitlement key to grep for, because there is no gate.
+//
 // BACKGROUND REMOVAL IS NOT A ROW (removed 2026-08-02). It is plumbing inside the upload flow, not
 // a feature anyone shops for — a baker uploads a photo of their decoration and expects the cut-out;
 // they do not compare plans on it. It also gated nothing. Where it belongs is inside the smart-tool
@@ -101,6 +111,7 @@ const tiers = [
     glow: "rgba(196,133,42,0.07)",
     features: [
       { label: "Storefront + 3D designer", value: "✓" },
+      { label: "Flavour suggestions", value: "✓" },
       { label: "Orders & quotes", value: "Unlimited" },
       { label: "Custom templates", value: "✓" },
       { label: "X-Ray reports", value: "✓" },
@@ -123,6 +134,7 @@ const tiers = [
     recommended: true,
     features: [
       { label: "Storefront + 3D designer", value: "✓" },
+      { label: "Flavour suggestions", value: "✓" },
       { label: "Orders & quotes", value: "Unlimited" },
       { label: "Custom templates", value: "✓" },
       { label: "X-Ray reports", value: "✓" },
@@ -144,6 +156,7 @@ const tiers = [
     glow: "rgba(139,58,42,0.08)",
     features: [
       { label: "Storefront + 3D designer", value: "✓" },
+      { label: "Flavour suggestions", value: "✓" },
       { label: "Orders & quotes", value: "Unlimited" },
       { label: "Custom templates", value: "✓" },
       { label: "X-Ray reports", value: "✓" },
