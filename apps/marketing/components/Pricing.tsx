@@ -132,7 +132,7 @@ const trial = {
 // flag, and no entitlement key existed — so every baker on every plan saw the same list and this
 // row would have been the team-seats mistake again, a fortnight before launch. The gate was built
 // first: `storefront_themes.is_premium`, a `premium_themes` entitlement (spattoo-api migration
-// 052), a 403 in PATCH /baker/profile, and a locked card in the Settings picker.
+// 054), a 403 in PATCH /baker/profile, and a locked card in the Settings picker.
 //
 // ⚠️ EVERY THEME THAT EXISTS TODAY IS BASIC, deliberately — no baker loses one they already chose,
 // and premium starts with themes built from here on. So the row is true and currently sells an
