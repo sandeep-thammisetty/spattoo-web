@@ -172,6 +172,19 @@ export function makeBakerApiClient(supabase: SupabaseClient) {
     deletePrintSheet: (id: number | string) =>
       authFetch(`/api/print-sheets/${id}`, { method: "DELETE" }),
 
+    // ── The notification centre ────────────────────────────────────────────────────────────────
+    // A READ over the outbox — every row was already being written. `.catch(() => …)` returns an
+    // empty shape rather than throwing: the bell is header furniture and must never be the reason a
+    // header breaks.
+    fetchNotifications: (limit = 20) =>
+      authGet(`/api/notifications?limit=${limit}`).catch(() => ({ unread: 0, notifications: [] })),
+    // Omit ids to mark everything read. Idempotent server-side, and only ever moves unread → read.
+    markNotificationsRead: (ids?: Array<number | string>) =>
+      authFetch("/api/notifications/read", {
+        method: "POST",
+        body: JSON.stringify(ids ? { ids } : {}),
+      }),
+
     // ── Push: this device asking to be notified ────────────────────────────────────────────────
     // Safe to call on every load — the FCM SDK returns the same token and the API upserts on it.
     registerDeviceToken: (
