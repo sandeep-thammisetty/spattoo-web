@@ -125,6 +125,24 @@ const trial = {
 // spattoo-api migration 050 grants it, and the seed carries it so a re-run cannot silently drop it
 // again. If that migration has not been applied, this row promises Blaze something it does not have.
 //
+// STOREFRONT THEMES IS A ROW (added 2026-08-06) — Basic on Flame, "Basic + premium" on Blaze and
+// Forge. It passes the grep test above, and only just: on the day it was asked for it did NOT.
+//
+// storefront_themes had is_active and nothing else, the theme-select route validated only that
+// flag, and no entitlement key existed — so every baker on every plan saw the same list and this
+// row would have been the team-seats mistake again, a fortnight before launch. The gate was built
+// first: `storefront_themes.is_premium`, a `premium_themes` entitlement (spattoo-api migration
+// 052), a 403 in PATCH /baker/profile, and a locked card in the Settings picker.
+//
+// ⚠️ EVERY THEME THAT EXISTS TODAY IS BASIC, deliberately — no baker loses one they already chose,
+// and premium starts with themes built from here on. So the row is true and currently sells an
+// empty set on Blaze. That is the honest way round: the capability is enforced, and the first
+// premium theme is a data INSERT with is_premium = true, not another deploy. If premium themes are
+// abandoned, this row goes and nothing was promised.
+//
+// "Basic + premium", not "Premium": Blaze does not lose the basic themes, and a column reading
+// Basic / Premium implies a swap rather than a superset.
+//
 // FLAVOUR SUGGESTIONS IS A ROW (added 2026-08-05), and it is the same tick on all three. It passes
 // the test above: not plumbing, but a capability a baker recognises — a customer who cannot decide
 // is offered flavours from THIS baker's list, with the reason for each. It had shipped and was
@@ -173,6 +191,7 @@ const tiers = [
       { label: "Orders & quotes", value: "Unlimited" },
       { label: "Custom templates", value: "✓" },
       { label: "X-Ray reports", value: "✓" },
+      { label: "Storefront themes", value: "Basic" },
       { label: "Edible Print Studio", value: "Order photos" },
       { label: "Smart tool credits", value: "300 / mo" },
       { label: "Buy extra credits", value: "—" },
@@ -196,6 +215,7 @@ const tiers = [
       { label: "Orders & quotes", value: "Unlimited" },
       { label: "Custom templates", value: "✓" },
       { label: "X-Ray reports", value: "✓" },
+      { label: "Storefront themes", value: "Basic + premium" },
       { label: "Edible Print Studio", value: "Any image" },
       { label: "Smart tool credits", value: "800 / mo" },
       { label: "Buy extra credits", value: "✓" },
@@ -218,6 +238,7 @@ const tiers = [
       { label: "Orders & quotes", value: "Unlimited" },
       { label: "Custom templates", value: "✓" },
       { label: "X-Ray reports", value: "✓" },
+      { label: "Storefront themes", value: "Basic + premium" },
       { label: "Edible Print Studio", value: "Any image" },
       { label: "Smart tool credits", value: "2,000 / mo" },
       { label: "Buy extra credits", value: "✓" },
