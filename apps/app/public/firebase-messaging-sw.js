@@ -43,6 +43,14 @@ if (config.projectId) {
       // Same tag replaces rather than stacks. A baker who gets two "deliveries today" nudges wants
       // the later one, not a pile.
       tag:   d.tag || undefined,
+      // STAYS UNTIL DISMISSED. The default auto-hides after a few seconds, which is precisely wrong
+      // here: the whole premise is that the baker was NOT looking at the screen. An enquiry alert
+      // that appears and vanishes while they are icing a cake has delivered nothing — and it is
+      // indistinguishable, afterwards, from never having arrived.
+      //
+      // Desktop Chrome honours this. Android already persists notifications in the tray so it is
+      // redundant there, and Safari ignores it — no platform is made worse by asking.
+      requireInteraction: true,
       data:  { url: d.url || '/' },
     });
   });
