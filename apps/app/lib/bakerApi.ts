@@ -174,8 +174,15 @@ export function makeBakerApiClient(supabase: SupabaseClient) {
 
     // ── Push: this device asking to be notified ────────────────────────────────────────────────
     // Safe to call on every load — the FCM SDK returns the same token and the API upserts on it.
-    registerDeviceToken: (token: string, platform: "web" | "android" | "ios" = "web") =>
-      authFetch("/api/device-tokens", { method: "POST", body: JSON.stringify({ token, platform }) }),
+    registerDeviceToken: (
+      token: string,
+      platform: "web" | "android" | "ios" = "web",
+      // Diagnostics only, and thin on web by nature — see lib/push.ts deviceInfo().
+      info: { deviceModel?: string; osVersion?: string; appVersion?: string } = {},
+    ) => authFetch("/api/device-tokens", {
+      method: "POST",
+      body: JSON.stringify({ token, platform, ...info }),
+    }),
     unregisterDeviceToken: (token: string) =>
       authFetch("/api/device-tokens", { method: "DELETE", body: JSON.stringify({ token }) }),
 

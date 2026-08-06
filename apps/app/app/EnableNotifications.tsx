@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { enablePush, pushSupported } from "../lib/push";
+import { deviceInfo, enablePush, pushSupported } from "../lib/push";
 import type { makeBakerApiClient } from "../lib/bakerApi";
 
 // ── "Never miss a delivery" ──────────────────────────────────────────────────────────────────────
@@ -55,7 +55,10 @@ export default function EnableNotifications({ api }: { api?: Pick<Api, "register
       // Not surfaced to the baker — they granted permission and that worked; a backend hiccup is not
       // their refusal to fix, and the next mount retries. But LOGGED, because a swallowed failure
       // here is indistinguishable from "no row appeared" and that is a bad hour to spend.
-      await api.registerDeviceToken(token, "web").catch((e) => {
+      // Re-sent on every registration, so a device that updates its OS or the app corrects itself
+      // rather than reporting whatever it was on the day it first registered.
+      const info = await deviceInfo().catch(() => ({}));
+      await api.registerDeviceToken(token, "web", info).catch((e) => {
         console.error("[push] permission granted but the token did not reach the API:", e?.message ?? e);
       });
     }

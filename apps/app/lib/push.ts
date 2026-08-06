@@ -149,6 +149,50 @@ export async function enablePush(): Promise<string | null> {
 }
 
 /**
+ * What this device is, for diagnosing non-delivery (migration 056).
+ *
+ * ── WHAT A BROWSER CAN ACTUALLY TELL US ─────────────────────────────────────────────────────────
+ * Very little, and that is expected rather than a bug to fix. `navigator.userAgent` is coarse and
+ * Chrome freezes its version; the handset MODEL is available only via User-Agent Client Hints, only
+ * on Chromium, and only by asking for high-entropy values. Safari reports none of it.
+ *
+ * So these are thin on web and fill in properly when the Capacitor apps report through the Device
+ * plugin. Sending what we have beats sending nothing: "Android, Chrome" already separates an OEM
+ * background-kill from an iOS install problem.
+ *
+ * DELIBERATELY NOT the full user-agent string. UA + screen + timezone + language is a fingerprint,
+ * and a fingerprint is a tracking capability we would then have to justify holding.
+ */
+export async function deviceInfo(): Promise<{ deviceModel?: string; osVersion?: string; appVersion?: string }> {
+  if (typeof navigator === "undefined") return {};
+  const uaData = (navigator as Navigator & {
+    userAgentData?: {
+      platform?: string;
+      getHighEntropyValues?: (h: string[]) => Promise<{ model?: string; platformVersion?: string }>;
+    };
+  }).userAgentData;
+
+  let model: string | undefined;
+  let platformVersion: string | undefined;
+  try {
+    // Chromium only, and it may still return empty strings — the browser decides what it is willing
+    // to say. Guarded because Safari has no userAgentData at all.
+    const high = await uaData?.getHighEntropyValues?.(["model", "platformVersion"]);
+    model = high?.model || undefined;
+    platformVersion = high?.platformVersion || undefined;
+  } catch { /* the browser declined; thin data is the expected outcome here */ }
+
+  const platform = uaData?.platform || navigator.platform || "web";
+  return {
+    deviceModel: model,
+    osVersion:   [platform, platformVersion].filter(Boolean).join(" ") || undefined,
+    // The build this browser is running, so "is this fixed for them yet" is answerable. Vercel
+    // exposes the commit SHA; falls back to nothing rather than lying.
+    appVersion:  process.env.NEXT_PUBLIC_RELEASE_SHA || undefined,
+  };
+}
+
+/**
  * Messages that arrive while the app is in the FOREGROUND.
  *
  * FCM deliberately does not show a system notification in this case — the user is already looking at
