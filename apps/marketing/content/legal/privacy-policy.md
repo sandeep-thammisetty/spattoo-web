@@ -56,7 +56,8 @@ Fiduciary, requests about that data may also need to be directed to the relevant
 - **Order/quote data**: your request details, messages/notes, quoted price, advance
   amount, and order status.
 - **Optional images** you upload (for example, a portrait/reference image), where the
-  storefront offers that.
+  storefront offers that. Where a Baker uses an AI feature on an image, that image is sent
+  to an AI provider outside India — see **Sections 3.1 and 6**.
 - **Dietary and allergen requirements you choose to state** on a quote or order (for
   example eggless, vegan, Jain, nut-free). These are optional, are recorded as **your own
   statement** and passed to the Baker so they can act on it, and are **not verified by
@@ -116,6 +117,34 @@ We use personal data to:
   which occasions, so that suggestions get better over time; and
 - comply with legal obligations and enforce our Terms.
 
+### 3.1. Images and AI features
+
+Some Baker features read an image with an AI model, and some draw a new image from one.
+Because these send your image outside India, they are set out here rather than left inside
+the list above.
+
+- **Reading a photo.** A Baker can ask the Platform to read a cake photo and describe what
+  is on it — tiers, frosting, piping, colours — so it can produce a make-it guide. The
+  **whole photo is sent** to our AI provider (Section 6) for that purpose. The model is
+  instructed to describe **the cake only**: not to describe, name, or characterise anybody
+  appearing in the image, and to ignore any person who is simply holding or standing near
+  the cake.
+- **Drawing a guide sheet.** From a small crop of that photo, the Platform can generate an
+  illustrated sheet showing how a decoration is built. **A photograph printed on a cake is
+  never used this way.** The Platform detects a printed photo and refuses, because an
+  edible print is printed rather than made by hand — so there is nothing to illustrate, and
+  we will not send a person's face to an image generator.
+- **What we do not do.** We do not use these features to identify anyone, to recognise
+  faces, to infer anything about a person, or to build a profile. No feature asks who
+  somebody is.
+- **Whose consent.** If you upload a photograph of another person, the person who uploads
+  it is responsible for having that person's consent — and, for a child, verifiable consent
+  from a parent or guardian — before uploading, covering this processing. See
+  [Terms of Service](/terms) Sections 6.3.1 and B5.6.
+- **Printing a photo does not involve AI.** Preparing a photo for an edible sheet is
+  layout and printing only. No AI provider is involved and the image is not sent anywhere
+  for that purpose.
+
 ## 4. Legal Basis and Consent (DPDP Act)
 
 We process personal data on the basis of your **consent** and/or for **legitimate uses**
@@ -152,7 +181,7 @@ restrictions notified by the Government of India.
 | Supabase | Database, authentication, storage | Outside India (region-dependent) |
 | Cloudflare R2 | File/object storage (images, designs, logos) | Global / outside India |
 | Razorpay | Baker subscription payment processing | India |
-| OpenAI | AI vision (identifying decorative elements) | United States |
+| OpenAI | AI vision (reading a cake photo to identify decorations and colours) **and AI image generation** (drawing how-to-make-it guide sheets from a photo) — see Section 3.1 | United States |
 | Meshy.ai | Image-to-3D model generation | Outside India (US) |
 | remove.bg | Image background removal | European Union (Germany) |
 | Sentry (or equivalent) | Error/diagnostic monitoring | United States (unless self-hosted) |
@@ -209,6 +238,16 @@ The Platform is intended for users **18 years and older** and is not directed to
 We do not knowingly collect personal data from children without verifiable parental or
 guardian consent as required by the DPDP Act. If you believe a child has provided personal
 data, contact us and we will take appropriate steps to delete it.
+
+**A photograph of a child is a child's personal data.** Photo cakes are the one place this
+arises. Where a Customer or Baker uploads a photograph of a child, we process it to produce
+the cake that was asked for, and **the person who uploads it must already hold verifiable
+consent from a parent or lawful guardian** covering that use, including the AI processing in
+Section 3.1 ([Terms](/terms) Sections 6.3.1 and B5.6). We do not require that consent record
+to be sent to us — holding files about children who are not our users would create risk
+rather than reduce it — but we may ask for it if a complaint is made, and we will act on a
+parent's or guardian's request to delete the image. A photograph printed on a cake is never
+sent to an image generator (Section 3.1).
 
 **Cakes are often for children, and we have designed around that.** A Customer ordering a
 child's birthday cake tells us about the **occasion** — for example that it is a first
