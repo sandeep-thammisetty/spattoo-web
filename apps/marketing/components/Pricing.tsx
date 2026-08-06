@@ -179,6 +179,7 @@ const trial = {
 const tiers = [
   {
     name: "Flame",
+    quote: false as const,
     tagline: "Less than the price of one cake",
     monthly: 999,
     annual: 9999,
@@ -202,6 +203,7 @@ const tiers = [
   },
   {
     name: "Blaze",
+    quote: false as const,
     tagline: "Your brand. Your templates. Your rules.",
     monthly: 2499,
     annual: 24999,
@@ -226,7 +228,21 @@ const tiers = [
   },
   {
     name: "Forge",
-    tagline: "No limits. Everything on. We've got your back.",
+    // ── A CONVERSATION, NOT A PRICE ───────────────────────────────────────────────────────────────
+    // Forge carried ₹4,999 and a feature list that, once team seats came off the table, differed
+    // from Blaze by credits and the word "Account manager". That is not a tier — it is Blaze with a
+    // bigger number, and a fixed price on it invites the only question we cannot answer well:
+    // what does the extra ₹2,500 buy?
+    //
+    // So it stops pretending to be a package. A bakery that has outgrown Blaze wants something
+    // specific — volume, an integration, a hand with setup — and the honest response to "specific"
+    // is to talk, not to publish a number and hope it fits.
+    //
+    // The rows stay, because the column still has to be comparable to the two beside it. Only the
+    // ones that would be PROMISES become "Custom": credits are negotiated now, so printing 2,000
+    // would be quoting a figure nobody has agreed.
+    quote: true as const,
+    tagline: "Bigger volumes, set up around your bakery.",
     monthly: 4999,
     annual: 49999,
     accent: "#8b3a2a",
@@ -240,11 +256,11 @@ const tiers = [
       { label: "X-Ray reports", value: "✓" },
       { label: "Storefront themes", value: "Basic + premium" },
       { label: "Edible Print Studio", value: "Any image" },
-      { label: "Smart tool credits", value: "2,000 / mo" },
+      { label: "Smart tool credits", value: "Custom" },
       { label: "Buy extra credits", value: "✓" },
       { label: "Support", value: "Account Manager" },
     ],
-    cta: "Start with Forge",
+    cta: "Contact us",
     ctaVariant: "ghost" as const,
   },
 ];
@@ -366,13 +382,16 @@ export default function Pricing() {
                 <p className="text-xs text-[#edeae3]/60 leading-relaxed mt-1">{tier.tagline}</p>
               </div>
 
-              {/* Price */}
+              {/* Price — or, on a quote tier, the absence of one.
+                  Deliberately still the biggest thing in this block, at the same size as the two
+                  prices beside it. A quote tier that whispers reads as an afterthought; the point
+                  is that "let's talk" IS the offer, sitting level with ₹999 and ₹2,499. */}
               <div>
                 <div className="flex items-end gap-1">
                   <span className="text-3xl font-black text-[#edeae3]">
-                    {formatPrice(annual ? tier.annual : tier.monthly)}
+                    {tier.quote ? "Let's talk" : formatPrice(annual ? tier.annual : tier.monthly)}
                   </span>
-                  {(annual ? tier.annual : tier.monthly) > 0 && (
+                  {!tier.quote && (annual ? tier.annual : tier.monthly) > 0 && (
                     <span className="text-[#edeae3]/55 text-sm mb-1">
                       /{annual ? "yr" : "mo"}
                     </span>
@@ -380,21 +399,44 @@ export default function Pricing() {
                 </div>
               </div>
 
-              {/* CTA */}
-              <StartCta
-                className="block w-full text-center py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer"
-                style={
-                  tier.ctaVariant === "filled"
-                    ? { backgroundColor: tier.accent, color: "#fff" }
-                    : {
-                        border: `1px solid ${tier.border}`,
-                        color: tier.accent,
-                        backgroundColor: "transparent",
-                      }
-                }
-              >
-                {tier.cta}
-              </StartCta>
+              {/* CTA. A quote tier does NOT get StartCta: that begins a signup, and signing somebody
+                  up to a plan whose price has not been agreed is the wrong first step for both
+                  sides. It goes to the contact section on this page instead — no new route, and
+                  they keep their place.
+                  ⚠️ It is also NOT gated on SHOW_SIGNIN, and that asymmetry is deliberate. StartCta
+                  renders nothing before the app is live, because there is no signup to send anyone
+                  to. Contact has no such dependency — the section is on this page either way, and
+                  before launch a conversation is the only thing anybody CAN do. The visible effect
+                  is that pre-launch Forge is the one column with a button, which is the correct way
+                  round rather than an oversight to even out. */}
+              {tier.quote ? (
+                <a
+                  href="#contact"
+                  className="block w-full text-center py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer"
+                  style={{
+                    border: `1px solid ${tier.border}`,
+                    color: tier.accent,
+                    backgroundColor: "transparent",
+                  }}
+                >
+                  {tier.cta}
+                </a>
+              ) : (
+                <StartCta
+                  className="block w-full text-center py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer"
+                  style={
+                    tier.ctaVariant === "filled"
+                      ? { backgroundColor: tier.accent, color: "#fff" }
+                      : {
+                          border: `1px solid ${tier.border}`,
+                          color: tier.accent,
+                          backgroundColor: "transparent",
+                        }
+                  }
+                >
+                  {tier.cta}
+                </StartCta>
+              )}
 
               {/* Divider */}
               <div className="h-px bg-white/5" />
