@@ -179,6 +179,7 @@ const trial = {
 const tiers = [
   {
     name: "Flame",
+    hidden: false as const,
     quote: false as const,
     tagline: "Less than the price of one cake",
     monthly: 999,
@@ -203,6 +204,7 @@ const tiers = [
   },
   {
     name: "Blaze",
+    hidden: false as const,
     quote: false as const,
     tagline: "Your brand. Your templates. Your rules.",
     monthly: 2499,
@@ -228,6 +230,21 @@ const tiers = [
   },
   {
     name: "Forge",
+    // ── HIDDEN, NOT DELETED (2026-08-07) ──────────────────────────────────────────────────────────
+    // Forge is off the page entirely. Turning it into a quote tier the day before was the smaller
+    // version of the same finding: once team seats came off the table it differed from Blaze by
+    // credits and the words "Account manager", and "Let's talk" still asks a bakery to start a
+    // conversation about something we cannot yet describe. A column that cannot say what it is for
+    // costs more than it earns — it invites the question "what do I get?" and answers it badly.
+    //
+    // The row STAYS here, flagged, rather than being deleted. Everything it needs already works —
+    // the quote rendering, the contact CTA, the feature list — and when there IS something to sell,
+    // this comes back by flipping one boolean rather than by rebuilding a column from a commit
+    // message. It is also the honest record of why it went.
+    //
+    // Its sibling: spattoo-api migration 058 took it out of the in-app picker on the same grounds.
+    // Both surfaces now say nothing rather than different things.
+    hidden: true as const,
     // ── A CONVERSATION, NOT A PRICE ───────────────────────────────────────────────────────────────
     // Forge carried ₹4,999 and a feature list that, once team seats came off the table, differed
     // from Blaze by credits and the word "Account manager". That is not a tier — it is Blaze with a
@@ -272,6 +289,8 @@ function formatPrice(amount: number) {
 
 export default function Pricing() {
   const [annual, setAnnual] = useState(false);
+  // Hidden tiers stay in `tiers` — see the Forge block above for why — so the page renders this.
+  const shown = tiers.filter((t) => !t.hidden);
 
   return (
     <section id="pricing" className="pt-14 pb-6 px-4 md:px-8 bg-[#0a0a0a]">
@@ -305,7 +324,12 @@ export default function Pricing() {
         </div>
 
         {/* Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+        {/* The column count follows what is actually shown — a hardcoded 4 leaves a gap the moment
+            a tier is hidden. Both class strings are written out in full because Tailwind's JIT
+            reads source text, so a template-built class name would be purged and silently do
+            nothing. +1 is the trial card, which is not in `tiers`. */}
+        <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 ${
+          shown.length + 1 >= 4 ? "xl:grid-cols-4" : "xl:grid-cols-3"}`}>
 
           {/* ── The trial, as the FIRST card ────────────────────────────────────────────
               It was a full-width strip above the table, and a reader who came for prices
@@ -349,7 +373,7 @@ export default function Pricing() {
             <p className="text-xs text-[#edeae3]/45 leading-relaxed">{trial.foot}</p>
           </div>
 
-          {tiers.map((tier) => (
+          {shown.map((tier) => (
             <div
               key={tier.name}
               className="relative rounded-2xl p-6 flex flex-col gap-6 transition-all"
@@ -463,9 +487,9 @@ export default function Pricing() {
             No job counts ("≈50 photo reads"): what an action costs is DATA that can move, and the
             app shows the live price list. A number printed here would go stale silently. */}
         <p className="text-center text-[#edeae3]/45 text-xs mt-8 max-w-2xl mx-auto leading-relaxed">
-          Every plan prints the photos a customer attaches to an order. Blaze and Forge also open the
-          Edible Print Studio on its own, for anything no order asked for — a name, a logo, a sheet
-          of the same rose to cut out. X-Ray works on every plan, for cakes you design and for orders
+          Every plan prints the photos a customer attaches to an order. Blaze also opens the Edible
+          Print Studio on its own, for anything no order asked for — a name, a logo, a sheet of the
+          same rose to cut out. X-Ray works on every plan, for cakes you design and for orders
           that are just a reference photo. Credits pay for the AI part — reading a photo, and working out how a decoration was
           made; an X-Ray of a cake you designed costs nothing. Monthly credits refresh on the 1st.
           Credits you buy never expire and are only used once the monthly ones are gone.
