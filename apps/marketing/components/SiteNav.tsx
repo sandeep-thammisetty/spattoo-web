@@ -61,7 +61,33 @@ export default function SiteNav() {
         )}
       </div>
 
-      <MobileNav />
+      {/* ── Sign in, on MOBILE ────────────────────────────────────────────────────────────────────
+          Desktop has carried this in the header all along; the block above is `hidden md:flex`, so
+          on a phone the only way in was the hamburger — open the drawer, read four section links,
+          find "Sign in" underneath. A returning baker should not have to search for the door.
+
+          Here rather than in the hero, where it was first suggested as a replacement for "See How
+          It Works". The hero is for people deciding; sign-in is for people who already decided
+          months ago, and trading a conversion element for a utility one serves the second audience
+          at the first's expense. The header also survives scrolling and exists on /pricing and
+          /privacy, where the hero does not — and the nav is `fixed`, so it is reachable from
+          anywhere on the page.
+
+          Still in the drawer too: somebody who opens the menu looking for it should find it.
+
+          Gated on SHOW_SIGNIN like every other route into the app — before launch there is nothing
+          to sign in to. */}
+      <div className="flex items-center gap-4 md:hidden">
+        {SHOW_SIGNIN && (
+          <a
+            href={APP_URL}
+            className="text-sm font-medium text-[#edeae3]/80 hover:text-[#edeae3] transition-colors"
+          >
+            Sign in
+          </a>
+        )}
+        <MobileNav />
+      </div>
     </nav>
   );
 }
