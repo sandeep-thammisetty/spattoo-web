@@ -195,8 +195,15 @@ restrictions notified by the Government of India.
 We keep personal data only as long as necessary for the purposes above or as required by
 law (for example, tax and accounting records). In particular:
 
-- A Baker's storefront and designs are retained for a limited period (currently **30 days**)
-  after subscription cancellation, then may be deleted.
+- A Baker's account, storefront, designs and order records are retained **while the account
+  exists**. A subscription that lapses or is cancelled takes the storefront **offline** —
+  customers can no longer reach it — but does not by itself delete the account, so a Baker
+  who comes back finds their work intact.
+- A Baker can **request deletion at any time**, from Privacy & Data — including after a
+  subscription has lapsed, when it is offered on the sign-in screen alongside the option to
+  resume. We notify before erasure, and then irreversibly erase or anonymise personal data,
+  except records we are required to keep by law (for example GST invoices, which are kept for
+  their statutory period).
 - Customer order/quote and Design data are retained to serve the order and for a reasonable
   period thereafter for records, disputes, and legal compliance, subject to the Baker's
   instructions where the Baker is the Data Fiduciary.
