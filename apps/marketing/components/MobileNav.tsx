@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { APP_URL, SHOW_SIGNIN, SIGNUP_URL } from "../lib/domain";
+import { SHOW_SIGNIN, SIGNUP_URL } from "../lib/domain";
 
 const links = [
   { label: "How It Works", href: "#how-it-works" },
@@ -74,26 +74,21 @@ export default function MobileNav() {
                 </motion.a>
               ))}
 
-              {SHOW_SIGNIN && (
-                <motion.a
-                  href={APP_URL}
-                  onClick={() => setOpen(false)}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.05 + links.length * 0.07, duration: 0.3 }}
-                  className="text-4xl font-bold text-[#edeae3]/80 hover:text-[#edeae3] transition-colors py-3 border-b border-[#edeae3]/8"
-                >
-                  Sign in
-                </motion.a>
-              )}
+              {/* No "Sign in" here. SiteNav carries it in the mobile header, beside the hamburger
+                  (`flex md:hidden`), so the drawer was repeating a link that lives two taps away.
+                  The drawer is `fixed inset-0`, so it does cover that header while open — somebody
+                  who opened the menu hunting for Sign in has to close it — but it is immediately
+                  there, next to the X they just pressed. A shorter menu is worth that.
 
+                  "Get started" STAYS: it is the conversion action rather than navigation, and being
+                  reachable from anywhere is the point of it. */}
               {SHOW_SIGNIN && (
                 <motion.a
                   href={SIGNUP_URL}
                   onClick={() => setOpen(false)}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.05 + (links.length + 1) * 0.07, duration: 0.3 }}
+                  transition={{ delay: 0.05 + links.length * 0.07, duration: 0.3 }}
                   className="text-4xl font-bold text-[#edeae3]/80 hover:text-[#edeae3] transition-colors py-3 border-b border-[#edeae3]/8"
                 >
                   Get started
