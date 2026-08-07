@@ -1,5 +1,6 @@
 "use client";
 import { useRef, useEffect, useState } from "react";
+import { guardInternalPage } from "@/lib/domain";
 import geistB64 from "./geistFont";
 import garetB64 from "./garetFont";
 
@@ -224,6 +225,7 @@ function draw(ctx: CanvasRenderingContext2D, geistFamily = "Arial", logoImg?: HT
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export default function LinkedInPersonalPage() {
+  guardInternalPage();   // SEC-WEB-4 — internal asset generator; 404 on the production site
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [ready, setReady] = useState(false);
 

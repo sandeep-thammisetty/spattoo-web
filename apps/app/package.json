@@ -2,6 +2,11 @@
   "name": "app",
   "version": "0.1.0",
   "private": true,
+  "browserslist": [
+    "defaults",
+    "safari >= 15",
+    "ios_saf >= 15"
+  ],
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -12,9 +17,11 @@
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.6.0",
     "@sentry/nextjs": "^10.61.0",
-    "@spattoo/designer": "file:../../vendor/spattoo-designer-0.1.8.tgz",
+    "@spattoo/designer": "file:../../vendor/spattoo-designer-0.1.279.tgz",
     "@supabase/supabase-js": "^2.105.4",
-    "next": "16.2.4",
+    "firebase": "^12.17.1",
+    "libphonenumber-js": "^1.13.7",
+    "next": "16.2.11",
     "qrcode": "^1.5.4",
     "react": "19.2.4",
     "react-dom": "19.2.4",
@@ -27,7 +34,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.2.4",
+    "eslint-config-next": "16.2.11",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
