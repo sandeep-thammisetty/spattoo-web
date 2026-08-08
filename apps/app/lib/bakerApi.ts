@@ -60,6 +60,11 @@ export function makeBakerApiClient(supabase: SupabaseClient) {
     fetchBakerSettings: () => authGet("/api/baker/settings"),
     fetchMe: () => authGet("/api/me").catch(() => null),
 
+    // Designer tour, per person (baker_appusers.tour_seen_at, migration 060). Fire-and-forget from
+    // core: the tour is already on screen by the time this runs, so a failure must do nothing
+    // visible — worst case it is offered once more on another device.
+    markTourSeen: () => authFetch("/api/me/tour-seen", { method: "POST" }),
+
     // ── Legal / consent (DPDP "Layer 2") ──────────────────────────────────────
     // Record the baker's acceptance of the CURRENT version of each doc. Idempotent
     // per (subject, version) server-side. `source`: 'signup' (self-signup) | 'gate'
