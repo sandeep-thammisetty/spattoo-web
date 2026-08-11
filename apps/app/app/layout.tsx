@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Quicksand, Montserrat, Pacifico, Cormorant_Garamond, Parisienne } from "next/font/google";
+import { Quicksand, Montserrat, Pacifico, Cormorant_Garamond, Parisienne, Lora } from "next/font/google";
 import "./globals.css";
 
 // SEC-WEB-7 — the UI font is loaded HERE, by the host app, not by @spattoo/designer.
@@ -45,6 +45,10 @@ const quicksand = Quicksand({
 //   Montserrat — body + most headings, at 400/600/700/800 (variable, one file).
 //   Pacifico   — the bakery wordmark only, single weight 400 (script, not variable).
 //   Cormorant Garamond — the "Classic serif" theme's headings, at 600/700.
+//   Lora — the Patisserie theme's BODY face, at 400/600. Montserrat is a geometric sans
+//     with even stroke weight; next to ink linework and a copperplate wordmark it was the
+//     one element still reading as a web app. Lora has brush-drawn roots and real
+//     thick/thin, so the page matches the drawing.
 //   Parisienne — the Patisserie theme's wordmark only, single weight 400. A fine
 //     copperplate script: that theme is hand-drawn ink-and-watercolour, and Pacifico
 //     (thick, rounded, single-stroke) fights it — the wordmark is the one place the
@@ -61,6 +65,13 @@ const pacifico = Pacifico({
   display: "swap",
   preload: false,
   variable: "--font-storefront-brand",
+});
+const lora = Lora({
+  subsets: ["latin", "latin-ext"],
+  weight: ["400", "600"],
+  display: "swap",
+  preload: false,
+  variable: "--font-storefront-body",
 });
 const parisienne = Parisienne({
   subsets: ["latin", "latin-ext"],
@@ -83,6 +94,7 @@ const fontVariables = [
   pacifico.variable,
   cormorant.variable,
   parisienne.variable,
+  lora.variable,
 ].join(" ");
 
 export const metadata: Metadata = {
