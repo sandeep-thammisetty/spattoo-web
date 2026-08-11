@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Quicksand, Montserrat, Pacifico, Cormorant_Garamond } from "next/font/google";
+import { Quicksand, Montserrat, Pacifico, Cormorant_Garamond, Parisienne } from "next/font/google";
 import "./globals.css";
 
 // SEC-WEB-7 — the UI font is loaded HERE, by the host app, not by @spattoo/designer.
@@ -45,6 +45,10 @@ const quicksand = Quicksand({
 //   Montserrat — body + most headings, at 400/600/700/800 (variable, one file).
 //   Pacifico   — the bakery wordmark only, single weight 400 (script, not variable).
 //   Cormorant Garamond — the "Classic serif" theme's headings, at 600/700.
+//   Parisienne — the Patisserie theme's wordmark only, single weight 400. A fine
+//     copperplate script: that theme is hand-drawn ink-and-watercolour, and Pacifico
+//     (thick, rounded, single-stroke) fights it — the wordmark is the one place the
+//     theme's whole premise is either believed or not.
 const montserrat = Montserrat({
   subsets: ["latin", "latin-ext"],
   display: "swap",
@@ -57,6 +61,13 @@ const pacifico = Pacifico({
   display: "swap",
   preload: false,
   variable: "--font-storefront-brand",
+});
+const parisienne = Parisienne({
+  subsets: ["latin", "latin-ext"],
+  weight: ["400"],
+  display: "swap",
+  preload: false,
+  variable: "--font-storefront-script",
 });
 const cormorant = Cormorant_Garamond({
   subsets: ["latin", "latin-ext"],
@@ -71,6 +82,7 @@ const fontVariables = [
   montserrat.variable,
   pacifico.variable,
   cormorant.variable,
+  parisienne.variable,
 ].join(" ");
 
 export const metadata: Metadata = {
