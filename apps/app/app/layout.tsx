@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Quicksand, Montserrat, Pacifico, Cormorant_Garamond, Parisienne, Lora } from "next/font/google";
+import { Quicksand, Montserrat, Pacifico, Cormorant_Garamond, Parisienne, Lora, Shantell_Sans } from "next/font/google";
 import "./globals.css";
 
 // SEC-WEB-7 — the UI font is loaded HERE, by the host app, not by @spattoo/designer.
@@ -45,6 +45,11 @@ const quicksand = Quicksand({
 //   Montserrat — body + most headings, at 400/600/700/800 (variable, one file).
 //   Pacifico   — the bakery wordmark only, single weight 400 (script, not variable).
 //   Cormorant Garamond — the "Classic serif" theme's headings, at 600/700.
+//   Shantell Sans — the Patisserie theme's DRAWN face, at 600/700, for the primary button
+//     and the section eyebrows. Marker-made contours on a SANS skeleton, which is the whole
+//     reason it is here rather than a handwriting face: a button is a control, and a label
+//     someone has to decode trades conversions for charm. Static weights requested (not the
+//     variable axis) so `700` is real weight and next/font need not resolve BNCE/INFM/SPAC.
 //   Lora — the Patisserie theme's BODY face, at 400/600. Montserrat is a geometric sans
 //     with even stroke weight; next to ink linework and a copperplate wordmark it was the
 //     one element still reading as a web app. Lora has brush-drawn roots and real
@@ -73,6 +78,13 @@ const lora = Lora({
   preload: false,
   variable: "--font-storefront-body",
 });
+const shantell = Shantell_Sans({
+  subsets: ["latin", "latin-ext"],
+  weight: ["600", "700"],
+  display: "swap",
+  preload: false,
+  variable: "--font-storefront-hand",
+});
 const parisienne = Parisienne({
   subsets: ["latin", "latin-ext"],
   weight: ["400"],
@@ -95,6 +107,7 @@ const fontVariables = [
   cormorant.variable,
   parisienne.variable,
   lora.variable,
+  shantell.variable,
 ].join(" ");
 
 export const metadata: Metadata = {
