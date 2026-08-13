@@ -84,6 +84,16 @@ export function makeBakerApiClient(supabase: SupabaseClient) {
     // hardcoded doc allowlist). Public endpoint; [] while nothing is published (draft phase).
     fetchLegalCurrent: () => authGet("/api/legal/current"),
     fetchConsentHistory: () => authGet("/api/legal/consent/history"),
+
+    // The full text of a SPECIFIC version — what Settings → Your agreements hands back when a baker
+    // wants the document they actually agreed to. Version is passed explicitly rather than defaulting
+    // to current: the two diverge at the first amendment, and after that the current page is a
+    // document the baker never saw. Public endpoint, so no auth needed.
+    fetchLegalDoc: (docKey: string, version?: string) =>
+      publicGet(
+        `/api/legal/${encodeURIComponent(docKey)}` +
+        (version ? `?version=${encodeURIComponent(version)}` : "")
+      ),
     withdrawConsent: (docKeys: string[]) =>
       authFetch("/api/legal/withdraw", {
         method: "POST",
