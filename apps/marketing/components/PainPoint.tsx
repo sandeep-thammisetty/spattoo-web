@@ -12,7 +12,7 @@ export default function PainPoint() {
           </span>
         </h2>
         <p className="text-[#edeae3]/60 text-base mb-14 max-w-xl leading-relaxed">
-          The average baker spends hours every week in endless chat conversations just to finalise a cake design — only to get it wrong on bake day.
+          The average baker spends hours every week on the same chat — what flavours, what size, what date, can you make this photo — before a single cake gets baked.
         </p>
 
         {/* Before / After */}
@@ -22,10 +22,10 @@ export default function PainPoint() {
           <div className="rounded-2xl p-7 flex flex-col gap-4" style={{ backgroundColor: "#0f0f0f", border: "1px solid rgba(255,255,255,0.06)" }}>
             <p className="text-xs uppercase tracking-widest text-[#edeae3]/30">Before Spattoo</p>
             {[
-              "Hours of messages describing the design",
-              "Last-minute changes, wrong expectations",
-              "No record of what was agreed",
-              "Design surprises on delivery day",
+              "Twenty messages to pin down one cake",
+              "\u201cWhat flavours do you have?\u201d \u2014 every single time",
+              "A photo in your DMs, and a lot of guessing",
+              "Scrolling back through chats on bake day",
             ].map((line) => (
               <div key={line} className="flex items-start gap-3">
                 <span className="text-[#c4512a]/60 mt-0.5">✕</span>
@@ -38,10 +38,10 @@ export default function PainPoint() {
           <div className="rounded-2xl p-7 flex flex-col gap-4" style={{ backgroundColor: "#0f0f0f", border: "1px solid rgba(107,143,126,0.2)" }}>
             <p className="text-xs uppercase tracking-widest text-[#6b8f7e]">With Spattoo</p>
             {[
-              "Customer designs it themselves in 3D",
-              "Design confirmed before you bake",
-              "Every order stored and tracked",
-              "No surprises. Just happy customers.",
+              "They design it in 3D, pick one of yours, or send a photo",
+              "Your storefront suggests a flavour \u2014 from what you offer",
+              "Flavour, size, date and photos arrive together",
+              "Every order stored, tracked, and agreed before you bake",
             ].map((line) => (
               <div key={line} className="flex items-start gap-3">
                 <span className="text-[#6b8f7e] mt-0.5">✓</span>

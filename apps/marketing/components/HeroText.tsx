@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import WaitlistModal from "./WaitlistModal";
+import StartCta from "./StartCta";
 
 const slides = [
   {
@@ -14,6 +14,11 @@ const slides = [
     eyebrow: "Save hours every week",
     headline: ["Less design chats.", "More baking."],
     highlight: "More baking.",
+  },
+  {
+    eyebrow: "Your storefront does the asking",
+    headline: ["They tell you the flavour,", "size and date.", "Before they message you."],
+    highlight: "Before they message you.",
   },
   {
     eyebrow: "No design skills needed.",
@@ -39,7 +44,6 @@ function Headline({ line, isHighlight, addBreak }: { line: string; isHighlight: 
 
 export default function HeroText() {
   const [index, setIndex] = useState(0);
-  const [waitlistOpen, setWaitlistOpen] = useState(false);
   const slide = slides[index];
 
   useEffect(() => {
@@ -102,10 +106,16 @@ export default function HeroText() {
           <a href="#how-it-works" className="px-6 py-2.5 rounded-full bg-[#3d5247] text-[#edeae3] font-semibold text-sm hover:bg-[#4a6357] transition-colors text-center">
             See How It Works
           </a>
-          <button onClick={() => setWaitlistOpen(true)} className="px-6 py-2.5 rounded-full bg-[#3d5247] text-[#edeae3] font-semibold text-sm hover:bg-[#4a6357] transition-colors text-center cursor-pointer">
+          <StartCta className="px-6 py-2.5 rounded-full bg-[#3d5247] text-[#edeae3] font-semibold text-sm hover:bg-[#4a6357] transition-colors text-center cursor-pointer">
             Get Started Free
-          </button>
+          </StartCta>
         </div>
+        {/* "Free" on a button is a word every SaaS uses and nobody believes. What earns the click is
+            the SHAPE of the offer — how long, and whether a card is needed — and it costs one line
+            to say here rather than making someone reach the pricing section to find out. */}
+        <p className="mt-3 text-xs text-[#edeae3]/55">
+          Use Spattoo free for a month. No credit card needed.
+        </p>
       </div>
 
       {/* Mobile */}
@@ -157,12 +167,16 @@ export default function HeroText() {
           <a href="#how-it-works" className="flex-1 py-3.5 rounded-full bg-[#3d5247] text-[#edeae3] font-semibold text-sm text-center">
             See How It Works
           </a>
-          <button onClick={() => setWaitlistOpen(true)} className="flex-1 py-3.5 rounded-full bg-[#3d5247] text-[#edeae3] font-semibold text-sm text-center cursor-pointer">
+          <StartCta className="flex-1 py-3.5 rounded-full bg-[#3d5247] text-[#edeae3] font-semibold text-sm text-center cursor-pointer">
             Get Started Free
-          </button>
+          </StartCta>
         </div>
+        {/* Mobile carries its own copy of the CTA row, so it needs its own copy of this line —
+            and it matters more here, where the pricing section is a long scroll away. */}
+        <p className="mt-3 text-center text-xs text-[#edeae3]/55">
+          Use Spattoo free for a month. No credit card needed.
+        </p>
       </div>
-      {waitlistOpen && <WaitlistModal onClose={() => setWaitlistOpen(false)} />}
     </>
   );
 }

@@ -1,12 +1,14 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getSupabase } from "../../../lib/supabase";
 import { makeCustomerApiClient } from "../../../lib/api";
 import { setTelemetryContext } from "../../../lib/telemetry";
 import { bridgeCoreTelemetryToSentry } from "../../../lib/coreTelemetryBridge";
+import { takeResumeDesign } from "../../../lib/resumeDesign";
+import { MARKETING_URL } from "../../../lib/domain";
 
 // The designer is a heavy WebGL client component — load it client-only.
 const CakeDesigner = dynamic(
@@ -30,6 +32,14 @@ export default function DesignerClient({ slug }: { slug: string }) {
   const router = useRouter();
   const apiClient = useMemo(() => makeCustomerApiClient(supabase, slug), [supabase, slug]);
 
+  // If the customer arrived from an invite the baker attached a design to, StorefrontClient stashed
+  // it — take it once (read-and-clear) and seed the designer with it. Null → a normal blank start.
+  const [initialDesign] = useState(() => takeResumeDesign(slug));
+  // Joining a baker's live co-design session via the shared link (?session=<id>).
+  const [liveSessionId] = useState(() =>
+    typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("session") : null,
+  );
+
   useEffect(() => {
     setTelemetryContext({ surface: "designer", bakerSlug: slug, role: "customer" });
     bridgeCoreTelemetryToSentry("designer"); // route the designer's internal reportError to Sentry
@@ -41,6 +51,11 @@ export default function DesignerClient({ slug }: { slug: string }) {
       supabase={supabase}
       cfAssetsBase={process.env.NEXT_PUBLIC_ASSETS_BASE}
       orderMode="customer"
+      // Where /terms + /privacy are served — the passive consent line under "Request a quote"
+      // links here, and submitting the quote records the customer's acceptance server-side.
+      legalBase={MARKETING_URL}
+      initialDesign={initialDesign}
+      liveSessionId={liveSessionId}
       onQuoteRequested={(result: { orderId?: string }) => {
         const orderId = result?.orderId;
         router.push(orderId ? `/${slug}/quote-sent?order=${orderId}` : `/${slug}/orders`);

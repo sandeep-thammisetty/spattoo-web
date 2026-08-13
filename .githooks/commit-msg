@@ -1,0 +1,25 @@
+#!/bin/sh
+# Feature-doc liveness gate — see spattoo-docs/README.md
+# Blocks a commit that changes code an owning feature doc covers without also
+# updating that doc. Honors [skip-feature-doc] in the commit message.
+# Tracked hook: activated via `git config core.hooksPath .githooks` (npm run prepare).
+DOCS_DIR="${SPATTOO_DOCS_DIR:-$(git rev-parse --show-toplevel)/../spattoo-docs}"
+BIN="$DOCS_DIR/bin/check-feature-docs.mjs"
+[ -f "$BIN" ] || { echo "i spattoo-docs not found next to repo - skipping feature-doc gate"; exit 0; }
+COMMIT_MSG_FILE="$1" node "$BIN" --repo spattoo-web || exit 1
+
+# Rollout-config liveness gate — every process.env the code reads must appear in
+# deployment/production-rollout.md. Honors [skip-rollout-config].
+ROLLOUT_BIN="$DOCS_DIR/bin/check-rollout-config.mjs"
+[ -f "$ROLLOUT_BIN" ] || exit 0
+# `|| exit 1` is load-bearing now that a gate follows this one: it was the last line, so
+# its status WAS the hook's status. Appending below it silently turned a failing rollout
+# check into a passing commit.
+COMMIT_MSG_FILE="$1" node "$ROLLOUT_BIN" --repo spattoo-web || exit 1
+
+# Plan-copy drift gate — the marketing pricing table and the in-app plan picker
+# (subscription_plans.feature_bullets) sell the same plans and share no source.
+# Compares both surfaces directly; skips silently if a sibling repo is absent.
+COPY_BIN="$DOCS_DIR/bin/check-plan-copy.mjs"
+[ -f "$COPY_BIN" ] || exit 0
+node "$COPY_BIN"

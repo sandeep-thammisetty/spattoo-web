@@ -1,0 +1,12 @@
+#!/bin/sh
+# Tracked hook - activated by `git config core.hooksPath .githooks` (npm run prepare),
+# so it follows a clone to any machine. Bypass: git commit --no-verify
+#
+# Secret scan on STAGED changes - the earliest catch, before a secret enters history.
+# Config: .gitleaks.toml (this repo has one; until now nothing ran it).
+#
+# Deliberately NOT running lint/build here: this is a two-app Next workspace and a
+# full pass on every commit is too slow to survive. CI and `npm run lint` cover it.
+. "$(git rev-parse --show-toplevel)/.githooks/_lib.sh"
+
+secret_scan_staged || exit 1

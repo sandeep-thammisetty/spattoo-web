@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense, useMemo } from "react";
+import { guardInternalPage } from "@/lib/domain";
 import { Canvas } from "@react-three/fiber";
 import { useGLTF, OrbitControls, Environment } from "@react-three/drei";
 import * as THREE from "three";
@@ -168,6 +169,7 @@ function FlowerBand() {
 useGLTF.preload("/green-petal-flower-2.glb");
 
 export default function TestPage() {
+  guardInternalPage();   // SEC-WEB-4 — render test-bed; 404 on the production site
   return (
     <div style={{ width: "100vw", height: "100vh", background: "#000000" }}>
       <Canvas

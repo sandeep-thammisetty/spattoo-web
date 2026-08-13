@@ -27,7 +27,13 @@ export function makeCustomerApiClient(supabase: SupabaseClient, slug: string) {
     const res = await fetch(`${API_BASE}${path}`, { ...opts, headers });
     if (!res.ok) {
       const e = await res.json().catch(() => ({}));
-      throw new Error(e.error ?? `API ${res.status}`);
+      // Preserve the server's machine code + HTTP status so callers can branch
+      // (e.g. BAKER_INACTIVE / ORDER_LIMIT_REACHED) instead of string-matching.
+      const err = Object.assign(new Error(e.error ?? `API ${res.status}`), {
+        code: e.code as string | undefined,
+        status: res.status,
+      });
+      throw err;
     }
     return res.json();
   }
@@ -59,6 +65,10 @@ export function makeCustomerApiClient(supabase: SupabaseClient, slug: string) {
     },
     fetchMaterials: () => authGet(`/api/materials`),
     fetchTextures: () => authGet(`/api/textures`),
+    fetchTextStyles: () => authGet(`/api/text-styles`),
+    // The cake shapes admin authored. Without this the designer falls back to its seed — round and
+    // rectangle only — so a customer would never be offered the baker's heart or hexagon.
+    fetchCakeShapes: () => authGet(`/api/cake-shapes`),
     fetchTags: () => authGet(`/api/tags`),
     fetchTemplates: () => authGet(`/api/templates`).catch(() => []),
     fetchTemplate: (id: string) => authGet(`/api/templates/${id}`),
@@ -72,12 +82,27 @@ export function makeCustomerApiClient(supabase: SupabaseClient, slug: string) {
     fetchFlavours: (bakerSlug: string) =>
       publicGet(`/api/flavours?bakerSlug=${encodeURIComponent(bakerSlug)}`),
     fetchOrderStatuses: () => publicGet(`/api/order-statuses`),
+    // Eggless / vegan / Jain / allergens. Reference data, not a tenant's data, so it
+    // is public — the order form needs it before anyone authenticates. With a slug each
+    // row also carries `offered`: whether this bakery deals in it at all. The full list
+    // comes back either way, because a diet option that isn't offered is hidden while an
+    // allergen never is — that rule lives on the surface, not here.
+    fetchDietaryRequirements: (bakerSlugArg?: string) =>
+      bakerSlugArg
+        ? publicGet(`/api/dietary-requirements?bakerSlug=${encodeURIComponent(bakerSlugArg)}`)
+        : publicGet(`/api/dietary-requirements`),
 
     // ── Authenticated as the customer ─────────────────────────────────────────
-    getSignedUploadUrl: (folder: string, filename: string, contentType: string) =>
+    // contentLength is REQUIRED and is signed INTO the URL: the body goes browser → R2 and never
+    // passes through the API, so a size limit checked in the client is advice, not a limit. R2 rejects
+    // a PUT whose body length differs from the one signed. Callers pass the blob's own .size.
+    // The upload size ceiling, as the API currently has it. Read, never copied: the limit is env-tuned
+    // on the API, and a hardcoded client would go on accepting files the API then 413s.
+    fetchUploadLimits: () => authFetch("/api/storage/limits"),
+    getSignedUploadUrl: (folder: string, filename: string, contentType: string, contentLength: number) =>
       authFetch("/api/storage/sign-upload", {
         method: "POST",
-        body: JSON.stringify({ folder, filename, contentType }),
+        body: JSON.stringify({ folder, filename, contentType, contentLength }),
       }),
     // "Request quote": server resolves the customer from the token; the payload
     // carries NO customer identity (only bakerSlug + design/delivery).
@@ -101,6 +126,17 @@ export function makeCustomerApiClient(supabase: SupabaseClient, slug: string) {
         method: "POST",
         body: JSON.stringify({ message }),
       }),
+
+    // ── Live co-design sessions (the customer joins the baker's live session) ──
+    createDesignSession: (body: unknown) =>
+      authFetch("/api/design-sessions", { method: "POST", body: JSON.stringify(body) }),
+    getDesignSession: (id: string) => authGet(`/api/design-sessions/${id}`),
+    putDesignSessionDesign: (id: string, design: unknown) =>
+      authFetch(`/api/design-sessions/${id}/design`, { method: "PUT", body: JSON.stringify({ design }) }),
+    penDesignSession: (id: string, body: unknown) =>
+      authFetch(`/api/design-sessions/${id}/pen`, { method: "POST", body: JSON.stringify(body) }),
+    endDesignSession: (id: string) =>
+      authFetch(`/api/design-sessions/${id}/end`, { method: "POST" }),
   };
 }
 

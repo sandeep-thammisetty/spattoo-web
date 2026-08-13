@@ -24,3 +24,95 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Shared prose styling for rendered legal documents (/terms /privacy /refund
+   /grievance). One class, reused by every legal page via LegalDocPage. */
+.legal-doc {
+  line-height: 1.7;
+  color: rgba(237, 234, 227, 0.82);
+  font-size: 0.95rem;
+}
+.legal-doc h1 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin: 2rem 0 1rem;
+  color: #edeae3;
+}
+.legal-doc h2 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin: 2.5rem 0 1rem;
+  color: #edeae3;
+}
+.legal-doc h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin: 1.75rem 0 0.5rem;
+  color: #edeae3;
+}
+.legal-doc p {
+  margin: 0 0 1rem;
+}
+.legal-doc ul,
+.legal-doc ol {
+  margin: 0 0 1rem 1.35rem;
+}
+.legal-doc ul {
+  list-style: disc;
+}
+.legal-doc ol {
+  list-style: decimal;
+}
+.legal-doc li {
+  margin: 0.35rem 0;
+}
+.legal-doc a {
+  color: #a8c5b5;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.legal-doc a:hover {
+  color: #edeae3;
+}
+.legal-doc strong {
+  color: #edeae3;
+  font-weight: 600;
+}
+.legal-doc hr {
+  border: 0;
+  border-top: 1px solid rgba(61, 82, 71, 0.3);
+  margin: 2rem 0;
+}
+.legal-doc blockquote {
+  border-left: 3px solid rgba(107, 143, 126, 0.4);
+  padding-left: 1rem;
+  margin: 1rem 0;
+  color: rgba(237, 234, 227, 0.6);
+}
+.legal-doc code {
+  background: rgba(255, 255, 255, 0.06);
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+  font-size: 0.85em;
+}
+/* GFM tables (e.g. the Privacy Policy processor list) — scroll on narrow screens. */
+.legal-doc table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.25rem 0;
+  font-size: 0.88rem;
+  display: block;
+  overflow-x: auto;
+}
+.legal-doc th,
+.legal-doc td {
+  border: 1px solid rgba(61, 82, 71, 0.35);
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  vertical-align: top;
+}
+.legal-doc th {
+  background: rgba(107, 143, 126, 0.12);
+  color: #edeae3;
+  font-weight: 600;
+}

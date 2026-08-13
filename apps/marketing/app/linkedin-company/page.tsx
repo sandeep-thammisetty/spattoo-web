@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { guardInternalPage } from "@/lib/domain";
 
 const W = 1920;
 const H = 1080;
@@ -343,6 +344,7 @@ function drawFrame(ctx: CanvasRenderingContext2D, s: number) {
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export default function LinkedInCompanyPage() {
+  guardInternalPage();   // SEC-WEB-4 — internal asset generator; 404 on the production site
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [status, setStatus]     = useState<"preview"|"recording"|"done">("preview");
   const [progress, setProgress] = useState(0);
