@@ -2,25 +2,25 @@
 // reference. Consumed by the /terms /privacy /refund /grievance pages via
 // components/LegalDocPage.tsx and the footer links in components/SiteFooter.tsx.
 //
-// TWO things to do before going live:
-//   1. Fill the SPATTOO_PROFILE blanks + each doc's `effectiveDate`, then set LEGAL_STATUS
-//      to "published". While anything is blank it renders a visible "[to be provided]"
-//      and the pages show a "draft — not yet in force" banner.
+// PUBLISHED 13 August 2026 (v1.0, all four documents). Two things to know:
+//   1. `effectiveDate` and LEGAL_STATUS drive what the page SHOWS. Anything left blank renders a
+//      visible "[to be provided]", and LEGAL_STATUS is GLOBAL — it removes the draft banner from
+//      every legal page at once, so a blank date on one document would leave that page looking
+//      in-force with a placeholder on it. Fill all four together or none.
 //   2. Versioning here backs DPDP Act 2023 demonstrable-consent: every published
 //      version is retained + timestamped, and `version`/`docKey` are what a future
 //      consent log (Layer 2) records a user's acceptance against. Never mutate a
 //      published version in place — bump `version` and add a Document History row.
 
-export const LEGAL_STATUS: "draft" | "published" = "draft";
+export const LEGAL_STATUS: "draft" | "published" = "published";
 
 // Spattoo's OWN statutory identity + contacts (the platform operator FEELINGS&FLAVOURS —
 // NOT a baker/tenant company; named spattoo_profile to avoid that confusion).
-// TODO before publishing: registeredOffice, cin, grievanceEmail, grievanceOfficer*.
 export const SPATTOO_PROFILE = {
   legalName: "FEELINGS&FLAVOURS (OPC) PRIVATE LIMITED",
   gstin: "36AAGCF5256J1ZD",
   cin: "U10712TS2025OPC201388", // e.g. "U15490TG2024OPC1XXXXX"
-  registeredOffice: "VILLA NO 21,LIBDOM VILLAS, GANDHAMGUDA,PERENCHERUVU, Hydershahkote, Golconda, Hyderabad- 500091,Telangana", // full registered office address (Telangana)
+  registeredOffice: "VILLA NO 21, LIBDOM VILLAS, GANDHAMGUDA, PERENCHERUVU, Hydershahkote, Golconda, Hyderabad - 500091, Telangana", // full registered office address (Telangana)
   contactEmail: "care@spattoo.com",
   grievanceEmail: "care@spattoo.com", // dedicated mailbox recommended; falls back to contactEmail
   grievanceOfficerName: "Tammisetty Dayamani", // a real person resident in India (IT Rules 2021 / DPDP)
@@ -48,7 +48,7 @@ export const LEGAL_DOCS: LegalDoc[] = [
     navLabel: "Terms",
     file: "terms-of-service.md",
     version: "1.0",
-    effectiveDate: "",
+    effectiveDate: "13 August 2026",
     description:
       "The terms governing use of Spattoo — the technology platform for bakers and their customers.",
   },
@@ -59,7 +59,7 @@ export const LEGAL_DOCS: LegalDoc[] = [
     navLabel: "Privacy",
     file: "privacy-policy.md",
     version: "1.0",
-    effectiveDate: "",
+    effectiveDate: "13 August 2026",
     description:
       "How Spattoo collects, uses, shares, and protects personal data, in line with the DPDP Act, 2023.",
   },
@@ -70,7 +70,7 @@ export const LEGAL_DOCS: LegalDoc[] = [
     navLabel: "Refund",
     file: "refund-and-cancellation-policy.md",
     version: "1.0",
-    effectiveDate: "",
+    effectiveDate: "13 August 2026",
     description:
       "Cancellations and refunds for Spattoo baker subscriptions, and how cake orders are handled by the baker.",
   },
@@ -81,7 +81,7 @@ export const LEGAL_DOCS: LegalDoc[] = [
     navLabel: "Grievance",
     file: "grievance-and-contact.md",
     version: "1.0",
-    effectiveDate: "",
+    effectiveDate: "13 August 2026",
     description:
       "How to contact Spattoo and reach our Grievance Officer under the IT Rules, 2021 and DPDP Act, 2023.",
   },
