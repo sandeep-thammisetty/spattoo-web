@@ -112,10 +112,14 @@ export function makeBakerApiClient(supabase: SupabaseClient) {
 
     // ── Catalog (baker Bearer; design:create) ─────────────────────────────────
     fetchElementTypes: () => authGet("/api/element-types"),
-    fetchElements: (opts: { parentsOnly?: boolean; elementTypeId?: string } = {}) => {
+    // Mirrors the customer client — the baker previews their own storefront through the same
+    // designer, so a menu that differs between the two would make the preview a lie.
+    fetchElementCategories: () => authGet("/api/element-categories"),
+    fetchElements: (opts: { parentsOnly?: boolean; elementTypeId?: string; categoryId?: string } = {}) => {
       const qs = new URLSearchParams();
       if (opts.parentsOnly) qs.set("parents_only", "true");
       if (opts.elementTypeId) qs.set("element_type_id", opts.elementTypeId);
+      if (opts.categoryId) qs.set("category_id", opts.categoryId);
       const q = qs.toString();
       return authGet(`/api/elements${q ? `?${q}` : ""}`);
     },
