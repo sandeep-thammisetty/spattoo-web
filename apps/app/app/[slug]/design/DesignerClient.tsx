@@ -21,12 +21,24 @@ const CakeDesigner = dynamic(
   }
 );
 
+// The SAME verification the storefront uses at quote time, not a second one. Two OTP screens on one
+// origin would drift — different copy, different channel list, different captcha handling — and the
+// one that drifts is always the one nobody is looking at.
+const VerifyStep = dynamic(
+  () => import("@spattoo/designer").then((m) => m.VerifyStep),
+  { ssr: false, loading: () => <div style={{ fontFamily: "sans-serif", padding: 48 }}>Loading…</div> }
+);
+
 // Mounts CakeDesigner in customer mode: the customer designs and hits "Request
 // quote", which routes to apiClient.requestQuote → POST /api/customer/orders.
 //
 // When the customer dismisses the "Quote Requested!" success popup (Done), core
 // fires onQuoteRequested — we redirect OFF the designer to the share screen
 // (/[slug]/quote-sent), which closes the loop and shows the share design.
+// Only the fields the gate reads. `channels` in particular is the SERVER's decision, in its order of
+// preference — offering SMS before DLT clearance is how somebody waits for a code a telco dropped.
+type StorefrontSettings = { bakerName?: string; channels?: string[]; primary?: string };
+
 export default function DesignerClient({ slug }: { slug: string }) {
   const supabase = getSupabase();
   const router = useRouter();
@@ -44,6 +56,68 @@ export default function DesignerClient({ slug }: { slug: string }) {
     setTelemetryContext({ surface: "designer", bakerSlug: slug, role: "customer" });
     bridgeCoreTelemetryToSentry("designer"); // route the designer's internal reportError to Sentry
   }, [slug]);
+
+  // ── The gate ───────────────────────────────────────────────────────────────────────────────────
+  // This page used to render for anyone. Every catalogue route behind the designer requires a
+  // session — /api/elements, /element-types, /materials, /textures, /cake-shapes — so an unverified
+  // visitor got the shell, an EMPTY DECORATIONS PANEL, and a console full of 401s. Nothing on screen
+  // said why, and there was no way forward from it. Reached both by typing the URL and by the
+  // storefront's own "let me build it myself in 3D" door, so the intended path was broken too.
+  //
+  // Nothing was ever exposed — the API refused every request correctly. What was broken was the
+  // experience. See the "one exception" note in core's VerifyStep for why this door asks and the
+  // storefront's other doors do not.
+  //
+  // `undefined` = still checking, and it must NOT render either branch: showing the verify screen
+  // for a moment to somebody who is already signed in is the same bug in a nicer costume.
+  const [authed, setAuthed] = useState<boolean | undefined>(undefined);
+  const [settings, setSettings] = useState<StorefrontSettings | null>(null);
+
+  useEffect(() => {
+    let live = true;
+    supabase.auth.getSession().then(({ data }) => { if (live) setAuthed(!!data.session); });
+    // Kept in step with the storefront's own login: a session that expires, or a sign-out in another
+    // tab, must drop the designer back to the gate rather than leaving it running on dead calls.
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => { if (live) setAuthed(!!session); });
+    return () => { live = false; sub.subscription.unsubscribe(); };
+  }, [supabase]);
+
+  // Only when the gate is actually going to show. The channels the server will accept are its
+  // decision, not ours — offering SMS before DLT clearance is how somebody waits for a code a telco
+  // already dropped.
+  useEffect(() => {
+    if (authed !== false || settings) return;
+    apiClient.fetchBakerSettings()
+      .then((s: unknown) => setSettings((s ?? {}) as StorefrontSettings))
+      .catch(() => setSettings({}));   // a failed read must not strand the gate — VerifyStep has its own defaults
+  }, [authed, settings, apiClient]);
+
+  if (authed === undefined) {
+    return <div style={{ fontFamily: "sans-serif", padding: 48 }}>Loading designer…</div>;
+  }
+
+  if (!authed) {
+    return (
+      <VerifyStep
+        apiBaseUrl={process.env.NEXT_PUBLIC_API_URL}
+        slug={slug}
+        bakerName={settings?.bakerName}
+        captchaSiteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+        primary={settings?.primary}
+        channels={settings?.channels ?? ["sms"]}
+        onVerified={async (session: { access_token: string; refresh_token: string } | null) => {
+          if (!session) return;
+          await supabase.auth.setSession({
+            access_token: session.access_token,
+            refresh_token: session.refresh_token,
+          });
+          // onAuthStateChange flips `authed` and the designer mounts — they land where they were
+          // going, rather than being returned to the storefront to find the door again.
+        }}
+        onBack={() => router.push(`/${slug}`)}
+      />
+    );
+  }
 
   return (
     <CakeDesigner

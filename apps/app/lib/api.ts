@@ -56,10 +56,15 @@ export function makeCustomerApiClient(supabase: SupabaseClient, slug: string) {
 
     // ── Catalog (customer Bearer; 'design:create' grants access) ──────────────
     fetchElementTypes: () => authGet(`/api/element-types`),
-    fetchElements: (opts: { parentsOnly?: boolean; elementTypeId?: string } = {}) => {
+    // What a decoration IS, for the browsing menu — as opposed to element-types, which is how it
+    // behaves. Each carries a `count`, and empty categories are already dropped server-side, so the
+    // menu can be drawn before a single element is fetched.
+    fetchElementCategories: () => authGet(`/api/element-categories`),
+    fetchElements: (opts: { parentsOnly?: boolean; elementTypeId?: string; categoryId?: string } = {}) => {
       const qs = new URLSearchParams();
       if (opts.parentsOnly) qs.set("parents_only", "true");
       if (opts.elementTypeId) qs.set("element_type_id", opts.elementTypeId);
+      if (opts.categoryId) qs.set("category_id", opts.categoryId);
       const q = qs.toString();
       return authGet(`/api/elements${q ? `?${q}` : ""}`);
     },

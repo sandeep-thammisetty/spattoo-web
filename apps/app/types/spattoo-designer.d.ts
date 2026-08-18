@@ -7,6 +7,10 @@ declare module "@spattoo/designer" {
   export const CakeDesigner: ComponentType<any>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   export const CustomerStorefront: ComponentType<any>;
+  // The storefront's OTP screen, reused to gate /[slug]/design — every catalogue route behind the
+  // designer needs a session, so an unverified visitor got an empty panel and 401s.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  export const VerifyStep: ComponentType<any>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   export const OrdersPanel: ComponentType<any>;
   export function configureTelemetry(opts: {
