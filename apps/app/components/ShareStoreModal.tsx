@@ -13,6 +13,10 @@ import { BASE_DOMAIN } from "../lib/domain";
 export type ShareStoreModalProps = {
   open: boolean;
   onClose: () => void;
+  /** Opened by the customiser the FIRST time a storefront goes live, rather than by a baker
+   *  reaching for it. Only the two lines at the top change — the card, the link and the share
+   *  buttons are identical, because it is the same thing being offered at a different moment. */
+  justPublished?: boolean;
   slug: string;
   name?: string | null;
   tagline?: string | null;
@@ -31,7 +35,7 @@ function storefront(slug: string): { full: string; display: string } {
 }
 
 export default function ShareStoreModal(props: ShareStoreModalProps) {
-  const { open, onClose, slug, name, tagline, logoUrl, brandColor } = props;
+  const { open, onClose, slug, name, tagline, logoUrl, brandColor, justPublished } = props;
   const brand = brandColor || "#7c8b54";
   const { full: storefrontUrl, display: displayUrl } = storefront(slug);
 
@@ -70,7 +74,10 @@ export default function ShareStoreModal(props: ShareStoreModalProps) {
     <div style={S.backdrop} onClick={onClose}>
       <div style={S.sheet} onClick={(e) => e.stopPropagation()}>
         <button style={S.close} onClick={onClose} aria-label="Close">×</button>
-        <h2 style={S.title}>Share your store</h2>
+        {/* A baker who has just published has never seen this address and did not ask for it, so
+            the heading tells them what happened. Every other time they came looking for the card,
+            and being told they are live is news they already have. */}
+        <h2 style={S.title}>{justPublished ? "You're live — here's your link" : "Share your store"}</h2>
         <p style={S.sub}>Post this anywhere — customers scan to design &amp; order.</p>
 
         <div style={S.preview}>

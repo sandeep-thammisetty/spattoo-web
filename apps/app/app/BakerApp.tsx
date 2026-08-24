@@ -64,7 +64,9 @@ export default function BakerApp() {
     slug?: string; name?: string; tagline?: string | null;
     logo_url?: string | null; primary_color?: string | null;
   } | null>(null);
-  const [shareStoreOpen, setShareStoreOpen] = useState(false);
+  // null = closed. The object carries WHY it opened: the customiser passes { justPublished } the
+  // first time a storefront goes live, and the sidebar passes nothing.
+  const [shareStore, setShareStore] = useState<{ justPublished?: boolean } | null>(null);
   // A logged-in user with no baker yet (self-signup before profile completion) →
   // profile fetch 404s ("No baker account found"); route them to setup instead of
   // hanging on "Loading your shop…".
@@ -248,15 +250,16 @@ export default function BakerApp() {
   // baker profile/settings/catalog via the apiClient (orderMode defaults to 'baker').
   return (
     <>
-      <CakeDesigner apiClient={api} supabase={supabase} cfAssetsBase={process.env.NEXT_PUBLIC_ASSETS_BASE} onShareStore={() => setShareStoreOpen(true)} liveSessionId={liveSessionId} onSaveTemplate={saveTemplate} legalBase={MARKETING_URL} />
+      <CakeDesigner apiClient={api} supabase={supabase} cfAssetsBase={process.env.NEXT_PUBLIC_ASSETS_BASE} onShareStore={(opts?: { justPublished?: boolean }) => setShareStore(opts ?? {})} liveSessionId={liveSessionId} onSaveTemplate={saveTemplate} legalBase={MARKETING_URL} />
       {/* Asked once shortly after sign-in, then not again for a week. Positions itself (a centred
           card over a scrim) and renders NOTHING when push is unavailable, already granted, or
           already declined — so it is inert for every baker who has answered it. */}
       <EnableNotifications api={api} />
       {baker.slug && (
         <ShareStoreModal
-          open={shareStoreOpen}
-          onClose={() => setShareStoreOpen(false)}
+          open={!!shareStore}
+          justPublished={!!shareStore?.justPublished}
+          onClose={() => setShareStore(null)}
           slug={baker.slug}
           name={baker.name}
           tagline={baker.tagline}
