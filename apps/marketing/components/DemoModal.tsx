@@ -45,23 +45,11 @@ export default function DemoModal({ onClose }: Props) {
   // The nav, a sibling of the whole hero, painted straight through the card. A portal moves it out
   // to the body, where z-50 means what it says.
   //
-  // `mounted` because the body does not exist while the server renders this.
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => { setMounted(true); }, []);
+  // No `mounted` guard: DemoCta renders this only once its button has been clicked, so it never
+  // renders on the server and `document` is always there. The usual SSR dance would be dead weight
+  // — and it trips the lint rule against setState in an effect, which is worth listening to here
+  // rather than silencing.
 
-  // Escape closes it, and the page behind stops scrolling. Both are what a modal is expected to do,
-  // and neither was true — a portal makes the second one necessary as well as possible, since the
-  // dialog is no longer nested in anything that would trap a scroll.
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
-    document.addEventListener("keydown", onKey);
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = prev;
-    };
-  }, [onClose]);
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",
@@ -77,6 +65,34 @@ export default function DemoModal({ onClose }: Props) {
     // same state object so it posts like any other field and needs no special case on the way out.
     website: "",
   });
+
+  // ── Has anything been typed? ─────────────────────────────────────────────────────────────────
+  // The honeypot is excluded: it is filled by bots and never by people, and counting it would let a
+  // bot's own submission protect itself from being dismissed.
+  const dirty = Object.entries(form).some(([k, v]) => k !== "website" && v.trim() !== "");
+  // Dismissing by accident must not cost eight fields of typing. A backdrop click and Escape both
+  // close an EMPTY form — someone who opened it by mistake gets out the way they expect — and both
+  // are ignored once anything has been entered. The ✕ always closes: nobody presses it by accident,
+  // and it is the one exit that must never be second-guessed.
+  const closeIfClean = () => { if (!dirty) onClose(); };
+
+  // Escape closes it, and the page behind stops scrolling. Both are what a modal is expected to do,
+  // and neither was true — a portal makes the second one necessary as well as possible, since the
+  // dialog is no longer nested in anything that would trap a scroll.
+  useEffect(() => {
+    // `dirty` is in the deps below, not read through a ref: registered once, this handler would
+    // close over the value from the first render — false, forever — and Escape would go on
+    // discarding a filled form while looking entirely correct. Re-registering costs one listener
+    // swap on the single transition from empty to typed-in.
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape" && !dirty) onClose(); };
+    document.addEventListener("keydown", onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prev;
+    };
+  }, [onClose, dirty]);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -142,13 +158,11 @@ export default function DemoModal({ onClose }: Props) {
     }
   }
 
-  if (!mounted) return null;
-
   return createPortal(
     <div
       className="fixed inset-0 z-50 flex items-center justify-center px-4"
       style={{ backgroundColor: "rgba(0,0,0,0.8)", backdropFilter: "blur(4px)" }}
-      onClick={(e) => e.target === e.currentTarget && onClose()}
+      onClick={(e) => { if (e.target === e.currentTarget) closeIfClean(); }}
     >
       <div
         className="relative w-full max-w-lg rounded-2xl p-8"
@@ -167,7 +181,7 @@ export default function DemoModal({ onClose }: Props) {
             <p className="text-xs tracking-[0.3em] uppercase text-[#6b8f7e] mb-2">Request a Demo</p>
             <h3 className="text-2xl font-bold text-[#edeae3] mb-1">See Spattoo in action</h3>
             <p className="text-sm text-[#edeae3]/55 mb-7">
-              Tell us a bit about you and we'll reach out to walk you through personally.
+              Tell us a bit about you and we&rsquo;ll reach out to walk you through personally.
             </p>
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -363,8 +377,8 @@ export default function DemoModal({ onClose }: Props) {
             <div>
               <h3 className="text-2xl font-bold text-[#edeae3] mb-3">Your spark is lit.</h3>
               <p className="text-[#edeae3]/65 text-sm leading-relaxed max-w-sm">
-                We've received your demo request and we're excited to show you what Spattoo can do for you.
-                We'll reach out to you shortly — get ready to ignite.
+                We&rsquo;ve received your demo request and we&rsquo;re excited to show you what Spattoo can do for you.
+                We&rsquo;ll reach out to you shortly — get ready to ignite.
               </p>
             </div>
             <button
