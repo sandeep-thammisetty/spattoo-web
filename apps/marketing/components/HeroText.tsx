@@ -57,15 +57,24 @@ export default function HeroText() {
     <>
       {/* Desktop */}
       <div className="hidden md:block relative z-10 px-16 max-w-lg">
-        {/* Grid stack: all slides in same cell, container auto-sizes to tallest, pure crossfade */}
+        {/* Grid stack: all slides in same cell, container auto-sizes to tallest.
+            ⚠️ mode="wait", and it is the whole fix for the "ghosting" a review caught on the live
+            site. The stacking here was already right; the default AnimatePresence mode is "sync",
+            which animates the outgoing and incoming slides AT THE SAME TIME. Two different
+            headlines, in one grid cell, each at roughly half opacity for 0.6s — that is a double
+            exposure, and it is unavoidable when crossfading words rather than images. "wait" holds
+            the new slide until the old one has gone: fade out, then fade in, never both.
+            0.35 rather than 0.6 because the two halves now run in SEQUENCE. At 0.6 the swap would
+            take 1.2s and feel like a stall; at 0.35 the whole thing is 0.7s — slightly quicker than
+            the overlapping version it replaces. */}
         <div style={{ display: "grid", marginBottom: "2rem" }}>
-          <AnimatePresence initial={false}>
+          <AnimatePresence initial={false} mode="wait">
             <motion.div
               key={index}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.6, ease: "easeInOut" }}
+              transition={{ duration: 0.35, ease: "easeInOut" }}
               style={{ gridArea: "1 / 1" }}
             >
               <p
@@ -135,13 +144,13 @@ export default function HeroText() {
         style={{ background: "linear-gradient(to top, #111111 35%, transparent)" }}
       >
         <div style={{ display: "grid", marginBottom: "1rem" }}>
-          <AnimatePresence initial={false}>
+          <AnimatePresence initial={false} mode="wait">
             <motion.div
               key={`mob-${index}`}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.6, ease: "easeInOut" }}
+              transition={{ duration: 0.35, ease: "easeInOut" }}
               style={{ gridArea: "1 / 1" }}
             >
               <p
