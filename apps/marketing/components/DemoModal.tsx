@@ -20,6 +20,19 @@ const cakeRanges = [
 // How they found us. Kept short: a long list is read as a chore and answered with whatever is
 // first. "Other" opens a text box rather than being an answer in itself — "Other" tells us nothing,
 // and the ones worth reading are exactly the ones the list did not predict.
+// ── The dark palette, measured rather than eyeballed ─────────────────────────────────────────────
+// It read as an unlit box with dull grey labels, and the numbers agreed:
+//
+//   field #1f1f1f against card #161616   1.10:1   invisible — only the border said a field was there
+//   placeholder at 20% opacity           1.8:1    unreadable
+//   label at 55% opacity                 5.3:1    passes WCAG, and still dull at 12px on near-black
+//
+// The card lifts to #1c1c1c so it reads as a card sitting ON the 80%-black backdrop rather than
+// dissolving into it; fields lift to #2a2a2a so they are visible as fields without leaning on a
+// hairline border. Labels go to 75% (8.4:1) and placeholders to 40% (3.2:1) — placeholders stay
+// deliberately below labels, because a placeholder that competes with a label is read as a value.
+//
+// Nothing here is a new colour: it is the same palette, spaced far enough apart to be seen.
 const heardFromOptions = [
   "Instagram",
   "Google search",
@@ -166,7 +179,7 @@ export default function DemoModal({ onClose }: Props) {
     >
       <div
         className="relative w-full max-w-lg rounded-2xl p-8"
-        style={{ backgroundColor: "#161616", border: "1px solid rgba(107,143,126,0.2)" }}
+        style={{ backgroundColor: "#1c1c1c", border: "1px solid rgba(107,143,126,0.2)" }}
       >
         {/* Close */}
         <button
@@ -180,40 +193,40 @@ export default function DemoModal({ onClose }: Props) {
           <>
             <p className="text-xs tracking-[0.3em] uppercase text-[#6b8f7e] mb-2">Request a Demo</p>
             <h3 className="text-2xl font-bold text-[#edeae3] mb-1">See Spattoo in action</h3>
-            <p className="text-sm text-[#edeae3]/55 mb-7">
+            <p className="text-sm text-[#edeae3]/75 mb-7">
               Tell us a bit about you and we&rsquo;ll reach out to walk you through personally.
             </p>
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-xs text-[#edeae3]/55">First Name</label>
+                  <label className="text-xs text-[#edeae3]/75">First Name</label>
                   <input
                     name="firstName"
                     required
                     value={form.firstName}
                     onChange={handleChange}
                     placeholder="Priya"
-                    className="rounded-xl px-4 py-2.5 text-sm text-[#edeae3] placeholder-[#edeae3]/20 outline-none focus:ring-1 focus:ring-[#6b8f7e]/50"
-                    style={{ backgroundColor: "#1f1f1f", border: "1px solid rgba(255,255,255,0.08)" }}
+                    className="rounded-xl px-4 py-2.5 text-sm text-[#edeae3] placeholder-[#edeae3]/40 outline-none focus:ring-1 focus:ring-[#6b8f7e]/50"
+                    style={{ backgroundColor: "#2a2a2a", border: "1px solid rgba(255,255,255,0.14)" }}
                   />
                 </div>
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-xs text-[#edeae3]/55">Last Name</label>
+                  <label className="text-xs text-[#edeae3]/75">Last Name</label>
                   <input
                     name="lastName"
                     required
                     value={form.lastName}
                     onChange={handleChange}
                     placeholder="Sharma"
-                    className="rounded-xl px-4 py-2.5 text-sm text-[#edeae3] placeholder-[#edeae3]/20 outline-none focus:ring-1 focus:ring-[#6b8f7e]/50"
-                    style={{ backgroundColor: "#1f1f1f", border: "1px solid rgba(255,255,255,0.08)" }}
+                    className="rounded-xl px-4 py-2.5 text-sm text-[#edeae3] placeholder-[#edeae3]/40 outline-none focus:ring-1 focus:ring-[#6b8f7e]/50"
+                    style={{ backgroundColor: "#2a2a2a", border: "1px solid rgba(255,255,255,0.14)" }}
                   />
                 </div>
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs text-[#edeae3]/55">Email</label>
+                <label className="text-xs text-[#edeae3]/75">Email</label>
                 <input
                   name="email"
                   required
@@ -221,13 +234,13 @@ export default function DemoModal({ onClose }: Props) {
                   value={form.email}
                   onChange={handleChange}
                   placeholder="priya@sweetdreams.in"
-                  className="rounded-xl px-4 py-2.5 text-sm text-[#edeae3] placeholder-[#edeae3]/20 outline-none focus:ring-1 focus:ring-[#6b8f7e]/50"
-                  style={{ backgroundColor: "#1f1f1f", border: "1px solid rgba(255,255,255,0.08)" }}
+                  className="rounded-xl px-4 py-2.5 text-sm text-[#edeae3] placeholder-[#edeae3]/40 outline-none focus:ring-1 focus:ring-[#6b8f7e]/50"
+                  style={{ backgroundColor: "#2a2a2a", border: "1px solid rgba(255,255,255,0.14)" }}
                 />
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs text-[#edeae3]/55">Mobile Number</label>
+                <label className="text-xs text-[#edeae3]/75">Mobile Number</label>
                 <input
                   name="mobile"
                   required
@@ -235,40 +248,40 @@ export default function DemoModal({ onClose }: Props) {
                   value={form.mobile}
                   onChange={handleChange}
                   placeholder="+91 98765 43210"
-                  className="rounded-xl px-4 py-2.5 text-sm text-[#edeae3] placeholder-[#edeae3]/20 outline-none focus:ring-1 focus:ring-[#6b8f7e]/50"
-                  style={{ backgroundColor: "#1f1f1f", border: "1px solid rgba(255,255,255,0.08)" }}
+                  className="rounded-xl px-4 py-2.5 text-sm text-[#edeae3] placeholder-[#edeae3]/40 outline-none focus:ring-1 focus:ring-[#6b8f7e]/50"
+                  style={{ backgroundColor: "#2a2a2a", border: "1px solid rgba(255,255,255,0.14)" }}
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-xs text-[#edeae3]/55">City</label>
+                  <label className="text-xs text-[#edeae3]/75">City</label>
                   <input
                     name="city"
                     required
                     value={form.city}
                     onChange={handleChange}
                     placeholder="Hyderabad"
-                    className="rounded-xl px-4 py-2.5 text-sm text-[#edeae3] placeholder-[#edeae3]/20 outline-none focus:ring-1 focus:ring-[#6b8f7e]/50"
-                    style={{ backgroundColor: "#1f1f1f", border: "1px solid rgba(255,255,255,0.08)" }}
+                    className="rounded-xl px-4 py-2.5 text-sm text-[#edeae3] placeholder-[#edeae3]/40 outline-none focus:ring-1 focus:ring-[#6b8f7e]/50"
+                    style={{ backgroundColor: "#2a2a2a", border: "1px solid rgba(255,255,255,0.14)" }}
                   />
                 </div>
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-xs text-[#edeae3]/55">Brand Name</label>
+                  <label className="text-xs text-[#edeae3]/75">Brand Name</label>
                   <input
                     name="brandName"
                     required
                     value={form.brandName}
                     onChange={handleChange}
                     placeholder="Sweet Dreams Cakes"
-                    className="rounded-xl px-4 py-2.5 text-sm text-[#edeae3] placeholder-[#edeae3]/20 outline-none focus:ring-1 focus:ring-[#6b8f7e]/50"
-                    style={{ backgroundColor: "#1f1f1f", border: "1px solid rgba(255,255,255,0.08)" }}
+                    className="rounded-xl px-4 py-2.5 text-sm text-[#edeae3] placeholder-[#edeae3]/40 outline-none focus:ring-1 focus:ring-[#6b8f7e]/50"
+                    style={{ backgroundColor: "#2a2a2a", border: "1px solid rgba(255,255,255,0.14)" }}
                   />
                 </div>
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs text-[#edeae3]/55">How many cakes do you sell in a month?</label>
+                <label className="text-xs text-[#edeae3]/75">How many cakes do you sell in a month?</label>
                 <select
                   name="cakesPerMonth"
                   required
@@ -276,14 +289,14 @@ export default function DemoModal({ onClose }: Props) {
                   onChange={handleChange}
                   className="rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-1 focus:ring-[#6b8f7e]/50 cursor-pointer"
                   style={{
-                    backgroundColor: "#1f1f1f",
-                    border: "1px solid rgba(255,255,255,0.08)",
-                    color: form.cakesPerMonth ? "#edeae3" : "rgba(237,234,227,0.2)",
+                    backgroundColor: "#2a2a2a",
+                    border: "1px solid rgba(255,255,255,0.14)",
+                    color: form.cakesPerMonth ? "#edeae3" : "rgba(237,234,227,0.42)",
                   }}
                 >
                   <option value="" disabled>Select a range</option>
                   {cakeRanges.map((r) => (
-                    <option key={r} value={r} style={{ color: "#edeae3", backgroundColor: "#1f1f1f" }}>
+                    <option key={r} value={r} style={{ color: "#edeae3", backgroundColor: "#2a2a2a" }}>
                       {r}
                     </option>
                   ))}
@@ -291,7 +304,7 @@ export default function DemoModal({ onClose }: Props) {
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs text-[#edeae3]/55">How did you hear about us?</label>
+                <label className="text-xs text-[#edeae3]/75">How did you hear about us?</label>
                 <select
                   name="heardFrom"
                   required
@@ -299,14 +312,14 @@ export default function DemoModal({ onClose }: Props) {
                   onChange={handleChange}
                   className="rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-1 focus:ring-[#6b8f7e]/50 cursor-pointer"
                   style={{
-                    backgroundColor: "#1f1f1f",
-                    border: "1px solid rgba(255,255,255,0.08)",
-                    color: form.heardFrom ? "#edeae3" : "rgba(237,234,227,0.2)",
+                    backgroundColor: "#2a2a2a",
+                    border: "1px solid rgba(255,255,255,0.14)",
+                    color: form.heardFrom ? "#edeae3" : "rgba(237,234,227,0.42)",
                   }}
                 >
                   <option value="" disabled>Select one</option>
                   {heardFromOptions.map((o) => (
-                    <option key={o} value={o} style={{ color: "#edeae3", backgroundColor: "#1f1f1f" }}>
+                    <option key={o} value={o} style={{ color: "#edeae3", backgroundColor: "#2a2a2a" }}>
                       {o}
                     </option>
                   ))}
@@ -319,8 +332,8 @@ export default function DemoModal({ onClose }: Props) {
                     value={form.heardFromOther}
                     onChange={handleChange}
                     placeholder="Where did you hear about us?"
-                    className="mt-1.5 rounded-xl px-4 py-2.5 text-sm text-[#edeae3] placeholder-[#edeae3]/20 outline-none focus:ring-1 focus:ring-[#6b8f7e]/50"
-                    style={{ backgroundColor: "#1f1f1f", border: "1px solid rgba(255,255,255,0.08)" }}
+                    className="mt-1.5 rounded-xl px-4 py-2.5 text-sm text-[#edeae3] placeholder-[#edeae3]/40 outline-none focus:ring-1 focus:ring-[#6b8f7e]/50"
+                    style={{ backgroundColor: "#2a2a2a", border: "1px solid rgba(255,255,255,0.14)" }}
                   />
                 )}
               </div>
