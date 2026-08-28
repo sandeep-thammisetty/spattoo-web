@@ -35,6 +35,7 @@
     "build:marketing": "npm run build --workspace marketing",
     "build:app": "npm run build --workspace app",
     "build": "npm run build --workspaces --if-present",
-    "lint": "npm run lint --workspaces --if-present"
+    "lint": "npm run lint --workspaces --if-present",
+    "check:csp": "node scripts/check-csp.mjs"
   }
 }
