@@ -1,6 +1,7 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { API_URL, TURNSTILE_SITE_KEY } from "@/lib/domain";
 import Captcha, { type CaptchaHandle } from "./Captcha";
 
@@ -36,6 +37,31 @@ export default function DemoModal({ onClose }: Props) {
   // typed and must never be treated as a field — in particular it is CLEARED after every attempt.
   const [captchaToken, setCaptchaToken] = useState("");
   const captchaRef = useRef<CaptchaHandle>(null);
+
+  // ── Rendered into <body>, not where it is written ────────────────────────────────────────────
+  // z-50 against the nav's z-20 should have been the end of it, and was not: the modal opens from a
+  // button inside the hero, and the hero animates — a framer-motion transform creates a STACKING
+  // CONTEXT, so the modal's z-index is only ever compared against its siblings inside that context.
+  // The nav, a sibling of the whole hero, painted straight through the card. A portal moves it out
+  // to the body, where z-50 means what it says.
+  //
+  // `mounted` because the body does not exist while the server renders this.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+
+  // Escape closes it, and the page behind stops scrolling. Both are what a modal is expected to do,
+  // and neither was true — a portal makes the second one necessary as well as possible, since the
+  // dialog is no longer nested in anything that would trap a scroll.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    document.addEventListener("keydown", onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prev;
+    };
+  }, [onClose]);
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",
@@ -87,6 +113,19 @@ export default function DemoModal({ onClose }: Props) {
       // The API's own message where there is one — the rate limiter's "we already have your
       // request" is friendlier and more accurate than anything this component could guess.
       const body = await res.json().catch(() => null);
+      // ── A misconfiguration that looks exactly like a bug ─────────────────────────────────────
+      // If the API enforces the captcha and this bundle has NO site key, there is no widget, no
+      // token, and every submission is refused — while the form looks completely normal. The
+      // visitor cannot fix it and neither can they report it usefully. Said once, loudly, to
+      // whoever opens devtools, because the fix is a deploy setting and nothing on this page.
+      if (body?.code === "CAPTCHA_FAILED" && !TURNSTILE_SITE_KEY) {
+        console.error(
+          "[demo] NEXT_PUBLIC_TURNSTILE_SITE_KEY is not set on this deploy, so no captcha token is "
+          + "sent and the API refuses every submission. Set it on the MARKETING Vercel project "
+          + "(apps/app has its own), as a NORMAL variable — a Sensitive one is not inlined into the "
+          + "client bundle — then redeploy without build cache.",
+        );
+      }
       setErr(body?.error || "Something went wrong. Please email hello@spattoo.com and we'll pick it up.");
       // ── A token is single-use ────────────────────────────────────────────────────────────────
       // Whatever went wrong, the one we just sent is spent. Without a fresh one the retry fails on
@@ -103,7 +142,9 @@ export default function DemoModal({ onClose }: Props) {
     }
   }
 
-  return (
+  if (!mounted) return null;
+
+  return createPortal(
     <div
       className="fixed inset-0 z-50 flex items-center justify-center px-4"
       style={{ backgroundColor: "rgba(0,0,0,0.8)", backdropFilter: "blur(4px)" }}
@@ -336,6 +377,7 @@ export default function DemoModal({ onClose }: Props) {
           </div>
         )}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
