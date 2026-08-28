@@ -3,6 +3,7 @@ import SpaceGridLoader from "@/components/SpaceGridLoader";
 import Pricing from "@/components/Pricing";
 import PricingCTA from "@/components/PricingCTA";
 import Contact from "@/components/Contact";
+import About from "@/components/About";
 import PainPoint from "@/components/PainPoint";
 import SiteNav from "@/components/SiteNav";
 import SiteFooter from "@/components/SiteFooter";
@@ -83,6 +84,8 @@ export default function Home() {
       <Pricing />
 
       <PricingCTA />
+
+      <About />
 
       <Contact />
 
