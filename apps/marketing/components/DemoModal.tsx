@@ -16,6 +16,18 @@ const cakeRanges = [
   "500+",
 ];
 
+// How they found us. Kept short: a long list is read as a chore and answered with whatever is
+// first. "Other" opens a text box rather than being an answer in itself — "Other" tells us nothing,
+// and the ones worth reading are exactly the ones the list did not predict.
+const heardFromOptions = [
+  "Instagram",
+  "Google search",
+  "A friend or another baker",
+  "YouTube",
+  "An event or expo",
+  "Other",
+];
+
 export default function DemoModal({ onClose }: Props) {
   const [submitted, setSubmitted] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -32,6 +44,8 @@ export default function DemoModal({ onClose }: Props) {
     city: "",
     brandName: "",
     cakesPerMonth: "",
+    heardFrom: "",
+    heardFromOther: "",
     // ── Honeypot ───────────────────────────────────────────────────────────────────────────────
     // Hidden from people, irresistible to the bots that fill every field they find. Kept in the
     // same state object so it posts like any other field and needs no special case on the way out.
@@ -58,7 +72,13 @@ export default function DemoModal({ onClose }: Props) {
       const res = await fetch(`${API_URL}/api/public/demo-request`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, captchaToken }),
+        // "Other" is a prompt, not an answer — send what they typed. Falls back to the literal
+        // "Other" if they picked it and left the box empty, so the row still says something.
+        body: JSON.stringify({
+          ...form,
+          heardFrom: form.heardFrom === "Other" ? (form.heardFromOther.trim() || "Other") : form.heardFrom,
+          captchaToken,
+        }),
       });
       if (res.ok) {
         setSubmitted(true);
@@ -213,6 +233,41 @@ export default function DemoModal({ onClose }: Props) {
                     </option>
                   ))}
                 </select>
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs text-[#edeae3]/55">How did you hear about us?</label>
+                <select
+                  name="heardFrom"
+                  required
+                  value={form.heardFrom}
+                  onChange={handleChange}
+                  className="rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-1 focus:ring-[#6b8f7e]/50 cursor-pointer"
+                  style={{
+                    backgroundColor: "#1f1f1f",
+                    border: "1px solid rgba(255,255,255,0.08)",
+                    color: form.heardFrom ? "#edeae3" : "rgba(237,234,227,0.2)",
+                  }}
+                >
+                  <option value="" disabled>Select one</option>
+                  {heardFromOptions.map((o) => (
+                    <option key={o} value={o} style={{ color: "#edeae3", backgroundColor: "#1f1f1f" }}>
+                      {o}
+                    </option>
+                  ))}
+                </select>
+                {/* Only once "Other" is chosen. Always-visible, it is a field to skip; revealed, it
+                    is a question that was just asked. */}
+                {form.heardFrom === "Other" && (
+                  <input
+                    name="heardFromOther"
+                    value={form.heardFromOther}
+                    onChange={handleChange}
+                    placeholder="Where did you hear about us?"
+                    className="mt-1.5 rounded-xl px-4 py-2.5 text-sm text-[#edeae3] placeholder-[#edeae3]/20 outline-none focus:ring-1 focus:ring-[#6b8f7e]/50"
+                    style={{ backgroundColor: "#1f1f1f", border: "1px solid rgba(255,255,255,0.08)" }}
+                  />
+                )}
               </div>
 
               {/* Off-screen rather than display:none — some bots skip hidden fields, and a
