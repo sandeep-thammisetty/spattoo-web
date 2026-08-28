@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import StartCta from "./StartCta";
+import DemoCta from "./DemoCta";
 
 const slides = [
   {
@@ -109,6 +110,13 @@ export default function HeroText() {
           <StartCta className="px-6 py-2.5 rounded-full bg-[#3d5247] text-[#edeae3] font-semibold text-sm hover:bg-[#4a6357] transition-colors text-center cursor-pointer">
             Get Started Free
           </StartCta>
+          {/* Outlined, not filled: a third solid button would make the row a wall of green and let
+              the primary action lose its place. Always present — see DemoCta on why this one is not
+              behind SHOW_SIGNIN. */}
+          <DemoCta className="px-6 py-2.5 rounded-full text-[#edeae3] font-semibold text-sm text-center cursor-pointer transition-colors hover:bg-[#3d5247]/30"
+                   style={{ border: "1px solid rgba(107,143,126,0.45)" }}>
+            Request a Demo
+          </DemoCta>
         </div>
         {/* "Free" on a button is a word every SaaS uses and nobody believes. What earns the click is
             the SHAPE of the offer — how long, and whether a card is needed — and it costs one line
@@ -170,6 +178,14 @@ export default function HeroText() {
           <StartCta className="flex-1 py-3.5 rounded-full bg-[#3d5247] text-[#edeae3] font-semibold text-sm text-center cursor-pointer">
             Get Started Free
           </StartCta>
+        </div>
+        {/* Its own row on a phone. Squeezed into the one above it would be a third of a 390px
+            screen, and "Request a Demo" does not fit a third of a 390px screen. */}
+        <div className="flex mt-3">
+          <DemoCta className="flex-1 py-3.5 rounded-full text-[#edeae3] font-semibold text-sm text-center cursor-pointer"
+                   style={{ border: "1px solid rgba(107,143,126,0.45)" }}>
+            Request a Demo
+          </DemoCta>
         </div>
         {/* Mobile carries its own copy of the CTA row, so it needs its own copy of this line —
             and it matters more here, where the pricing section is a long scroll away. */}

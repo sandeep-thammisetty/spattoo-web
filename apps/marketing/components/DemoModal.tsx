@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { API_URL, TURNSTILE_SITE_KEY } from "@/lib/domain";
+import Captcha, { type CaptchaHandle } from "./Captcha";
 
 interface Props {
   onClose: () => void;
@@ -16,22 +18,69 @@ const cakeRanges = [
 
 export default function DemoModal({ onClose }: Props) {
   const [submitted, setSubmitted] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");
+  // The captcha's token. Held here rather than in `form` because it is not something the visitor
+  // typed and must never be treated as a field — in particular it is CLEARED after every attempt.
+  const [captchaToken, setCaptchaToken] = useState("");
+  const captchaRef = useRef<CaptchaHandle>(null);
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",
+    email: "",
     mobile: "",
     city: "",
     brandName: "",
     cakesPerMonth: "",
+    // ── Honeypot ───────────────────────────────────────────────────────────────────────────────
+    // Hidden from people, irresistible to the bots that fill every field they find. Kept in the
+    // same state object so it posts like any other field and needs no special case on the way out.
+    website: "",
   });
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  // ── It used to just say "thank you" ──────────────────────────────────────────────────────────
+  // handleSubmit was `setSubmitted(true)` and nothing else: a success screen over a lead that went
+  // nowhere. The component was never imported, so nobody lost anything by it — but it was a trap
+  // set for whoever wired up the button, which is now this.
+  //
+  // Success is shown ONLY on a 2xx. A visitor told "we'll be in touch" who then hears nothing is
+  // worse off than one told to email us, because they stop trying.
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setSubmitted(true);
+    if (busy) return;
+    setBusy(true);
+    setErr("");
+    try {
+      const res = await fetch(`${API_URL}/api/public/demo-request`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...form, captchaToken }),
+      });
+      if (res.ok) {
+        setSubmitted(true);
+        return;
+      }
+      // The API's own message where there is one — the rate limiter's "we already have your
+      // request" is friendlier and more accurate than anything this component could guess.
+      const body = await res.json().catch(() => null);
+      setErr(body?.error || "Something went wrong. Please email hello@spattoo.com and we'll pick it up.");
+      // ── A token is single-use ────────────────────────────────────────────────────────────────
+      // Whatever went wrong, the one we just sent is spent. Without a fresh one the retry fails on
+      // the CAPTCHA rather than on whatever the visitor just corrected — so they fix the real
+      // problem, press again, and get a second error that has nothing to do with it.
+      setCaptchaToken("");
+      captchaRef.current?.reset();
+    } catch {
+      setErr("Could not reach us just now. Please check your connection, or email hello@spattoo.com.");
+      setCaptchaToken("");
+      captchaRef.current?.reset();
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (
@@ -86,6 +135,20 @@ export default function DemoModal({ onClose }: Props) {
                     style={{ backgroundColor: "#1f1f1f", border: "1px solid rgba(255,255,255,0.08)" }}
                   />
                 </div>
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs text-[#edeae3]/55">Email</label>
+                <input
+                  name="email"
+                  required
+                  type="email"
+                  value={form.email}
+                  onChange={handleChange}
+                  placeholder="priya@sweetdreams.in"
+                  className="rounded-xl px-4 py-2.5 text-sm text-[#edeae3] placeholder-[#edeae3]/20 outline-none focus:ring-1 focus:ring-[#6b8f7e]/50"
+                  style={{ backgroundColor: "#1f1f1f", border: "1px solid rgba(255,255,255,0.08)" }}
+                />
               </div>
 
               <div className="flex flex-col gap-1.5">
@@ -152,12 +215,44 @@ export default function DemoModal({ onClose }: Props) {
                 </select>
               </div>
 
+              {/* Off-screen rather than display:none — some bots skip hidden fields, and a
+                  positioned input is still filled by the ones that read the DOM. aria-hidden and
+                  tabIndex keep it away from screen readers and the keyboard, so nobody real meets
+                  it. Its name is one bots expect to find. */}
+              <input
+                name="website"
+                value={form.website}
+                onChange={handleChange}
+                tabIndex={-1}
+                autoComplete="off"
+                aria-hidden="true"
+                style={{ position: "absolute", left: "-9999px", width: 1, height: 1, opacity: 0 }}
+              />
+
+              {/* The widget is usually invisible — it only shows a checkbox when something about the
+                  visit looks unusual. It renders nothing at all without a site key, which is how a
+                  deploy that has not set one behaves. */}
+              <Captcha
+                ref={captchaRef}
+                siteKey={TURNSTILE_SITE_KEY}
+                onVerify={setCaptchaToken}
+                onExpire={() => setCaptchaToken("")}
+              />
+
+              {err && (
+                <p className="text-sm" style={{ color: "#e08a7a" }} role="alert">{err}</p>
+              )}
+
+              {/* Waiting on the captcha is a real state and the button should say so rather than
+                  failing on press. Gated only when a site key is configured — otherwise no token is
+                  ever coming and the button would never enable. */}
               <button
                 type="submit"
-                className="mt-2 w-full py-3 rounded-xl font-semibold text-sm text-white transition-opacity hover:opacity-90 cursor-pointer"
+                disabled={busy || (!!TURNSTILE_SITE_KEY && !captchaToken)}
+                className="mt-2 w-full py-3 rounded-xl font-semibold text-sm text-white transition-opacity hover:opacity-90 disabled:opacity-60 disabled:cursor-default cursor-pointer"
                 style={{ backgroundColor: "#3d5247" }}
               >
-                Request Demo
+                {busy ? "Sending…" : (TURNSTILE_SITE_KEY && !captchaToken ? "Checking your browser…" : "Request Demo")}
               </button>
             </form>
           </>
