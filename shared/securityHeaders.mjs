@@ -52,7 +52,20 @@ function originOf(url) {
 export function buildCsp(env = process.env) {
   const isDev = env.NODE_ENV !== "production";
 
-  const api = originOf(env.NEXT_PUBLIC_API_URL);
+  // ── The API origin, derived the SAME way the site derives it ────────────────────────────────
+  // `NEXT_PUBLIC_API_URL` is set on the baker app and NOT on marketing, which never called the API
+  // until the demo form did. Marketing builds its own API URL from the base domain
+  // (apps/marketing/lib/domain.ts: `https://api.${BASE_DOMAIN}`, exactly as it builds APP_URL), so
+  // the CSP knew nothing about the host the page was actually posting to — connect-src came out as
+  // just `'self' blob: data: <turnstile>` and every demo submission logged a violation. Report-only
+  // today, so it went through; enforced, the form would simply stop working.
+  //
+  // Mirroring that derivation here, rather than asking for one more variable, is what stops the two
+  // drifting again. `NEXT_PUBLIC_API_URL` still wins where it is set, so the app is unchanged.
+  const apiFromBase = env.NEXT_PUBLIC_BASE_DOMAIN
+    ? `https://api.${env.NEXT_PUBLIC_BASE_DOMAIN}`
+    : null;
+  const api = originOf(env.NEXT_PUBLIC_API_URL) ?? originOf(apiFromBase);
   const supabase = originOf(env.NEXT_PUBLIC_SUPABASE_URL);
   const assets = originOf(env.NEXT_PUBLIC_ASSETS_BASE);
   const sentry = originOf(env.NEXT_PUBLIC_SENTRY_DSN);

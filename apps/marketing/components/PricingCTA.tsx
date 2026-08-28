@@ -1,6 +1,7 @@
 "use client";
 
 import StartCta from "./StartCta";
+import DemoCta from "./DemoCta";
 
 export default function PricingCTA() {
   return (
@@ -18,6 +19,14 @@ export default function PricingCTA() {
         Start free for a full month, or let us walk you through what Spattoo can do for you.
       </p>
 
+      {/* ── The section had NO button at all in production ──────────────────────────────────────
+          A review of the live site listed this as a fault: a dedicated bottom-of-page conversion
+          moment with descriptive text and nothing to press. It was not missing — StartCta returns
+          null while SHOW_SIGNIN is off, which it is in prod until the baker app opens, so the
+          paragraph above made two offers and delivered neither.
+          The second half of that sentence — "let us walk you through what Spattoo can do for you" —
+          is a demo invitation, and DemoCta is not behind the flag. So the page keeps a working CTA
+          whether or not signup is live, and gains a second one the day it is. */}
       <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
         <StartCta
           className="px-8 py-3.5 rounded-full font-semibold text-sm text-white transition-opacity hover:opacity-90 cursor-pointer"
@@ -25,6 +34,12 @@ export default function PricingCTA() {
         >
           Get Started Free
         </StartCta>
+        <DemoCta
+          className="px-8 py-3.5 rounded-full font-semibold text-sm text-[#edeae3] transition-colors hover:bg-[#3d5247]/30 cursor-pointer whitespace-nowrap"
+          style={{ border: "1px solid rgba(107,143,126,0.45)" }}
+        >
+          Request a Demo
+        </DemoCta>
       </div>
 
       <button

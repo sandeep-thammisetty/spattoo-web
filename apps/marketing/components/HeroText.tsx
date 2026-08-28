@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import StartCta from "./StartCta";
+import DemoCta from "./DemoCta";
 
 const slides = [
   {
@@ -57,15 +57,24 @@ export default function HeroText() {
     <>
       {/* Desktop */}
       <div className="hidden md:block relative z-10 px-16 max-w-lg">
-        {/* Grid stack: all slides in same cell, container auto-sizes to tallest, pure crossfade */}
+        {/* Grid stack: all slides in same cell, container auto-sizes to tallest.
+            ⚠️ mode="wait", and it is the whole fix for the "ghosting" a review caught on the live
+            site. The stacking here was already right; the default AnimatePresence mode is "sync",
+            which animates the outgoing and incoming slides AT THE SAME TIME. Two different
+            headlines, in one grid cell, each at roughly half opacity for 0.6s — that is a double
+            exposure, and it is unavoidable when crossfading words rather than images. "wait" holds
+            the new slide until the old one has gone: fade out, then fade in, never both.
+            0.35 rather than 0.6 because the two halves now run in SEQUENCE. At 0.6 the swap would
+            take 1.2s and feel like a stall; at 0.35 the whole thing is 0.7s — slightly quicker than
+            the overlapping version it replaces. */}
         <div style={{ display: "grid", marginBottom: "2rem" }}>
-          <AnimatePresence initial={false}>
+          <AnimatePresence initial={false} mode="wait">
             <motion.div
               key={index}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.6, ease: "easeInOut" }}
+              transition={{ duration: 0.35, ease: "easeInOut" }}
               style={{ gridArea: "1 / 1" }}
             >
               <p
@@ -102,17 +111,28 @@ export default function HeroText() {
           ))}
         </div>
 
+        {/* ── Two buttons, and they stay on one line ────────────────────────────────────────────
+            There were three. "Get Started Free" is gone from here because the nav already carries
+            "Get started" behind the same SHOW_SIGNIN flag, so the two appeared and disappeared
+            together and said the same thing twice on one screen.
+            `whitespace-nowrap` is the rest of the fix. A rounded-full button whose label wraps to
+            two lines stops being a pill and becomes a tall oval — which is what three of them did
+            once they were sharing the column. */}
         <div className="flex gap-3">
-          <a href="#how-it-works" className="px-6 py-2.5 rounded-full bg-[#3d5247] text-[#edeae3] font-semibold text-sm hover:bg-[#4a6357] transition-colors text-center">
+          <a href="#how-it-works" className="px-6 py-2.5 rounded-full bg-[#3d5247] text-[#edeae3] font-semibold text-sm hover:bg-[#4a6357] transition-colors text-center whitespace-nowrap">
             See How It Works
           </a>
-          <StartCta className="px-6 py-2.5 rounded-full bg-[#3d5247] text-[#edeae3] font-semibold text-sm hover:bg-[#4a6357] transition-colors text-center cursor-pointer">
-            Get Started Free
-          </StartCta>
+          {/* Outlined, not filled: two solid buttons side by side leave neither one primary. */}
+          <DemoCta className="px-6 py-2.5 rounded-full text-[#edeae3] font-semibold text-sm text-center cursor-pointer transition-colors hover:bg-[#3d5247]/30 whitespace-nowrap"
+                   style={{ border: "1px solid rgba(107,143,126,0.45)" }}>
+            Request a Demo
+          </DemoCta>
         </div>
-        {/* "Free" on a button is a word every SaaS uses and nobody believes. What earns the click is
-            the SHAPE of the offer — how long, and whether a card is needed — and it costs one line
-            to say here rather than making someone reach the pricing section to find out. */}
+        {/* The SHAPE of the offer — how long, and whether a card is needed — said here rather than
+            making someone reach the pricing section to find out. It was written under a "Get Started
+            Free" button, on the grounds that "free" on a button is a word every SaaS uses and nobody
+            believes. That button now lives only in the nav, and the line stays: it is the answer to
+            "what does it cost" whether or not there is something to press beside it. */}
         <p className="mt-3 text-xs text-[#edeae3]/55">
           Use Spattoo free for a month. No credit card needed.
         </p>
@@ -124,13 +144,13 @@ export default function HeroText() {
         style={{ background: "linear-gradient(to top, #111111 35%, transparent)" }}
       >
         <div style={{ display: "grid", marginBottom: "1rem" }}>
-          <AnimatePresence initial={false}>
+          <AnimatePresence initial={false} mode="wait">
             <motion.div
               key={`mob-${index}`}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.6, ease: "easeInOut" }}
+              transition={{ duration: 0.35, ease: "easeInOut" }}
               style={{ gridArea: "1 / 1" }}
             >
               <p
@@ -163,16 +183,20 @@ export default function HeroText() {
           ))}
         </div>
 
+        {/* Two share the row on a phone. Three could not — "Request a Demo" needed its own line at
+            a third of a 390px screen — and with the signup CTA gone from here they fit. */}
         <div className="flex gap-3">
-          <a href="#how-it-works" className="flex-1 py-3.5 rounded-full bg-[#3d5247] text-[#edeae3] font-semibold text-sm text-center">
+          <a href="#how-it-works" className="flex-1 py-3.5 rounded-full bg-[#3d5247] text-[#edeae3] font-semibold text-sm text-center whitespace-nowrap">
             See How It Works
           </a>
-          <StartCta className="flex-1 py-3.5 rounded-full bg-[#3d5247] text-[#edeae3] font-semibold text-sm text-center cursor-pointer">
-            Get Started Free
-          </StartCta>
+          <DemoCta className="flex-1 py-3.5 rounded-full text-[#edeae3] font-semibold text-sm text-center cursor-pointer whitespace-nowrap"
+                   style={{ border: "1px solid rgba(107,143,126,0.45)" }}>
+            Request a Demo
+          </DemoCta>
         </div>
         {/* Mobile carries its own copy of the CTA row, so it needs its own copy of this line —
-            and it matters more here, where the pricing section is a long scroll away. */}
+            and it matters more here, where the pricing section is a long scroll away and the nav's
+            "Get started" is behind a menu. */}
         <p className="mt-3 text-center text-xs text-[#edeae3]/55">
           Use Spattoo free for a month. No credit card needed.
         </p>
