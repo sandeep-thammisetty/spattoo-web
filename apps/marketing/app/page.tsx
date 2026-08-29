@@ -15,7 +15,10 @@ export default function Home() {
       <SiteNav />
 
       {/* Hero */}
-      <section className="relative min-h-screen flex flex-col md:flex-row md:items-center bg-gradient-to-br from-[#111111] via-[#2a2a2a] to-[#edeae3] overflow-hidden md:pt-24">
+      {/* min-h-screen-safe, NOT min-h-screen — see globals.css. `100vh` on iOS is the height with
+          the toolbars hidden, so the bottom of this section (which is where the phone's CTA row
+          lives) was off screen behind the toolbar. */}
+      <section className="relative min-h-screen-safe flex flex-col md:flex-row md:items-center bg-gradient-to-br from-[#111111] via-[#2a2a2a] to-[#edeae3] overflow-hidden md:pt-24">
 
         {/* 3D space grid — full on mobile (top half), right side on desktop */}
         <div className="absolute right-0 top-0 w-full md:w-[90%] h-full pointer-events-none">
@@ -28,7 +31,10 @@ export default function Home() {
 
         <HeroText />
 
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-[#6b8f7e]/50 text-xs tracking-widest uppercase">
+        {/* Desktop only. It was never hidden on a phone — it was just off screen for the same
+            reason the buttons were, and fixing the height would have dropped it straight on top of
+            them. A phone does not need telling to scroll; it needs the CTA it came for. */}
+        <div className="hidden md:flex absolute bottom-8 left-1/2 -translate-x-1/2 flex-col items-center gap-2 text-[#6b8f7e]/50 text-xs tracking-widest uppercase">
           <span>Scroll</span>
           <div className="w-px h-10 bg-gradient-to-b from-[#6b8f7e]/50 to-transparent animate-pulse" />
         </div>
