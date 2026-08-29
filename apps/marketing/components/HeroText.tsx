@@ -46,6 +46,40 @@ function Headline({ line, isHighlight, addBreak }: { line: string; isHighlight: 
   );
 }
 
+type Slide = (typeof slides)[number];
+
+// One slide's eyebrow + headline at desktop sizing. Rendered by the slide that is actually visible
+// AND, hidden, once per slide to reserve the grid cell's height — see the stack below.
+//
+// Both come from this ONE component deliberately. A spacer built from a copied block of markup
+// drifts the moment either copy is edited, and it drifts SILENTLY: nobody looks at a spacer, so the
+// first sign would be the jump quietly coming back.
+//
+// `heading` picks the tag. Only the visible slide is an <h1>; the five reservations are plain divs
+// carrying identical typography. Six <h1> elements on a marketing landing page is not a thing to do
+// to a page whose job is to be found.
+function DesktopSlide({ slide, heading = false }: { slide: Slide; heading?: boolean }) {
+  const H = heading ? "h1" : "div";
+  return (
+    <>
+      <p
+        className="inline-block text-sm tracking-[0.2em] uppercase text-[#a8c5b5] font-medium mb-5 px-4 py-1.5 rounded-full"
+        style={{ border: "1px solid rgba(107,143,126,0.4)", backgroundColor: "rgba(107,143,126,0.08)" }}
+      >
+        {slide.eyebrow}
+      </p>
+
+      <div className="mb-6">
+        <H className="text-3xl md:text-4xl font-bold leading-snug text-[#edeae3]">
+          {slide.headline.map((line, i) => (
+            <Headline key={line} line={line} isHighlight={line === slide.highlight} addBreak={i > 0} />
+          ))}
+        </H>
+      </div>
+    </>
+  );
+}
+
 export default function HeroText() {
   const [index, setIndex] = useState(0);
   const slide = slides[index];
@@ -63,13 +97,16 @@ export default function HeroText() {
       <div className="hidden md:block relative z-10 px-16 max-w-lg">
         {/* Grid stack: one cell, so a slide can be swapped without the two ever being laid out
             side by side.
-            ⚠️ It does NOT auto-size to the tallest slide, though an earlier version of this comment
-            said so. That was true while AnimatePresence ran in "sync" mode and both slides were
-            mounted at once; under "wait" only ONE is, so the cell is as tall as the CURRENT slide
-            and everything below — dots, buttons, the free-trial line — rides up and down with it.
-            Measured at 1246px wide, the button row moves through a 198px range as the five slides
-            rotate. Bottom-anchored mobile (`justify-end`, below) does not have this: there the
-            stack grows upward and the buttons hold still.
+            ⚠️ The cell does not auto-size to the tallest slide on its own — an earlier version of
+            this comment claimed it did. That was true while AnimatePresence ran in "sync" mode and
+            both slides were mounted at once; under "wait" only ONE is, so the cell was as tall as
+            the CURRENT slide and everything below it — dots, buttons, the free-trial line — rode up
+            and down as the slides rotated. Measured at 1246px wide, the five slides stand 276, 177,
+            346, 128 and 276 tall: a 218px range, every six seconds. The hidden reservations below
+            restore the property the comment used to describe — the cell holds at 346 whichever
+            slide is showing.
+            (Bottom-anchored mobile, `justify-end` further down, never had this: there the stack
+            grows upward and the buttons hold still, which is why only desktop needs them.)
             ⚠️ mode="wait", and it is the whole fix for the "ghosting" a review caught on the live
             site. The stacking here was already right; the default AnimatePresence mode is "sync",
             which animates the outgoing and incoming slides AT THE SAME TIME. Two different
@@ -80,6 +117,24 @@ export default function HeroText() {
             take 1.2s and feel like a stall; at 0.35 the whole thing is 0.7s — slightly quicker than
             the overlapping version it replaces. */}
         <div style={{ display: "grid", marginBottom: "2rem" }}>
+          {/* Height reservation: EVERY slide, laid into the same cell, hidden. A grid row is as tall
+              as its tallest child, so the cell now measures the tallest slide instead of the current
+              one and nothing below it moves.
+              `visibility: hidden`, never `display: none` — a display:none child contributes no
+              height, which is the entire job. aria-hidden and inert to the pointer so the five
+              copies are neither read out nor clickable. Which slide is tallest depends on where the
+              text wraps, so it is not hardcoded: all five are reserved and the browser takes the
+              max. */}
+          {slides.map((s) => (
+            <div
+              key={`reserve-${s.highlight}`}
+              aria-hidden
+              style={{ gridArea: "1 / 1", visibility: "hidden", pointerEvents: "none" }}
+            >
+              <DesktopSlide slide={s} />
+            </div>
+          ))}
+
           <AnimatePresence initial={false} mode="wait">
             <motion.div
               key={index}
@@ -89,21 +144,7 @@ export default function HeroText() {
               transition={{ duration: 0.35, ease: "easeInOut" }}
               style={{ gridArea: "1 / 1" }}
             >
-              <p
-                className="inline-block text-sm tracking-[0.2em] uppercase text-[#a8c5b5] font-medium mb-5 px-4 py-1.5 rounded-full"
-                style={{ border: "1px solid rgba(107,143,126,0.4)", backgroundColor: "rgba(107,143,126,0.08)" }}
-              >
-                {slide.eyebrow}
-              </p>
-
-              <div className="mb-6">
-                <h1 className="text-3xl md:text-4xl font-bold leading-snug text-[#edeae3]">
-                  {slide.headline.map((line, i) => (
-                    <Headline key={line} line={line} isHighlight={line === slide.highlight} addBreak={i > 0} />
-                  ))}
-                </h1>
-              </div>
-
+              <DesktopSlide slide={slide} heading />
             </motion.div>
           </AnimatePresence>
         </div>
