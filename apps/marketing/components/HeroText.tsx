@@ -21,8 +21,12 @@ const slides = [
     highlight: "Before they message you.",
   },
   {
+    // The eyebrow is a LABEL and the headline is the statement — every other slide reads that way,
+    // and this one used to repeat itself: the pill said "No design skills needed." and the first
+    // headline line said it again, directly underneath. On a phone, where the two sit a few pixels
+    // apart, you read the same sentence twice before reaching anything new.
     eyebrow: "No design skills needed.",
-    headline: ["No design skills needed.", "Start from a template."],
+    headline: ["Start from a template."],
     highlight: "Start from a template.",
   },
   {
@@ -57,7 +61,15 @@ export default function HeroText() {
     <>
       {/* Desktop */}
       <div className="hidden md:block relative z-10 px-16 max-w-lg">
-        {/* Grid stack: all slides in same cell, container auto-sizes to tallest.
+        {/* Grid stack: one cell, so a slide can be swapped without the two ever being laid out
+            side by side.
+            ⚠️ It does NOT auto-size to the tallest slide, though an earlier version of this comment
+            said so. That was true while AnimatePresence ran in "sync" mode and both slides were
+            mounted at once; under "wait" only ONE is, so the cell is as tall as the CURRENT slide
+            and everything below — dots, buttons, the free-trial line — rides up and down with it.
+            Measured at 1246px wide, the button row moves through a 198px range as the five slides
+            rotate. Bottom-anchored mobile (`justify-end`, below) does not have this: there the
+            stack grows upward and the buttons hold still.
             ⚠️ mode="wait", and it is the whole fix for the "ghosting" a review caught on the live
             site. The stacking here was already right; the default AnimatePresence mode is "sync",
             which animates the outgoing and incoming slides AT THE SAME TIME. Two different
