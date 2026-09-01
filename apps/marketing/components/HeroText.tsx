@@ -11,7 +11,12 @@ const slides = [
     highlight: "You just bake it.",
   },
   {
-    eyebrow: "Save hours every week",
+    /* Merged with the old "No design skills needed. / Start from a template." slide rather than
+     * deleting it. That slide's whole content was a label and a restatement of it, and this one had
+     * a headline that already said the benefit — so the template becomes the LABEL here, which is
+     * the rule every slide follows, and "Save hours every week" goes because "Less design chats.
+     * More baking." was already saying that. Two slides, one idea each, into one slide with both. */
+    eyebrow: "Start from a template",
     headline: ["Less design chats.", "More baking."],
     highlight: "More baking.",
   },
@@ -37,13 +42,20 @@ const slides = [
     highlight: "All in one place.",
   },
   {
-    // The eyebrow is a LABEL and the headline is the statement — every other slide reads that way,
-    // and this one used to repeat itself: the pill said "No design skills needed." and the first
-    // headline line said it again, directly underneath. On a phone, where the two sit a few pixels
-    // apart, you read the same sentence twice before reaching anything new.
-    eyebrow: "No design skills needed.",
-    headline: ["Start from a template."],
-    highlight: "Start from a template.",
+    /* ⚠️ The one thing on this page nobody else can say.
+     *
+     * Every other slide is a better version of a claim a competitor also makes. Turning a design
+     * into which tin, which colour mix and which nozzle is not — a render is a picture, and a
+     * picture is not a recipe.
+     *
+     * The specifics ARE the argument. "Step-by-step guides" would be worth less than saying nothing:
+     * it is what anybody would write whether or not they had built it.
+     *
+     * This took the slot the template slide gave up when it merged into "Less design chats" above,
+     * so the rotation stays at six. Seven would mean the last slide is seen by almost nobody. */
+    eyebrow: "Help guides with every order",
+    headline: ["The tin.", "The colour mix.", "The nozzle."],
+    highlight: "The nozzle.",
   },
   {
     eyebrow: "They see your brand, not ours.",
