@@ -45,8 +45,12 @@ const slides = [
     /* ⚠️ The one thing on this page nobody else can say.
      *
      * Every other slide is a better version of a claim a competitor also makes. Turning a design
-     * into which tin, which colour mix and which nozzle is not — a render is a picture, and a
-     * picture is not a recipe.
+     * into the colour mix, the nozzle and the steps for modelling a fondant figure is not — a render
+     * is a picture, and a picture is not a recipe.
+     *
+     * The tin was here and came out: it is the smallest of the four and the easiest to guess from
+     * the tier count. The fondant guide is the opposite — genuinely hard, genuinely wanted, and it
+     * goes LAST because the last line is the highlighted one.
      *
      * The specifics ARE the argument. "Step-by-step guides" would be worth less than saying nothing:
      * it is what anybody would write whether or not they had built it.
@@ -54,8 +58,8 @@ const slides = [
      * This took the slot the template slide gave up when it merged into "Less design chats" above,
      * so the rotation stays at six. Seven would mean the last slide is seen by almost nobody. */
     eyebrow: "Help guides with every order",
-    headline: ["The tin.", "The colour mix.", "The nozzle."],
-    highlight: "The nozzle.",
+    headline: ["The colour mix.", "The nozzle.", "The fondant guide."],
+    highlight: "The fondant guide.",
   },
   {
     eyebrow: "They see your brand, not ours.",
