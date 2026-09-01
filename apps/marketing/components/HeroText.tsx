@@ -57,7 +57,7 @@ const slides = [
      *
      * This took the slot the template slide gave up when it merged into "Less design chats" above,
      * so the rotation stays at six. Seven would mean the last slide is seen by almost nobody. */
-    eyebrow: "Help guides with every order",
+    eyebrow: "Order specific help guide",
     headline: ["The colour mix.", "The nozzle.", "The fondant guide."],
     highlight: "The fondant guide.",
   },
