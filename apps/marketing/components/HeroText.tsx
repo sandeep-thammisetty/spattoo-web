@@ -30,7 +30,7 @@ const slides = [
      * ⚠️ The statement is WHERE THE ORDERS COME FROM, not the bake-day view. An earlier draft read
      * "See your bake day at a glance", which is a detail inside the feature and too small a thing to
      * carry a hero slide — the point is that everything lands here, however it arrived. */
-    eyebrow: "Order management for bakers",
+    eyebrow: "Baker focused order management",
     /* ⚠️ ~18 characters a line at this size, measured — not guessed. Longer lines wrap, and a
      * wrapped line means the authored break is ignored and the highlight lands mid-phrase. */
     headline: ["Orders from 3D", "or a photo.", "All in one place."],
