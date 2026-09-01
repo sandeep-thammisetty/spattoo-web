@@ -18,6 +18,12 @@
  * a storefront enquiry, and an order the baker adds themselves (manual orders — a walk-in, a phone
  * call). It is one sentence because the distinction matters to us and not to the reader.
  *
+ * ⚠️ "How to make it", not "bench guide" and not "build guide". `bench` is British bakery
+ * vocabulary and reads oddly to an Indian home baker, who would say kitchen or counter. `build
+ * guide` is already a DIFFERENT feature — the per-decoration AI guide, metered by credits — and one
+ * name on two things is the trap tools-into-the-catalogue.md keeps complaining about. A plain verb
+ * phrase has no dialect to get wrong and no product noun to learn.
+ *
  * "Every order PRINTS" is stated flatly, and it took a correction to earn that. The bench guide is
  * the X-Ray report, and this line first read "can print" because the repo contradicted itself about
  * who gets it: features/xray-report.md and two comments in spattoo-core said Blaze and above, while
@@ -42,7 +48,7 @@ export default function OrderManagement() {
         </h2>
         <p className="text-[#edeae3]/60 leading-relaxed max-w-2xl">
           Every order in one place — designed in 3D or from a reference photo. Quote it, confirm it,
-          and see your bake day at a glance. Each one prints the tin, colour mix and nozzle.
+          and see your bake day at a glance. Each one prints how to make it — tin, colour mix, nozzle.
         </p>
       </div>
     </section>
