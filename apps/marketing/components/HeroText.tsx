@@ -21,9 +21,21 @@ const slides = [
     highlight: "More baking.",
   },
   {
-    eyebrow: "Your storefront does the asking",
-    headline: ["They tell you the flavour,", "size and date.", "Before they message you."],
-    highlight: "Before they message you.",
+    /* ⚠️ "Before they message you" conceded that messaging is the baseline — three slides after
+     * promising fewer chats — and it made the message the subject rather than the storefront.
+     *
+     * Guiding is also a stronger claim than collecting: any order form collects a flavour and a
+     * size. This one RECOMMENDS, and both halves were checked in the code before being claimed.
+     * `suggestFlavour.js` reasons from the OCCASION ("children's birthdays nearly always go
+     * chocolate") and is rules rather than a model precisely so it can say why; `SizeDateFacets`
+     * asks how many people and works the size out, because a customer can answer a headcount and
+     * cannot answer a weight.
+     *
+     * "the occasion", not "your occasion": the visitor is the BAKER, so the occasion belongs to
+     * their customer. */
+    eyebrow: "Your storefront guides them",
+    headline: ["To pick the right", "flavour and size", "for the occasion."],
+    highlight: "for the occasion.",
   },
   {
     /* ⚠️ The only slide about what happens AFTER the order arrives.
