@@ -27,13 +27,14 @@ const slides = [
      * branding — and the rotation left a visitor with no idea Spattoo runs the orders too. That is
      * the half a baker pays for every month; the designer is what makes them look once.
      *
-     * "Order management for bakers" is the LABEL and the bake day is the statement, per the note on
-     * the slide below — which is here because that slide once said the same thing twice. */
+     * ⚠️ The statement is WHERE THE ORDERS COME FROM, not the bake-day view. An earlier draft read
+     * "See your bake day at a glance", which is a detail inside the feature and too small a thing to
+     * carry a hero slide — the point is that everything lands here, however it arrived. */
     eyebrow: "Order management for bakers",
-    // "your whole bake day" overflowed max-w-lg and wrapped, so two authored lines drew as
-    // three — the break has to be OURS or the highlight lands mid-phrase.
-    headline: ["See your bake day", "at a glance."],
-    highlight: "at a glance.",
+    /* ⚠️ ~18 characters a line at this size, measured — not guessed. Longer lines wrap, and a
+     * wrapped line means the authored break is ignored and the highlight lands mid-phrase. */
+    headline: ["Orders from 3D", "or a photo.", "All in one place."],
+    highlight: "All in one place.",
   },
   {
     // The eyebrow is a LABEL and the headline is the statement — every other slide reads that way,

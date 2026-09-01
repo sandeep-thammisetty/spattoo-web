@@ -4,7 +4,6 @@ import Pricing from "@/components/Pricing";
 import PricingCTA from "@/components/PricingCTA";
 import Contact from "@/components/Contact";
 import About from "@/components/About";
-import OrderManagement from "@/components/OrderManagement";
 import PainPoint from "@/components/PainPoint";
 import SiteNav from "@/components/SiteNav";
 import SiteFooter from "@/components/SiteFooter";
@@ -88,9 +87,6 @@ export default function Home() {
 
       <PainPoint />
 
-      {/* Between the problem and the price: the answer to "scrolling back through chats on bake
-          day", which PainPoint names and nothing else on the page pays off. */}
-      <OrderManagement />
 
       <Pricing />
 
