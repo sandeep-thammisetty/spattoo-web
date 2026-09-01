@@ -42,8 +42,7 @@ export default function OrderManagement() {
         </h2>
         <p className="text-[#edeae3]/60 leading-relaxed max-w-2xl">
           Every order in one place — designed in 3D or from a reference photo. Quote it, confirm it,
-          and see your bake day at a glance. Every order prints what you need at the bench: the tin,
-          the colour mix, the nozzle.
+          and see your bake day at a glance. Each one prints the tin, colour mix and nozzle.
         </p>
       </div>
     </section>
