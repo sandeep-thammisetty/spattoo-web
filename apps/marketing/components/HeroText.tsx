@@ -21,6 +21,21 @@ const slides = [
     highlight: "Before they message you.",
   },
   {
+    /* ⚠️ The only slide about what happens AFTER the order arrives.
+     *
+     * The other five are all the customer's half — designing, the storefront asking, templates,
+     * branding — and the rotation left a visitor with no idea Spattoo runs the orders too. That is
+     * the half a baker pays for every month; the designer is what makes them look once.
+     *
+     * "Order management for bakers" is the LABEL and the bake day is the statement, per the note on
+     * the slide below — which is here because that slide once said the same thing twice. */
+    eyebrow: "Order management for bakers",
+    // "your whole bake day" overflowed max-w-lg and wrapped, so two authored lines drew as
+    // three — the break has to be OURS or the highlight lands mid-phrase.
+    headline: ["See your bake day", "at a glance."],
+    highlight: "at a glance.",
+  },
+  {
     // The eyebrow is a LABEL and the headline is the statement — every other slide reads that way,
     // and this one used to repeat itself: the pill said "No design skills needed." and the first
     // headline line said it again, directly underneath. On a phone, where the two sit a few pixels
