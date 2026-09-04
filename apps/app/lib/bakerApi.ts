@@ -392,6 +392,17 @@ export function makeBakerApiClient(supabase: SupabaseClient) {
     fetchCraftGuides: (elementIds: string[]) =>
       authGet(`/api/craft-guide?element_ids=${(elementIds ?? []).join(",")}`).catch(() => []),
 
+    // ── Edible prints, read off an order's reference photo ─────────────────────
+    // identify is FREE — a second read of a photo the order already paid to read. generate is
+    // metered, one image per press, and lands in the baker's own uploads.
+    identifyEdiblePrints: (orderId: string) =>
+      authFetch(`/api/orders/${orderId}/edible-prints/identify`, { method: "POST" }),
+    generateEdiblePrint: (orderId: string, payload: unknown) =>
+      authFetch(`/api/orders/${orderId}/edible-prints/generate`, {
+        method: "POST",
+        body: JSON.stringify(payload),
+      }),
+
     // ── Customers ─────────────────────────────────────────────────────────────
     fetchCustomers: () => authGet("/api/baker/customers"),
     createCustomer: (payload: unknown) =>
