@@ -395,6 +395,10 @@ export function makeBakerApiClient(supabase: SupabaseClient) {
     // ── Edible prints, read off an order's reference photo ─────────────────────
     // identify is FREE — a second read of a photo the order already paid to read. generate is
     // metered, one image per press, and lands in the baker's own uploads.
+    // The prints already made for this order — Print & cut-outs shows them beside the catalogue
+    // decorations. Unmetered, one indexed read, safe on every open.
+    fetchOrderEdiblePrints: (orderId: string) =>
+      authGet(`/api/orders/${orderId}/edible-prints`).catch(() => ({ prints: [] })),
     identifyEdiblePrints: (orderId: string) =>
       authFetch(`/api/orders/${orderId}/edible-prints/identify`, { method: "POST" }),
     generateEdiblePrint: (orderId: string, payload: unknown) =>
