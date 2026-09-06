@@ -51,9 +51,15 @@ export const SIGNUP_URL = `${APP_URL}/?signup=1`;
 // decisions from — and the dev property's real job is to prove the wiring works
 // before prod, not to be analysed.
 //
-// ⚠️ Marketing only, for now. The baker app is next; customer storefronts are
-// DELIBERATELY excluded and are measured first-party instead (spattoo-api
-// storefront_views) — see plans/analytics.md for why that is not a compromise.
+// ⚠️ MARKETING ONLY. Neither surface of `apps/app` is measured by Google:
+//   · the baker app, because GA answers an ACQUISITION question and that app is
+//     entirely post-acquisition — nobody arrives there from a search result. A
+//     baker reaches it by signing up, which is the event measured over here.
+//   · customer storefronts, which are counted first-party instead (spattoo-api
+//     storefront_views) because GA4's ad-blocker undercount and thresholding
+//     corrupt exactly the long tail that "is this shop used at all" depends on.
+// So the whole of apps/app stays Google-free — a simpler rule to hold than a
+// per-route one. See plans/analytics.md.
 export const GA_ID = process.env.NEXT_PUBLIC_GA_ID || "";
 
 // True only on the production marketing deploy. Whitelisting prod (rather than

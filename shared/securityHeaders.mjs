@@ -106,15 +106,22 @@ export function buildCsp(env = process.env) {
   // Google back in is a choice each deploy makes for itself — a deploy with no
   // measurement ID must not advertise origins it never calls.
   //
-  // ⚠️ WHICH SURFACES. Analytics runs on the MARKETING SITE and (later) the
-  // baker app. It must NEVER run on a customer storefront: those pages carry the
-  // BAKER's brand and serve the BAKER's customers, and storefront usage is
-  // measured first-party instead (spattoo-api storefront_views). Note that
-  // apps/app serves the baker app AND every storefront from one deploy, so the
-  // day that app sets a GA id, storefront RESPONSES will carry these origins in
-  // their policy too. That is over-permission, not a leak — CSP permits requests,
-  // it never causes them — but the tag itself must stay mounted on the baker-app
-  // route only, never in that app's root layout. See plans/analytics.md.
+  // ⚠️ WHICH SURFACES. Analytics runs on the MARKETING SITE ONLY. `apps/app` is
+  // Google-free on BOTH of its surfaces, and for two different reasons: the baker
+  // app because GA answers an acquisition question and that app is entirely
+  // post-acquisition, and customer storefronts because they carry the BAKER's
+  // brand and serve the BAKER's customers — storefront usage is counted
+  // first-party instead (spattoo-api storefront_views).
+  //
+  // So in practice this block only ever fires for the marketing deploy. It stays
+  // env-gated rather than hardcoded to that app because the two apps share ONE
+  // policy: a rule that reads "only when this deploy measures" cannot drift, and
+  // a rule that reads "only for marketing" would have to be re-derived here every
+  // time either app moves. If apps/app is ever given an id, note that storefront
+  // RESPONSES would then carry these origins too — over-permission, not a leak,
+  // since CSP permits requests and never causes them — but the tag itself would
+  // have to mount on the baker-app route alone, never in that app's root layout,
+  // which also serves every storefront. See plans/analytics.md.
   //
   // gtag.js is served from googletagmanager.com even for a pure GA4 (G-) id —
   // there is no analytics.js host any more. The wildcard connect hosts are real:
