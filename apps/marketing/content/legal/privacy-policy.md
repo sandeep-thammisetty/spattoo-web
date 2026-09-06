@@ -88,10 +88,22 @@ Fiduciary, requests about that data may also need to be directed to the relevant
 
 ### 2.4. Cookies and similar technologies
 We use strictly necessary and functional cookies/local storage to keep you signed in,
-remember preferences, secure the Platform, and make it work. We currently **do not use
-third-party advertising or behavioural-tracking cookies**, and we use error-monitoring
-tools (see Section 6) for diagnostics only. If this changes, we will update this Policy
-and, where required, seek consent.
+remember preferences, secure the Platform, and make it work. We also use error-monitoring
+tools (see Section 6) for diagnostics only.
+
+**Analytics.** We use Google Analytics on our **marketing website** to understand how
+people find and use it — which pages are read, and which links are followed. It sets
+first-party cookies and reports to Google (see Section 6). We use it to improve the site,
+not to build a profile of you, and we do **not** use advertising or ad-retargeting
+cookies, and do **not** sell or share personal data with advertisers.
+
+**Where analytics does NOT run.** A Baker's public storefront (`{baker}.spattoo.com`)
+carries **no Google Analytics and no Google cookies**. Visiting a Baker's shop, designing
+a cake, or placing an order sends nothing to Google. We count how many times each Baker's
+storefront was opened using our own systems, so the Baker can see whether their shop is
+being visited; that count records **no** information identifying you.
+
+If this changes, we will update this Policy and, where required, seek consent.
 
 We do **not** knowingly collect sensitive personal data (such as health, biometric, or
 financial account details beyond what a payment processor requires). Please do not submit
@@ -184,6 +196,7 @@ restrictions notified by the Government of India.
 | OpenAI | AI vision (reading a cake photo to identify decorations and colours) **and AI image generation** (drawing how-to-make-it guide sheets from a photo) — see Section 3.1 | United States |
 | Meshy.ai | Image-to-3D model generation | Outside India (US) |
 | remove.bg | Image background removal | European Union (Germany) |
+| Google Analytics | Website usage analytics — **marketing website only**, never a Baker's storefront (see Section 2.4) | United States |
 | Sentry (or equivalent) | Error/diagnostic monitoring | United States (unless self-hosted) |
 | Email/SMTP provider | Transactional email delivery | Provider-dependent |
 | Cloud hosting (e.g. Render) | Application hosting | Global / outside India |
@@ -296,6 +309,7 @@ access, correct, or delete your data at `care@spattoo.com`.
 
 | Version | Effective | Changes |
 |---|---|---|
-| 1.0 | {{EFFECTIVE_DATE}} | Initial version. |
+| 1.1 | {{EFFECTIVE_DATE}} | Added Google Analytics on the **marketing website** — Section 2.4 now describes it, and Google is named in the Section 6 processor table. Section 2.4 also states plainly where analytics does **not** run: a Baker's storefront carries no Google Analytics and no Google cookies, and storefront visits are counted using our own systems with no information identifying the visitor. |
+| 1.0 | 13 August 2026 | Initial version. |
 
 *Every published version of this document is retained and timestamped. The version currently in force is shown at the top of this page.*

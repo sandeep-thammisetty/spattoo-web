@@ -98,6 +98,39 @@ export function buildCsp(env = process.env) {
   // iframe, so it needs script-src AND frame-src.
   const TURNSTILE = "https://challenges.cloudflare.com";
 
+  // ── Google Analytics — ONLY when this deploy actually uses it ──────────────
+  // Gated on NEXT_PUBLIC_GA_ID rather than hardcoded, because these origins are
+  // the deliberate REVERSAL of a decision this file already made: SEC-WEB-7
+  // removed fonts.googleapis.com + fonts.gstatic.com precisely because they
+  // disclosed every visitor's IP to Google on every storefront visit. Letting
+  // Google back in is a choice each deploy makes for itself — a deploy with no
+  // measurement ID must not advertise origins it never calls.
+  //
+  // ⚠️ WHICH SURFACES. Analytics runs on the MARKETING SITE and (later) the
+  // baker app. It must NEVER run on a customer storefront: those pages carry the
+  // BAKER's brand and serve the BAKER's customers, and storefront usage is
+  // measured first-party instead (spattoo-api storefront_views). Note that
+  // apps/app serves the baker app AND every storefront from one deploy, so the
+  // day that app sets a GA id, storefront RESPONSES will carry these origins in
+  // their policy too. That is over-permission, not a leak — CSP permits requests,
+  // it never causes them — but the tag itself must stay mounted on the baker-app
+  // route only, never in that app's root layout. See plans/analytics.md.
+  //
+  // gtag.js is served from googletagmanager.com even for a pure GA4 (G-) id —
+  // there is no analytics.js host any more. The wildcard connect hosts are real:
+  // GA4 beacons go to region-sharded subdomains (region1.google-analytics.com,
+  // *.analytics.google.com), so naming only www.google-analytics.com admits the
+  // script and then blocks the very hits it exists to send.
+  const GTM_HOST = "https://www.googletagmanager.com";
+  const GA_HOST = "https://www.google-analytics.com";
+  const gaOn = Boolean(env.NEXT_PUBLIC_GA_ID);
+  const gaScript = gaOn ? [GTM_HOST] : [];
+  const gaConnect = gaOn
+    ? [GA_HOST, "https://*.google-analytics.com", "https://*.analytics.google.com", GTM_HOST]
+    : [];
+  // The no-JS / blocked-XHR fallback is a 1×1 pixel, so img-src matters too.
+  const gaImg = gaOn ? [GA_HOST, GTM_HOST] : [];
+
   // ── No third-party font/asset CDNs (SEC-WEB-7, closed 2026-07-24) ──────────
   // This policy used to allowlist fonts.googleapis.com + fonts.gstatic.com (the
   // designer @import-ed Quicksand from 17 places) and cdn.jsdelivr.net (troika
@@ -156,6 +189,7 @@ export function buildCsp(env = process.env) {
       "'wasm-unsafe-eval'",
       "blob:",
       TURNSTILE,
+      ...gaScript,
       ...(isDev ? ["'unsafe-eval'"] : []),
     ],
 
@@ -167,7 +201,7 @@ export function buildCsp(env = process.env) {
 
     // data: — canvas-generated thumbnails and inlined SVG/icon data URIs.
     // blob:  — designer share cards + client-side canvas snapshots.
-    "img-src": ["'self'", "data:", "blob:", assets, ...extra],
+    "img-src": ["'self'", "data:", "blob:", assets, ...gaImg, ...extra],
 
     "font-src": ["'self'", "data:"],
 
@@ -185,6 +219,7 @@ export function buildCsp(env = process.env) {
       assets,
       sentry,
       TURNSTILE,
+      ...gaConnect,
       ...extra,
     ],
 

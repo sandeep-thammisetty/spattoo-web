@@ -37,6 +37,25 @@ export const SHOW_SIGNIN = process.env.NEXT_PUBLIC_SHOW_SIGNIN === "true";
 // Baker signup entry — the app reveals its signup screen behind ?signup=1.
 export const SIGNUP_URL = `${APP_URL}/?signup=1`;
 
+// Google Analytics 4 measurement id ("G-XXXXXXXXXX"). NEXT_PUBLIC_ because the tag
+// runs in the browser, and that is fine — a measurement id is meant to be seen and
+// authorises nothing. Like TURNSTILE_SITE_KEY above, nothing secret belongs here.
+//
+// UNSET MEANS NO ANALYTICS AT ALL: no script, and no Google origin in the CSP either
+// (shared/securityHeaders.mjs gates on this same variable). So local development and
+// any deploy that has not opted in stay entirely Google-free, rather than loading a
+// tag that reports nowhere.
+//
+// SET IT PER VERCEL PROJECT, to a DIFFERENT property per environment. Dev and prod
+// sharing one property would mix our own test traffic into the numbers we make
+// decisions from — and the dev property's real job is to prove the wiring works
+// before prod, not to be analysed.
+//
+// ⚠️ Marketing only, for now. The baker app is next; customer storefronts are
+// DELIBERATELY excluded and are measured first-party instead (spattoo-api
+// storefront_views) — see plans/analytics.md for why that is not a compromise.
+export const GA_ID = process.env.NEXT_PUBLIC_GA_ID || "";
+
 // True only on the production marketing deploy. Whitelisting prod (rather than
 // blacklisting .dev) means any new non-prod host is treated as non-prod by
 // default — the same safe-by-default direction `proxy.ts` uses for indexing.
