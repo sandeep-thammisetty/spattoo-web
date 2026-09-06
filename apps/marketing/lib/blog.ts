@@ -33,7 +33,7 @@ export type BlogPost = {
 export const BLOG_POSTS: BlogPost[] = [
   {
     slug: "cake-design-storytelling",
-    title: "What People Are Really Saying With Cake",
+    title: "How Cake Design Is Becoming a New Form of Storytelling",
     description:
       "Cake design has shifted from marking an occasion to being about a specific person. What changed, and what it asks of the people who make them.",
     file: "cake-design-storytelling.md",
