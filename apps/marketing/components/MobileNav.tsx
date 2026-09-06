@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { SHOW_SIGNIN, SIGNUP_URL } from "../lib/domain";
 
@@ -33,9 +34,32 @@ export default function MobileNav() {
         <span className="block w-4 h-px bg-[#edeae3] mx-auto" />
       </button>
 
-      {/* Full-screen overlay */}
-      <AnimatePresence>
-        {open && (
+      {/* ── The overlay is rendered into <body>, not where it is written ─────────────────────────
+          ⚠️ `fixed inset-0 z-50` is not enough, and this is the SECOND time this exact trap has been
+          hit here — DemoModal.tsx carries the same note.
+
+          This component lives inside SiteNav, which is `fixed … z-20`. A positioned ancestor with a
+          z-index makes a STACKING CONTEXT, so the drawer's z-50 is only ever compared against its
+          siblings INSIDE that context; against the rest of the page the whole thing sits at 20. The
+          hero's SpaceGrid paints at zIndex 20 too, and being later in the document it wins — which
+          is why the cake and the grid showed straight through an overlay whose background is opaque
+          #0d0d0d.
+
+          A portal moves it out to the body, where z-50 means what it says.
+
+          ⚠️ The portal wraps AnimatePresence, NOT the other way round. Put createPortal INSIDE it and
+          the drawer never appears at all: AnimatePresence inspects its children to track what is
+          entering and leaving, and a portal is not a component it can see through — it rendered
+          nothing, silently, with no error. Cost one debugging pass to find, because "the menu does
+          not open" looks nothing like "the z-index fix was applied at the wrong level".
+
+          `typeof document` rather than a mounted flag: on the server there is no document and this
+          renders nothing; on the client a portal contributes no DOM where it is written, so the
+          markup either side of hydration matches. That also keeps the exit fade, which gating the
+          portal on `open` would have thrown away. */}
+      {typeof document !== "undefined" && createPortal(
+        <AnimatePresence>
+          {open && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -96,8 +120,10 @@ export default function MobileNav() {
               )}
             </nav>
           </motion.div>
-        )}
-      </AnimatePresence>
+          )}
+        </AnimatePresence>,
+        document.body,
+      )}
     </>
   );
 }

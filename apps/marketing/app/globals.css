@@ -25,6 +25,38 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* ── A full-height section whose BOTTOM is actually reachable on a phone ──────────────────────
+ *
+ * `100vh` (Tailwind's `min-h-screen`) is not the height of what a phone is showing you. On iOS
+ * Safari it is the LARGE viewport — the height the page would have if the browser's toolbars were
+ * hidden — and they are not hidden when the page loads. So the last ~90px of a `100vh` hero sit
+ * behind the toolbar, and anything pinned to its bottom is simply not there.
+ *
+ * That is how the hero's "Request a Demo" button came to be invisible on an iPhone: the most
+ * important control on the page, below the fold of a section built to BE the fold.
+ *
+ * `svh` is the small viewport — the height with the browser chrome fully shown. It is the one unit
+ * that guarantees the bottom edge is on screen at the moment a visitor arrives. `dvh` would track
+ * the chrome as it collapses, but it resizes the section mid-scroll, which reflows a 3D canvas on
+ * every frame of the transition.
+ *
+ * ⚠️ The fallback is an @supports block, NOT two `min-height` lines in one rule. The obvious form
+ * — `min-height: 100vh; min-height: 100svh;` — compiled down to `min-height:100svh` alone: the
+ * minifier saw a property assigned twice and kept the winner. That is right for anything that
+ * understands `svh` and silently removes the safety net for anything that does not, and this app
+ * targets `ios_saf >= 15` while `svh` only arrived in 15.4. Safari 15.0–15.3 would have been left
+ * with no min-height at all, collapsing the hero to nothing, since its content is absolutely
+ * positioned. @supports cannot be collapsed that way, so the fallback survives the build.
+ */
+.min-h-screen-safe {
+  min-height: 100vh;
+}
+@supports (min-height: 100svh) {
+  .min-h-screen-safe {
+    min-height: 100svh;
+  }
+}
+
 /* Shared prose styling for rendered legal documents (/terms /privacy /refund
    /grievance). One class, reused by every legal page via LegalDocPage. */
 .legal-doc {

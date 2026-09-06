@@ -58,8 +58,13 @@ export const LEGAL_DOCS: LegalDoc[] = [
     title: "Privacy Policy",
     navLabel: "Privacy",
     file: "privacy-policy.md",
-    version: "1.0",
-    effectiveDate: "13 August 2026",
+    // 1.1 (6 Sep 2026) — Google Analytics on the marketing site. v1.0 stated we used no
+    // behavioural-tracking cookies and promised to update this Policy if that changed;
+    // this is that update. Bumped rather than edited in place: `version` is what a consent
+    // log records an acceptance against, so a published version must never change meaning
+    // underneath a recorded consent.
+    version: "1.1",
+    effectiveDate: "6 September 2026",
     description:
       "How Spattoo collects, uses, shares, and protects personal data, in line with the DPDP Act, 2023.",
   },

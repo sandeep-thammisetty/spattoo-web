@@ -155,6 +155,16 @@ export function makeBakerApiClient(supabase: SupabaseClient) {
     registerUpload: (payload: { storage_key: string; name?: string; for_customer_id?: string }) =>
       authFetch("/api/uploads", { method: "POST", body: JSON.stringify(payload) }),
     fetchUploads: () => authGet("/api/uploads").catch(() => []),
+
+    // ── Garnishes: chocolate pieces someone piped in the studio ────────────────────────────────
+    // ⚠️ A garnish is stored as its PATHS, not a picture — see supabase/baker_garnishes.sql. The
+    // thumbnail rides along as base64 and is only a tile; a failure to store it must not cost the
+    // drawing, which is why the server swallows that error and keeps the row.
+    fetchGarnishes: () => authGet("/api/garnishes").catch(() => []),
+    saveGarnish: (payload: { name: string; payload: unknown; thumbBase64?: string | null }) =>
+      authFetch("/api/garnishes", { method: "POST", body: JSON.stringify(payload) }),
+    deleteGarnish: (id: number | string) =>
+      authFetch(`/api/garnishes/${id}`, { method: "DELETE" }),
     deleteUpload: (id: number | string) =>
       authFetch(`/api/uploads/${id}`, { method: "DELETE" }),
     // Only the NAME is patchable — the storage key, the attribution and the tenant are server-derived
@@ -381,6 +391,21 @@ export function makeBakerApiClient(supabase: SupabaseClient) {
         : bakerSlug().then((s) => (s ? publicGet(`/api/flavours?bakerSlug=${encodeURIComponent(s)}`) : [])),
     fetchCraftGuides: (elementIds: string[]) =>
       authGet(`/api/craft-guide?element_ids=${(elementIds ?? []).join(",")}`).catch(() => []),
+
+    // ── Edible prints, read off an order's reference photo ─────────────────────
+    // identify is FREE — a second read of a photo the order already paid to read. generate is
+    // metered, one image per press, and lands in the baker's own uploads.
+    // The prints already made for this order — Print & cut-outs shows them beside the catalogue
+    // decorations. Unmetered, one indexed read, safe on every open.
+    fetchOrderEdiblePrints: (orderId: string) =>
+      authGet(`/api/orders/${orderId}/edible-prints`).catch(() => ({ prints: [] })),
+    identifyEdiblePrints: (orderId: string) =>
+      authFetch(`/api/orders/${orderId}/edible-prints/identify`, { method: "POST" }),
+    generateEdiblePrint: (orderId: string, payload: unknown) =>
+      authFetch(`/api/orders/${orderId}/edible-prints/generate`, {
+        method: "POST",
+        body: JSON.stringify(payload),
+      }),
 
     // ── Customers ─────────────────────────────────────────────────────────────
     fetchCustomers: () => authGet("/api/baker/customers"),

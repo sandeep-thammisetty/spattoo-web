@@ -11,19 +11,67 @@ const slides = [
     highlight: "You just bake it.",
   },
   {
-    eyebrow: "Save hours every week",
+    /* Merged with the old "No design skills needed. / Start from a template." slide rather than
+     * deleting it. That slide's whole content was a label and a restatement of it, and this one had
+     * a headline that already said the benefit — so the template becomes the LABEL here, which is
+     * the rule every slide follows, and "Save hours every week" goes because "Less design chats.
+     * More baking." was already saying that. Two slides, one idea each, into one slide with both. */
+    eyebrow: "Start from a template",
     headline: ["Less design chats.", "More baking."],
     highlight: "More baking.",
   },
   {
-    eyebrow: "Your storefront does the asking",
-    headline: ["They tell you the flavour,", "size and date.", "Before they message you."],
-    highlight: "Before they message you.",
+    /* ⚠️ "Before they message you" conceded that messaging is the baseline — three slides after
+     * promising fewer chats — and it made the message the subject rather than the storefront.
+     *
+     * Guiding is also a stronger claim than collecting: any order form collects a flavour and a
+     * size. This one RECOMMENDS, and both halves were checked in the code before being claimed.
+     * `suggestFlavour.js` reasons from the OCCASION ("children's birthdays nearly always go
+     * chocolate") and is rules rather than a model precisely so it can say why; `SizeDateFacets`
+     * asks how many people and works the size out, because a customer can answer a headcount and
+     * cannot answer a weight.
+     *
+     * "the occasion", not "your occasion": the visitor is the BAKER, so the occasion belongs to
+     * their customer. */
+    eyebrow: "Your storefront guides them",
+    headline: ["To pick the right", "flavour and size", "for the occasion."],
+    highlight: "for the occasion.",
   },
   {
-    eyebrow: "No design skills needed.",
-    headline: ["No design skills needed.", "Start from a template."],
-    highlight: "Start from a template.",
+    /* ⚠️ The only slide about what happens AFTER the order arrives.
+     *
+     * The other five are all the customer's half — designing, the storefront asking, templates,
+     * branding — and the rotation left a visitor with no idea Spattoo runs the orders too. That is
+     * the half a baker pays for every month; the designer is what makes them look once.
+     *
+     * ⚠️ The statement is WHERE THE ORDERS COME FROM, not the bake-day view. An earlier draft read
+     * "See your bake day at a glance", which is a detail inside the feature and too small a thing to
+     * carry a hero slide — the point is that everything lands here, however it arrived. */
+    eyebrow: "Baker focused order management",
+    /* ⚠️ ~18 characters a line at this size, measured — not guessed. Longer lines wrap, and a
+     * wrapped line means the authored break is ignored and the highlight lands mid-phrase. */
+    headline: ["Orders from 3D", "or a photo.", "All in one place."],
+    highlight: "All in one place.",
+  },
+  {
+    /* ⚠️ The one thing on this page nobody else can say.
+     *
+     * Every other slide is a better version of a claim a competitor also makes. Turning a design
+     * into the colour mix, the nozzle and the steps for modelling a fondant figure is not — a render
+     * is a picture, and a picture is not a recipe.
+     *
+     * The tin was here and came out: it is the smallest of the four and the easiest to guess from
+     * the tier count. The fondant guide is the opposite — genuinely hard, genuinely wanted, and it
+     * goes LAST because the last line is the highlighted one.
+     *
+     * The specifics ARE the argument. "Step-by-step guides" would be worth less than saying nothing:
+     * it is what anybody would write whether or not they had built it.
+     *
+     * This took the slot the template slide gave up when it merged into "Less design chats" above,
+     * so the rotation stays at six. Seven would mean the last slide is seen by almost nobody. */
+    eyebrow: "Order specific help guide",
+    headline: ["The colour mix.", "The nozzle.", "The fondant guide."],
+    highlight: "The fondant guide.",
   },
   {
     eyebrow: "They see your brand, not ours.",
@@ -42,6 +90,40 @@ function Headline({ line, isHighlight, addBreak }: { line: string; isHighlight: 
   );
 }
 
+type Slide = (typeof slides)[number];
+
+// One slide's eyebrow + headline at desktop sizing. Rendered by the slide that is actually visible
+// AND, hidden, once per slide to reserve the grid cell's height — see the stack below.
+//
+// Both come from this ONE component deliberately. A spacer built from a copied block of markup
+// drifts the moment either copy is edited, and it drifts SILENTLY: nobody looks at a spacer, so the
+// first sign would be the jump quietly coming back.
+//
+// `heading` picks the tag. Only the visible slide is an <h1>; the five reservations are plain divs
+// carrying identical typography. Six <h1> elements on a marketing landing page is not a thing to do
+// to a page whose job is to be found.
+function DesktopSlide({ slide, heading = false }: { slide: Slide; heading?: boolean }) {
+  const H = heading ? "h1" : "div";
+  return (
+    <>
+      <p
+        className="inline-block text-sm tracking-[0.2em] uppercase text-[#a8c5b5] font-medium mb-5 px-4 py-1.5 rounded-full"
+        style={{ border: "1px solid rgba(107,143,126,0.4)", backgroundColor: "rgba(107,143,126,0.08)" }}
+      >
+        {slide.eyebrow}
+      </p>
+
+      <div className="mb-6">
+        <H className="text-3xl md:text-4xl font-bold leading-snug text-[#edeae3]">
+          {slide.headline.map((line, i) => (
+            <Headline key={line} line={line} isHighlight={line === slide.highlight} addBreak={i > 0} />
+          ))}
+        </H>
+      </div>
+    </>
+  );
+}
+
 export default function HeroText() {
   const [index, setIndex] = useState(0);
   const slide = slides[index];
@@ -57,7 +139,18 @@ export default function HeroText() {
     <>
       {/* Desktop */}
       <div className="hidden md:block relative z-10 px-16 max-w-lg">
-        {/* Grid stack: all slides in same cell, container auto-sizes to tallest.
+        {/* Grid stack: one cell, so a slide can be swapped without the two ever being laid out
+            side by side.
+            ⚠️ The cell does not auto-size to the tallest slide on its own — an earlier version of
+            this comment claimed it did. That was true while AnimatePresence ran in "sync" mode and
+            both slides were mounted at once; under "wait" only ONE is, so the cell was as tall as
+            the CURRENT slide and everything below it — dots, buttons, the free-trial line — rode up
+            and down as the slides rotated. Measured at 1246px wide, the five slides stand 276, 177,
+            346, 128 and 276 tall: a 218px range, every six seconds. The hidden reservations below
+            restore the property the comment used to describe — the cell holds at 346 whichever
+            slide is showing.
+            (Bottom-anchored mobile, `justify-end` further down, never had this: there the stack
+            grows upward and the buttons hold still, which is why only desktop needs them.)
             ⚠️ mode="wait", and it is the whole fix for the "ghosting" a review caught on the live
             site. The stacking here was already right; the default AnimatePresence mode is "sync",
             which animates the outgoing and incoming slides AT THE SAME TIME. Two different
@@ -68,6 +161,24 @@ export default function HeroText() {
             take 1.2s and feel like a stall; at 0.35 the whole thing is 0.7s — slightly quicker than
             the overlapping version it replaces. */}
         <div style={{ display: "grid", marginBottom: "2rem" }}>
+          {/* Height reservation: EVERY slide, laid into the same cell, hidden. A grid row is as tall
+              as its tallest child, so the cell now measures the tallest slide instead of the current
+              one and nothing below it moves.
+              `visibility: hidden`, never `display: none` — a display:none child contributes no
+              height, which is the entire job. aria-hidden and inert to the pointer so the five
+              copies are neither read out nor clickable. Which slide is tallest depends on where the
+              text wraps, so it is not hardcoded: all five are reserved and the browser takes the
+              max. */}
+          {slides.map((s) => (
+            <div
+              key={`reserve-${s.highlight}`}
+              aria-hidden
+              style={{ gridArea: "1 / 1", visibility: "hidden", pointerEvents: "none" }}
+            >
+              <DesktopSlide slide={s} />
+            </div>
+          ))}
+
           <AnimatePresence initial={false} mode="wait">
             <motion.div
               key={index}
@@ -77,21 +188,7 @@ export default function HeroText() {
               transition={{ duration: 0.35, ease: "easeInOut" }}
               style={{ gridArea: "1 / 1" }}
             >
-              <p
-                className="inline-block text-sm tracking-[0.2em] uppercase text-[#a8c5b5] font-medium mb-5 px-4 py-1.5 rounded-full"
-                style={{ border: "1px solid rgba(107,143,126,0.4)", backgroundColor: "rgba(107,143,126,0.08)" }}
-              >
-                {slide.eyebrow}
-              </p>
-
-              <div className="mb-6">
-                <h1 className="text-3xl md:text-4xl font-bold leading-snug text-[#edeae3]">
-                  {slide.headline.map((line, i) => (
-                    <Headline key={line} line={line} isHighlight={line === slide.highlight} addBreak={i > 0} />
-                  ))}
-                </h1>
-              </div>
-
+              <DesktopSlide slide={slide} heading />
             </motion.div>
           </AnimatePresence>
         </div>

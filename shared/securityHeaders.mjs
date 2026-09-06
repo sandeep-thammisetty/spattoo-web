@@ -98,6 +98,46 @@ export function buildCsp(env = process.env) {
   // iframe, so it needs script-src AND frame-src.
   const TURNSTILE = "https://challenges.cloudflare.com";
 
+  // ── Google Analytics — ONLY when this deploy actually uses it ──────────────
+  // Gated on NEXT_PUBLIC_GA_ID rather than hardcoded, because these origins are
+  // the deliberate REVERSAL of a decision this file already made: SEC-WEB-7
+  // removed fonts.googleapis.com + fonts.gstatic.com precisely because they
+  // disclosed every visitor's IP to Google on every storefront visit. Letting
+  // Google back in is a choice each deploy makes for itself — a deploy with no
+  // measurement ID must not advertise origins it never calls.
+  //
+  // ⚠️ WHICH SURFACES. Analytics runs on the MARKETING SITE ONLY. `apps/app` is
+  // Google-free on BOTH of its surfaces, and for two different reasons: the baker
+  // app because GA answers an acquisition question and that app is entirely
+  // post-acquisition, and customer storefronts because they carry the BAKER's
+  // brand and serve the BAKER's customers — storefront usage is counted
+  // first-party instead (spattoo-api storefront_views).
+  //
+  // So in practice this block only ever fires for the marketing deploy. It stays
+  // env-gated rather than hardcoded to that app because the two apps share ONE
+  // policy: a rule that reads "only when this deploy measures" cannot drift, and
+  // a rule that reads "only for marketing" would have to be re-derived here every
+  // time either app moves. If apps/app is ever given an id, note that storefront
+  // RESPONSES would then carry these origins too — over-permission, not a leak,
+  // since CSP permits requests and never causes them — but the tag itself would
+  // have to mount on the baker-app route alone, never in that app's root layout,
+  // which also serves every storefront. See plans/analytics.md.
+  //
+  // gtag.js is served from googletagmanager.com even for a pure GA4 (G-) id —
+  // there is no analytics.js host any more. The wildcard connect hosts are real:
+  // GA4 beacons go to region-sharded subdomains (region1.google-analytics.com,
+  // *.analytics.google.com), so naming only www.google-analytics.com admits the
+  // script and then blocks the very hits it exists to send.
+  const GTM_HOST = "https://www.googletagmanager.com";
+  const GA_HOST = "https://www.google-analytics.com";
+  const gaOn = Boolean(env.NEXT_PUBLIC_GA_ID);
+  const gaScript = gaOn ? [GTM_HOST] : [];
+  const gaConnect = gaOn
+    ? [GA_HOST, "https://*.google-analytics.com", "https://*.analytics.google.com", GTM_HOST]
+    : [];
+  // The no-JS / blocked-XHR fallback is a 1×1 pixel, so img-src matters too.
+  const gaImg = gaOn ? [GA_HOST, GTM_HOST] : [];
+
   // ── No third-party font/asset CDNs (SEC-WEB-7, closed 2026-07-24) ──────────
   // This policy used to allowlist fonts.googleapis.com + fonts.gstatic.com (the
   // designer @import-ed Quicksand from 17 places) and cdn.jsdelivr.net (troika
@@ -156,6 +196,7 @@ export function buildCsp(env = process.env) {
       "'wasm-unsafe-eval'",
       "blob:",
       TURNSTILE,
+      ...gaScript,
       ...(isDev ? ["'unsafe-eval'"] : []),
     ],
 
@@ -167,7 +208,7 @@ export function buildCsp(env = process.env) {
 
     // data: — canvas-generated thumbnails and inlined SVG/icon data URIs.
     // blob:  — designer share cards + client-side canvas snapshots.
-    "img-src": ["'self'", "data:", "blob:", assets, ...extra],
+    "img-src": ["'self'", "data:", "blob:", assets, ...gaImg, ...extra],
 
     "font-src": ["'self'", "data:"],
 
@@ -185,6 +226,7 @@ export function buildCsp(env = process.env) {
       assets,
       sentry,
       TURNSTILE,
+      ...gaConnect,
       ...extra,
     ],
 
